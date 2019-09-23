@@ -91,8 +91,77 @@ can be called that flushes the various buffers. Note however that very
 frequent flushing (without very few values written in between flushes)
 greatly reduces the efficiency of the compression algorithm.
 
+## Walkthrough of an example using the writer
 
-## Library reference
+Let's look at how we would read the data back out again. We first need to
+open a reader:
+
+```c
+otic_reader r = otic_reader_open_filename("somefilename.otic");
+```
+
+Then we can iterate through the content of the file like this:
+```c
+    while (true) {
+        otic_result res = otic_reader_next(r);
+        if (!res) {
+            break;
+        }
+        ...
+    }
+```
+
+There are a number of accessor functions for the `otic_result` type. Most
+importantly, we can find out the time stamp of the value using the following
+two functions:
+
+```c
+    time_t epoch = otic_result_get_epoch(res);
+    long nanoseconds = otic_result_get_nanoseconds(res);
+```
+
+and the name of the column like this:
+
+```c
+    char* name;
+    size_t size = otic_result_get_colname(res, &name);
+```
+
+To find out, what the type of the value that we just read is, use:
+
+```c
+    int typ = otic_result_get_type(res);
+```
+
+This will return one of `OTIC_TYPE_INT`, `OTIC_TYPE_DOUBLE`, `OTIC_TYPE_NULL`
+or `OTIC_TYPE_STRING`. Depending on what type the result has, we can get the
+value as follows:
+
+```c
+    long value = otic_result_get_long(res);
+    // or
+    double value = otic_result_get_double(res);
+    // or
+    char *name;
+    size_t size = otic_result_get_string(res, &name);
+```
+
+For `OTIC_TYPE_NULL` there is no value to retrieve.
+
+After we are done reading, we can check whether an error occurred (e.g. if the
+file ended prematurely) using:
+
+```c
+    int error = otic_reader_geterror(r);
+```
+
+To close the writer, call:
+
+```c
+    otic_reader_close(r);
+```
+
+## Library reference writer
 
 In the following, a brief description for all the functions of the library is given.
 
