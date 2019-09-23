@@ -50,6 +50,7 @@ typedef struct otic_reader* otic_reader;
 typedef struct otic_result* otic_result;
 
 otic_reader otic_reader_open_filename(const char* filename);
+otic_reader otic_reader_open_file(void* f);
 int otic_reader_close(otic_reader);
 otic_result otic_reader_next(otic_reader);
 int otic_reader_geterror(otic_reader);
@@ -65,6 +66,9 @@ int otic_result_ignore_column_from_now_on(otic_result);
 
 time_t otic_reader_closing_epoch(otic_reader);
 long otic_reader_closing_nanoseconds(otic_reader);
+
+void* fopen(char*, char*);
+void fclose(void*);
 """
 )
 

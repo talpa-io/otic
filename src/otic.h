@@ -100,6 +100,11 @@ typedef struct otic_result* otic_result;
 // the result is NULL on error
 otic_reader otic_reader_open_filename(const char* filename);
 
+// open a reader which will read from a given FILE*
+// the result is NULL on error
+otic_reader otic_reader_open_file(FILE* f);
+
+
 // close and free the reader
 int otic_reader_close(otic_reader);
 

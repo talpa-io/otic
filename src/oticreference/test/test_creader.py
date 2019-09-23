@@ -233,7 +233,10 @@ def test_write_and_read_files(values, tmp_path):
 
 
 def check_results(fn, values):
-    reader = lib.otic_reader_open_filename(fn)
+    if isinstance(fn, bytes):
+        reader = lib.otic_reader_open_filename(fn)
+    else:
+        reader = fn
     try:
         for col_name, value, epoch, ns in values:
             if col_name is None:
@@ -312,3 +315,19 @@ def test_ignore_column_float(tmp_path):
         assert not res
     finally:
         lib.otic_reader_close(reader)
+
+@given(values=values_with_repetitions)
+def test_open_stdio_file(values, tmp_path):
+    pa = tmp_path / "foo.fmt"
+    for compression in [False, True]:
+        w = FileWriter(pa, compression=compression)
+        _write_all(w, values)
+        w.close()
+
+        b = bytes(pa)
+        f = lib.fopen(b, b"rb")
+        try:
+            reader = lib.otic_reader_open_file(f)
+            check_results(reader, values)
+        finally:
+            lib.fclose(f)

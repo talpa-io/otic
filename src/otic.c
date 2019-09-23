@@ -524,6 +524,7 @@ otic_reader otic_reader_open_filename(const char* filename) {
     result->position = 0;
     result->block_size = 0;
     result->version = 0;
+    result->owns_infile = 0;
 
     result->buffer = malloc(ZSTD_compressBound(BUFSIZE));
     if (!result->buffer) {
@@ -544,13 +545,50 @@ otic_reader otic_reader_open_filename(const char* filename) {
         return NULL;
     }
     result->infile = infile;
+    result->owns_infile = true;
+    result->last_epoch = result->last_nanoseconds = 0;
+    return result;
+}
+
+otic_reader otic_reader_open_file(FILE* infile) {
+    if (!infile) {
+        return NULL;
+    }
+    otic_reader result = malloc(sizeof(struct otic_reader));
+    result->infile = NULL;
+    result->errorcode = OTIC_NO_ERROR;
+    result->decompressor = NULL;
+    result->columnarray = NULL;
+
+    result->numcolumns = 0;
+    result->position = 0;
+    result->block_size = 0;
+    result->version = 0;
+
+    result->buffer = malloc(ZSTD_compressBound(BUFSIZE));
+    if (!result->buffer) {
+        _reader_dealloc(result);
+        return NULL;
+    }
+
+    result->columnarray = malloc(8 * sizeof(otic_result));
+    if (!result->columnarray) {
+        _reader_dealloc(result);
+        return NULL;
+    }
+    result->capcolumns = 8;
+
+    result->infile = infile;
+    result->owns_infile = false;
     result->last_epoch = result->last_nanoseconds = 0;
     return result;
 }
 
 // close and free the reader
 int otic_reader_close(otic_reader r) {
-    fclose(r->infile);
+    if (r->owns_infile) {
+        fclose(r->infile);
+    }
     _reader_dealloc(r);
     return OTIC_NO_ERROR;
 }

@@ -135,6 +135,7 @@ struct otic_reader {
     size_t capcolumns; // capacity of overallocated array
 
     FILE* infile;
+    bool owns_infile;
 
     int errorcode;
 
