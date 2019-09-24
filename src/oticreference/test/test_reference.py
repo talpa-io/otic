@@ -338,9 +338,14 @@ def repeat_add_timestamps(values, col_names, data):
             col_name = data.draw(strategies.sampled_from(col_names))
             epoch, ns = convert_float_ts(ts)
             res.append((col_name, value, epoch, ns))
+    # insert flushes: (None, ) * 4 tuples, ignored when reading
     for i in range(data.draw(strategies.integers(min_value=0, max_value=5))):
         flushpos = data.draw(strategies.integers(min_value=0, max_value=len(res)))
         res.insert(flushpos, (None, None, None, None))
+    # insert ignore columns: (None, colname, None, None), ignored when writing
+    for i in range(data.draw(strategies.integers(min_value=0, max_value=5))):
+        ignorecol = data.draw(strategies.integers(min_value=0, max_value=len(res)))
+        res.insert(ignorecol, (None, "ignore!", None, None))
     return res
 
 

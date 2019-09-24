@@ -54,7 +54,7 @@ def python_read_callback(userdata, result, size):
     f = ffi.from_handle(userdata)
     res = f.read(size)
     for i in range(len(res)):
-        result[i] = res[i:i+1]
+        result[i] = res[i : i + 1]
     return len(res)
 
 
@@ -222,10 +222,21 @@ def test_error(tmp_path):
         ("j", 0, 0, 0),
     ]
 )
+@example(
+    values=[
+        ("a", 0, 0, 0),
+        ("a", 0, 0, 0),
+        ("b", 0, 0, 0),
+        (None, "ignore!", None, None),
+        ("b", 0, 0, 0),
+        ("a", 0, 0, 0),
+        ("b", 0, 0, 0),
+        ("b", 0, 0, 0),
+    ]
+)
 @given(values=values_with_repetitions)
 @settings(deadline=None)
 def test_write_and_read_files(values, tmp_path):
-    print(values)
     pa = tmp_path / "foo.fmt"
     for compression in [False, True]:
         w = FileWriter(pa, compression=compression)
@@ -233,7 +244,9 @@ def test_write_and_read_files(values, tmp_path):
         w.close()
 
         if 0:
-            p = multiprocessing.Process(target=check_results_fn, args=[bytes(pa), values])
+            p = multiprocessing.Process(
+                target=check_results_fn, args=[bytes(pa), values]
+            )
             p.start()
             p.join()
             assert p.exitcode == 0
@@ -245,13 +258,26 @@ def check_results_fn(fn, values):
     reader = lib.otic_reader_open_filename(fn)
     return check_results_reader(reader, values)
 
+
 def check_results_reader(reader, values):
     try:
+        ignored = set()
+        res = None
+        last_colname = None
         for col_name, value, epoch, ns in values:
             if col_name is None:
+                if value is None:
+                    assert epoch is ns is None
+                    continue
+                assert value == "ignore!"
+                if res is not None:
+                    lib.otic_result_ignore_column_from_now_on(res)
+                    ignored.add(last_colname)
                 continue
-            res = lib.otic_reader_next(reader)
-            _check_entry(res, value, epoch, ns, col_name)
+            if col_name not in ignored:
+                res = lib.otic_reader_next(reader)
+                _check_entry(res, value, epoch, ns, col_name)
+                last_colname = col_name
         res = lib.otic_reader_next(reader)
         assert not res
         assert lib.otic_reader_geterror(reader) == 0
@@ -325,12 +351,15 @@ def test_ignore_column_float(tmp_path):
     finally:
         lib.otic_reader_close(reader)
 
+
 def check_results_content(l, values):
     import io
+
     f = io.BytesIO(b"".join(l))
     h = ffi.new_handle(f)
     reader = lib.otic_reader_open(lib.python_read_callback, h)
     check_results_reader(reader, values)
+
 
 @given(values=values_with_repetitions)
 def test_open_cb_file(values):
