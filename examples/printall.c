@@ -30,9 +30,7 @@ int main(int argc, char* argv[]) {
         long nanoseconds = otic_result_get_nanoseconds(res);
         char* name;
         size_t size = otic_result_get_colname(res, &name);
-        for (int i = 0; i < size; i++) {
-            putchar(name[i]);
-        }
+        fwrite(name, size, 1, stdout);
         printf(" %li %li ", epoch, nanoseconds);
         if (typ == OTIC_TYPE_INT) {
             printf("%li\n", otic_result_get_long(res));
@@ -42,9 +40,7 @@ int main(int argc, char* argv[]) {
             printf("NULL\n");
         } else {
             size = otic_result_get_string(res, &name);
-            for (int i = 0; i < size; i++) {
-                putchar(name[i]);
-            }
+            fwrite(name, size, 1, stdout);
         }
     }
     otic_reader_close(r);
