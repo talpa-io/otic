@@ -54,6 +54,9 @@ otic_writer _writer_open(void) {
     result->block_started = false;
 
     result->block_header = malloc(BUFSIZE + BLOCK_HEADER_SIZE);
+    if (!result->block_header) {
+        _writer_dealloc(result);
+    }
     result->buffer = result->block_header + BLOCK_HEADER_SIZE;
 
     result->compressed_buffer = NULL;
@@ -202,10 +205,14 @@ int otic_register_column(otic_writer w, char *name, otic_column* resultptr) {
     // ignore double column names for now
     _ensure_block_started(w);
     otic_column result = malloc(sizeof(struct otic_column));
+    if (!result) {
+        return OTIC_ERROR_COULDNT_ALLOCATE;
+    }
     result->writer = w;
     result->last_value_type = OTIC_TYPE_NONE_SEEN;
 
     result->last_string_buffer = NULL;
+    result->name = NULL;
     size_t namelen = strlen(name);
     result->name = malloc(namelen);
     if (!result->name) {
@@ -215,17 +222,23 @@ int otic_register_column(otic_writer w, char *name, otic_column* resultptr) {
     }
     memcpy(result->name, name, namelen);
 
+    if (w->numcolumns == w->capcolumns) {
+        // no space left, realloc
+        otic_column* columnarray = realloc(
+            w->columnarray, 2 * w->capcolumns * sizeof(otic_column));
+        if (!columnarray) {
+            _column_dealloc(result);
+            return OTIC_ERROR_COULDNT_ALLOCATE;
+        }
+        w->columnarray = columnarray;
+        w->capcolumns *= 2;
+    }
+
     int error = _write_column_id_assignment(w, name, namelen);
     if (error) {
         _column_dealloc(result);
         *resultptr = NULL;
         return error;
-    }
-    if (w->numcolumns == w->capcolumns) {
-        // no space left, realloc
-        w->columnarray = realloc(
-            w->columnarray, 2 * w->capcolumns * sizeof(otic_column));
-        w->capcolumns *= 2;
     }
 
     unsigned long columnindex = w->numcolumns++;
@@ -514,6 +527,9 @@ int otic_write_null_index(otic_writer w, size_t columnindex, time_t epoch, long 
 
 otic_reader _reader_open() {
     otic_reader result = malloc(sizeof(struct otic_reader));
+    if (!result) {
+        return NULL;
+    }
     result->userdata = NULL;
     result->callback = NULL;
     result->infile = NULL;
@@ -544,6 +560,9 @@ otic_reader _reader_open() {
 
 otic_reader otic_reader_open_filename(const char* filename) {
     otic_reader result = _reader_open();
+    if (!result) {
+        return NULL;
+    }
     FILE * infile = fopen(filename, "rb");
     if (!infile) {
         _reader_dealloc(result);
@@ -555,6 +574,9 @@ otic_reader otic_reader_open_filename(const char* filename) {
 
 otic_reader otic_reader_open(otic_read_cb_tp cb, void* userdata) {
     otic_reader result = _reader_open();
+    if (!result) {
+        return NULL;
+    }
     result->callback = cb;
     result->userdata = userdata;
     return result;
@@ -747,8 +769,13 @@ int _add_new_column(otic_reader r) {
     result->ignore_column = false;
     if (r->numcolumns == r->capcolumns) {
         // no space left, realloc
-        r->columnarray = realloc(
+        otic_result* columnarray = realloc(
             r->columnarray, 2 * r->capcolumns * sizeof(otic_result));
+        if (!columnarray) {
+            _result_dealloc(result);
+            return OTIC_ERROR_COULDNT_ALLOCATE;
+        }
+        r->columnarray = columnarray;
         r->capcolumns *= 2;
     }
     r->columnarray[r->numcolumns++] = result;
