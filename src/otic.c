@@ -889,7 +889,7 @@ int _read_block(otic_reader r) {
     }
     if (blockheader[0] == BLOCK_TYPE_DATA) {
         uint8_t header[12];
-        sizeread = _read(r, header, 12);
+        sizeread = _read(r, (char*)header, 12);
         if (sizeread != 12) {
             return OTIC_ERROR_FILE_CORRUPT;
         }
@@ -921,7 +921,7 @@ int _read_block(otic_reader r) {
     } else if (blockheader[0] == BLOCK_TYPE_END) {
         r->block_size = 0;
         uint8_t header[8];
-        sizeread = _read(r, header, 8);
+        sizeread = _read(r, (char*)header, 8);
         if (sizeread != 8) {
             return OTIC_ERROR_FILE_CORRUPT;
         }
