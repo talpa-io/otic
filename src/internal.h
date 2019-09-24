@@ -167,6 +167,7 @@ struct otic_result {
     int last_value_type;
 
     char * last_string_buffer; // NULL to start with, needs to be freed
+    size_t string_buffer_capacity;
 
     char * name;
     size_t lenname;

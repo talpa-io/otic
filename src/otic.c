@@ -715,19 +715,19 @@ otic_result _otic_reader_next_every_column(otic_reader r) {
 
         } else if (msgtype == TYPE_STRING) {
             size_t size;
+            READER_READVARUINT(size);
+            if ((size > STRING_SIZE_LIMIT) ||
+                    (r->position + size > r->block_size)) {
+                r->errorcode = OTIC_ERROR_FILE_CORRUPT;
+                return NULL;
+            }
             if (column->ignore_column) {
                 // efficiently skip string
-                READER_READVARUINT(size);
-                if ((size > STRING_SIZE_LIMIT) ||
-                        (r->position + size > r->block_size)) {
-                    r->errorcode = OTIC_ERROR_FILE_CORRUPT;
-                    return NULL;
-                }
                 r->position += size;
                 return column; // value not updated
             } else {
-                char* value;
-                RETURNONERROR_READER(_read_string_copy(r, &value, &size));
+                char* value = r->uncompressed_buffer + r->position;
+                r->position += size;
                 return _return_value_string(column, value, size);
             }
         } else if (msgtype == TYPE_NULL) {
@@ -762,6 +762,7 @@ int _add_new_column(otic_reader r) {
     result->metadata = NULL;
     result->lenmetadata = 0;
     result->last_string_buffer = NULL;
+    result->string_buffer_capacity = 0;
     result->last_value_type = OTIC_TYPE_NONE_SEEN;
     result->name = name;
     result->lenname = lenname;
@@ -951,11 +952,15 @@ otic_result _return_value_double(otic_result column, double value) {
 }
 
 otic_result _return_value_string(otic_result column, char* value, size_t size) {
-    // XXX could (re)use a buffer here instead
-    free(column->last_string_buffer);
-    column->last_value.string_size = size;
-    column->last_string_buffer = value;
     column->last_value_type = OTIC_TYPE_STRING;
+    column->last_value.string_size = size;
+    if (size > column->string_buffer_capacity) {
+        free(column->last_string_buffer);
+        column->last_string_buffer = malloc(size);
+        column->string_buffer_capacity = size;
+    }
+    // NB: we need to make a copy, so that TYPE_UNMODIFIED across blocks works
+    memcpy(column->last_string_buffer, value, size);
     return column;
 }
 
