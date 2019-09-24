@@ -468,7 +468,7 @@ int otic_write_null(otic_column c, time_t epoch, long nanoseconds) {
     _write_byte(w, TYPE_NULL);
     _write_varuint(w, c->columnindex);
     c->last_value_type = OTIC_TYPE_NULL;
-    return OTIC_NO_ERROR;
+    return _maybe_flush(w);
 }
 
 

@@ -630,3 +630,13 @@ def test_decreasing_timestamps(offset, ts, tmp_path):
     epoch, ns = convert_float_ts(ts - offset)
     error = lib.otic_write_long(res[0], epoch, ns, 2)
     assert error == lib.OTIC_ERROR_TIMESTAMP_DECREASED
+
+def test_null_missing_maybe_flush(tmp_path):
+    p = tmp_path / "foo.fmt"
+    w = lib.otic_writer_open_filename_uncompressed(bytes(p))
+    res = ffi.new("otic_column*")
+    error = lib.otic_register_column(w, b"test", res)
+    c = res[0]
+    for i in range(100_000):
+        error = lib.otic_write_null(c, i | 1, i & 1)
+        assert not error
