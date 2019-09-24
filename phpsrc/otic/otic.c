@@ -104,6 +104,48 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_otic_reader_open, 0, 0, 1)
     ZEND_ARG_INFO(0, filename)
 ZEND_END_ARG_INFO()
 
+size_t _read_callback(void* userdata, char *data, size_t size) {
+    return php_stream_read((php_stream*)userdata, data, size);
+}
+
+PHP_METHOD(OticReaderRaw, open_stream)
+{
+    zval *zstream;
+    php_stream *stream;
+
+    zval *self = getThis();
+    otic_reader_object *ze_obj = NULL;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "r", &zstream) == FAILURE) {
+        return;
+    }
+
+    php_stream_from_zval(stream, zstream);
+
+    if (!self) {
+        zend_throw_exception(zend_ce_exception, "no this!", 0);
+        return;
+    }
+    ze_obj = Z_OTIC_READER_P(self);
+
+    if (ze_obj->r) {
+        /* we already have an opened file */
+        zend_throw_exception(zend_ce_exception, "reader already open", 0);
+        return;
+    }
+
+    otic_reader r = otic_reader_open(_read_callback, (void*)stream);
+    if (!r) {
+        zend_throw_exception(zend_ce_exception, "error opening file!", 0);
+    }
+    ze_obj->r = r;
+    RETURN_TRUE;
+}
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_otic_reader_open_stream, 0, 0, 1)
+    ZEND_ARG_INFO(0, stream)
+ZEND_END_ARG_INFO()
+
 PHP_METHOD(OticReaderRaw, close)
 {
     zval *self = getThis();
@@ -262,6 +304,7 @@ ZEND_END_ARG_INFO()
 
 static const zend_function_entry otic_reader_class_functions[] = {
     PHP_ME(OticReaderRaw, open, arginfo_otic_reader_open, ZEND_ACC_PUBLIC)
+    PHP_ME(OticReaderRaw, open_stream, arginfo_otic_reader_open_stream, ZEND_ACC_PUBLIC)
     PHP_ME(OticReaderRaw, close, arginfo_otic_reader_close, ZEND_ACC_PUBLIC)
     PHP_ME(OticReaderRaw, read, arginfo_otic_reader_read, ZEND_ACC_PUBLIC)
     PHP_ME(OticReaderRaw, ignore_previous_column, arginfo_otic_reader_ignore_previous_column, ZEND_ACC_PUBLIC)
