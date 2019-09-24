@@ -837,9 +837,14 @@ int _read_varuint_slow_path(unsigned long res, otic_reader r, unsigned long* res
 
 
 int _ensure_header_read(otic_reader r) {
+    // fast path, hopefully inlined
     if (r->version) {
 	return OTIC_NO_ERROR;
     }
+    return _read_header(r);
+}
+
+int _read_header(otic_reader r) {
     char header[HEADER_SIZE];
     int sizeread = _read(r, header, HEADER_SIZE);
     if (sizeread != HEADER_SIZE) {

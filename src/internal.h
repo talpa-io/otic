@@ -180,6 +180,7 @@ struct otic_result {
 void _reader_dealloc(otic_reader);
 void _result_dealloc(otic_result res);
 int _ensure_header_read(otic_reader);
+int _read_header(otic_reader r);
 int _read_block(otic_reader);
 
 otic_result _otic_reader_next_every_column(otic_reader r);
