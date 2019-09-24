@@ -312,6 +312,35 @@ def test_header_uncompressed():
     assert res.startswith(_pack_test(b"TlPa", 0, 1, 1))
 
 
+def test_statistics():
+    res = []
+    w = Writer(res.append)
+    for i in range(1000):
+        w.write(i, 0, "col1", i | 1)
+        w.write(i, 0, "col2", i * 0.01)
+    w.close()
+    assert w.stats[w.OTIC_STAT_NUM_ROWS] == 2 * 1000
+    # timestamps take 3 bytes, but the first ts is in the header
+    assert w.stats[w.OTIC_STAT_NUM_BYTES_TS] == 3 * 1000 - 3
+    assert w.stats[w.OTIC_STAT_NUM_TS_SHIFT] == 1000 - 1
+    assert w.stats[w.OTIC_STAT_NUM_BYTES_VALUES] == (
+        100 * 2  # direct ints
+        + 400 * 4  # larger ints
+        + 500 * 2  # unmodified
+        + 1000 * 10  # floats
+    )
+    assert w.stats[w.OTIC_STAT_NUM_BYTES] == len(b"".join(res))
+    assert w.stats[w.OTIC_STAT_NUM_BLOCKS] == 1
+
+    assert w.columns["col1"].stats[w.OTIC_STAT_NUM_ROWS] == 1000
+    assert w.columns["col2"].stats[w.OTIC_STAT_NUM_ROWS] == 1000
+    assert w.columns["col2"].stats[w.OTIC_STAT_NUM_BYTES] == 1000 * 10
+    assert (
+        w.columns["col1"].stats[w.OTIC_STAT_NUM_BYTES]
+        + w.columns["col2"].stats[w.OTIC_STAT_NUM_BYTES]
+    ) == w.stats[w.OTIC_STAT_NUM_BYTES_VALUES]
+
+
 values = (
     strategies.integers(min_value=-(2 ** 31), max_value=2 ** 31 - 1)
     | strategies.floats(allow_nan=False, allow_infinity=False)

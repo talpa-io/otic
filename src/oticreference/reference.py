@@ -99,6 +99,14 @@ class Constants:
     BLOCK_TYPE_RAW = 1
     BLOCK_TYPE_END = 2
 
+    # stat types
+    OTIC_STAT_NUM_ROWS = 0
+    OTIC_STAT_NUM_BYTES = 1
+    OTIC_STAT_NUM_BYTES_TS = 2
+    OTIC_STAT_NUM_BYTES_VALUES = 3
+    OTIC_STAT_NUM_TS_SHIFT = 4
+    OTIC_STAT_NUM_BLOCKS = 5
+
 
 class BareWriter(Constants):
     # class for ease of testing
@@ -123,17 +131,14 @@ class BareWriter(Constants):
         self.last_nanoseconds = 0
 
         # statistics
-        self.num_rows = 0
-        self.total_timestamp_size = 0
-        self.num_shift_ns = 0
-        self.num_shift_epoch = 0
+        self.stats = [0] * 7
 
     def close(self):
         self.flush()
         block_header = bytearray([self.BLOCK_TYPE_END])
         block_header += uintstruct.pack(self.last_epoch)
         block_header += uintstruct.pack(self.last_nanoseconds)
-        self.write_block(bytes(block_header))
+        self._write_block(bytes(block_header))
 
     def flush(self):
         if self.block:
@@ -144,8 +149,13 @@ class BareWriter(Constants):
             header += uintstruct.pack(self.first_nanoseconds)
             self.first_epoch = self.first_nanoseconds = 0
             self.seen_timestamp_in_block = False
-            self.write_block(bytes(header) + content)
+            self._write_block(bytes(header) + content)
             self.block.clear()
+            self.stats[self.OTIC_STAT_NUM_BLOCKS] += 1
+
+    def _write_block(self, content):
+        self.stats[self.OTIC_STAT_NUM_BYTES] += len(content)
+        return self.write_block(content)
 
     def _maybe_flush(self):
         if len(self.block) > self.OUTPUT_BUFFER_LENGTH:
@@ -193,7 +203,7 @@ class BareWriter(Constants):
         features = self.compression * self.FEATURE_COMPRESSION
         self._write_byte(features)  # features
 
-        self.write_block(bytes(self.block))  # write uncompressed!
+        self._write_block(bytes(self.block))  # write uncompressed!
         self.block.clear()
 
     def add_column_metadata(self, columnname, metadata):
@@ -212,14 +222,15 @@ class BareWriter(Constants):
         column = self.columns[columnname]
         size = len(self.block)
         self._write_timestamp(epoch, nanoseconds)
-        self.total_timestamp_size += len(self.block) - size
+        self.stats[self.OTIC_STAT_NUM_BYTES_TS] += len(self.block) - size
 
         size = len(self.block)
         self._write_value(column, value)
-        column.total_size_written += len(self.block) - size
-        column.num_rows += 1
 
-        self.num_rows += 1
+        self.stats[self.OTIC_STAT_NUM_BYTES_VALUES] += len(self.block) - size
+        self.stats[self.OTIC_STAT_NUM_ROWS] += 1
+        column.stats[self.OTIC_STAT_NUM_BYTES] += len(self.block) - size
+        column.stats[self.OTIC_STAT_NUM_ROWS] += 1
 
         self._maybe_flush()
 
@@ -240,7 +251,7 @@ class BareWriter(Constants):
             self._write_byte(self.TYPE_SHIFT_TIMESTAMP_NS)
             self._write_varuint(diff)
             self.last_nanoseconds = nanoseconds
-            self.num_shift_ns += 1
+            self.stats[self.OTIC_STAT_NUM_TS_SHIFT] += 1
             return
         if diff < 0:
             raise ValueError("time stamp decreased")
@@ -249,7 +260,7 @@ class BareWriter(Constants):
         self._write_varuint(nanoseconds)
         self.last_epoch = epoch
         self.last_nanoseconds = nanoseconds
-        self.num_shift_epoch += 1
+        self.stats[self.OTIC_STAT_NUM_TS_SHIFT] += 1
 
     def _write_value(self, column, value):
         if (
@@ -305,7 +316,7 @@ class Column:
         self.last_value = object()
         self.metadata = None
 
-        self.total_size_written = 0
+        self.stats = [0] * 7
         self.num_rows = 0
 
     def __repr__(self):
