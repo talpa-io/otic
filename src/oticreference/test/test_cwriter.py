@@ -68,7 +68,7 @@ def test_open_close():
 
 
 def test_write_nothing(tmp_path):
-    from oticreference.test.test_creader import check_results
+    from oticreference.test.test_creader import check_results_fn
 
     p = tmp_path / "foo.fmt"
     with get_output() as d:
@@ -112,7 +112,7 @@ def test_write_nothing(tmp_path):
     r = FileReader(p)
     with pytest.raises(StopIteration):
         r.read()
-    check_results(bytes(p), [])
+    check_results_fn(bytes(p), [])
 
 
 def test_write_one():
@@ -579,7 +579,7 @@ def test_write_and_read(values, tmp_path):
 
 
 def test_write_huge(tmp_path):
-    from oticreference.test.test_creader import check_results
+    from oticreference.test.test_creader import check_results_fn
 
     p = bytes(tmp_path / "huge.fmt")
     w = lib.otic_writer_open_filename(p)
@@ -590,7 +590,7 @@ def test_write_huge(tmp_path):
         values.append((f"a{i % 20}", str(i + 0.6), i, 1))
     _write_c(w, values)
     lib.otic_writer_close(w)
-    check_results(bytes(p), values)
+    check_results_fn(bytes(p), values)
 
 
 @example(values=[("", "\x0000", 0, 0)])

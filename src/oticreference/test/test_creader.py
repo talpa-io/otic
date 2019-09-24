@@ -10,7 +10,7 @@ from oticreference.test.test_reference import (
     values_with_repetitions,
     _write_all,
 )
-from oticreference.reference import Constants, FileWriter
+from oticreference.reference import Constants, FileWriter, Writer
 
 
 def _check_entry(res, value, epoch, nanoseconds, colname, column_metadata=None):
@@ -47,6 +47,15 @@ def _check_entry(res, value, epoch, nanoseconds, colname, column_metadata=None):
         assert size == len(column_metadata)
         buf = ffi.buffer(valp[0], size)
         assert bytes(buf) == column_metadata.encode("utf-8")
+
+
+@ffi.def_extern()
+def python_read_callback(userdata, result, size):
+    f = ffi.from_handle(userdata)
+    res = f.read(size)
+    for i in range(len(res)):
+        result[i] = res[i:i+1]
+    return len(res)
 
 
 def test_reader_writer_int(tmp_path):
@@ -224,19 +233,19 @@ def test_write_and_read_files(values, tmp_path):
         w.close()
 
         if 0:
-            p = multiprocessing.Process(target=check_results, args=[bytes(pa), values])
+            p = multiprocessing.Process(target=check_results_fn, args=[bytes(pa), values])
             p.start()
             p.join()
             assert p.exitcode == 0
         else:
-            check_results(bytes(pa), values)
+            check_results_fn(bytes(pa), values)
 
 
-def check_results(fn, values):
-    if isinstance(fn, bytes):
-        reader = lib.otic_reader_open_filename(fn)
-    else:
-        reader = fn
+def check_results_fn(fn, values):
+    reader = lib.otic_reader_open_filename(fn)
+    return check_results_reader(reader, values)
+
+def check_results_reader(reader, values):
     try:
         for col_name, value, epoch, ns in values:
             if col_name is None:
@@ -316,18 +325,25 @@ def test_ignore_column_float(tmp_path):
     finally:
         lib.otic_reader_close(reader)
 
+def check_results_content(l, values):
+    import io
+    f = io.BytesIO(b"".join(l))
+    h = ffi.new_handle(f)
+    reader = lib.otic_reader_open(lib.python_read_callback, h)
+    check_results_reader(reader, values)
+
 @given(values=values_with_repetitions)
-def test_open_stdio_file(values, tmp_path):
-    pa = tmp_path / "foo.fmt"
+def test_open_cb_file(values):
+    l = []
     for compression in [False, True]:
-        w = FileWriter(pa, compression=compression)
+        w = Writer(l.append, compression=compression)
         _write_all(w, values)
         w.close()
 
-        b = bytes(pa)
-        f = lib.fopen(b, b"rb")
-        try:
-            reader = lib.otic_reader_open_file(f)
-            check_results(reader, values)
-        finally:
-            lib.fclose(f)
+        if 0:
+            p = multiprocessing.Process(target=check_results_content, args=[l, values])
+            p.start()
+            p.join()
+            assert p.exitcode == 0
+        else:
+            check_results_content(l, values)

@@ -512,9 +512,10 @@ int otic_write_null_index(otic_writer w, size_t columnindex, time_t epoch, long 
 // reader
 //
 
-
-otic_reader otic_reader_open_filename(const char* filename) {
+otic_reader _reader_open() {
     otic_reader result = malloc(sizeof(struct otic_reader));
+    result->userdata = NULL;
+    result->callback = NULL;
     result->infile = NULL;
     result->errorcode = OTIC_NO_ERROR;
     result->decompressor = NULL;
@@ -524,7 +525,6 @@ otic_reader otic_reader_open_filename(const char* filename) {
     result->position = 0;
     result->block_size = 0;
     result->version = 0;
-    result->owns_infile = 0;
 
     result->buffer = malloc(ZSTD_compressBound(BUFSIZE));
     if (!result->buffer) {
@@ -538,55 +538,39 @@ otic_reader otic_reader_open_filename(const char* filename) {
         return NULL;
     }
     result->capcolumns = 8;
+    result->last_epoch = result->last_nanoseconds = 0;
+    return result;
+}
 
+otic_reader otic_reader_open_filename(const char* filename) {
+    otic_reader result = _reader_open();
     FILE * infile = fopen(filename, "rb");
     if (!infile) {
         _reader_dealloc(result);
         return NULL;
     }
     result->infile = infile;
-    result->owns_infile = true;
-    result->last_epoch = result->last_nanoseconds = 0;
     return result;
 }
 
-otic_reader otic_reader_open_file(FILE* infile) {
-    if (!infile) {
-        return NULL;
-    }
-    otic_reader result = malloc(sizeof(struct otic_reader));
-    result->infile = NULL;
-    result->errorcode = OTIC_NO_ERROR;
-    result->decompressor = NULL;
-    result->columnarray = NULL;
-
-    result->numcolumns = 0;
-    result->position = 0;
-    result->block_size = 0;
-    result->version = 0;
-
-    result->buffer = malloc(ZSTD_compressBound(BUFSIZE));
-    if (!result->buffer) {
-        _reader_dealloc(result);
-        return NULL;
-    }
-
-    result->columnarray = malloc(8 * sizeof(otic_result));
-    if (!result->columnarray) {
-        _reader_dealloc(result);
-        return NULL;
-    }
-    result->capcolumns = 8;
-
-    result->infile = infile;
-    result->owns_infile = false;
-    result->last_epoch = result->last_nanoseconds = 0;
+otic_reader otic_reader_open(otic_read_cb_tp cb, void* userdata) {
+    otic_reader result = _reader_open();
+    result->callback = cb;
+    result->userdata = userdata;
     return result;
+}
+
+size_t _read(otic_reader r, char* buffer, size_t count) {
+    if (r->infile) {
+        return fread(buffer, 1, count, r->infile);
+    } else {
+        return r->callback(r->userdata, buffer, count);
+    }
 }
 
 // close and free the reader
 int otic_reader_close(otic_reader r) {
-    if (r->owns_infile) {
+    if (r->infile) {
         fclose(r->infile);
     }
     _reader_dealloc(r);
@@ -830,7 +814,7 @@ int _ensure_header_read(otic_reader r) {
 	return OTIC_NO_ERROR;
     }
     char header[HEADER_SIZE];
-    int sizeread = fread(header, 1, HEADER_SIZE, r->infile);
+    int sizeread = _read(r, header, HEADER_SIZE);
     if (sizeread != HEADER_SIZE) {
 	return OTIC_ERROR_EOF;
     }
@@ -863,13 +847,13 @@ int _read_block(otic_reader r) {
     r->position = 0;
 
     char blockheader[1];
-    int sizeread = fread(blockheader, 1, 1, r->infile);
+    int sizeread = _read(r, blockheader, 1);
     if (sizeread != 1) {
         return OTIC_ERROR_FILE_CORRUPT;
     }
     if (blockheader[0] == BLOCK_TYPE_DATA) {
         uint8_t header[12];
-        sizeread = fread(header, 1, 12, r->infile);
+        sizeread = _read(r, header, 12);
         if (sizeread != 12) {
             return OTIC_ERROR_FILE_CORRUPT;
         }
@@ -881,7 +865,7 @@ int _read_block(otic_reader r) {
         r->last_epoch = epoch;
         uint32_t nanoseconds = _read_uint32(header + 8);
         r->last_nanoseconds = nanoseconds;
-        sizeread = fread(r->buffer, 1, isize, r->infile);
+        sizeread = _read(r, r->buffer, isize);
         if (sizeread != isize) {
             return OTIC_ERROR_FILE_CORRUPT;
         }
@@ -901,7 +885,7 @@ int _read_block(otic_reader r) {
     } else if (blockheader[0] == BLOCK_TYPE_END) {
         r->block_size = 0;
         uint8_t header[8];
-        sizeread = fread(header, 1, 8, r->infile);
+        sizeread = _read(r, header, 8);
         if (sizeread != 8) {
             return OTIC_ERROR_FILE_CORRUPT;
         }

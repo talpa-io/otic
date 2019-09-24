@@ -95,6 +95,7 @@ int otic_write_null_index(otic_writer, size_t, time_t epoch, long nanoseconds);
 //
 typedef struct otic_reader* otic_reader;
 typedef struct otic_result* otic_result;
+typedef size_t (*otic_read_cb_tp)(void* userdata, char *data, size_t size);
 
 // open a reader which will read from a file name
 // the result is NULL on error
@@ -102,7 +103,7 @@ otic_reader otic_reader_open_filename(const char* filename);
 
 // open a reader which will read from a given FILE*
 // the result is NULL on error
-otic_reader otic_reader_open_file(FILE* f);
+otic_reader otic_reader_open(otic_read_cb_tp cb, void* userdata);
 
 
 // close and free the reader

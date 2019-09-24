@@ -134,8 +134,10 @@ struct otic_reader {
     size_t numcolumns;
     size_t capcolumns; // capacity of overallocated array
 
+    // either callback and userdata are set, or infile
+    otic_read_cb_tp callback;
+    void* userdata;
     FILE* infile;
-    bool owns_infile;
 
     int errorcode;
 
