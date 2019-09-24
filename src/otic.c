@@ -636,7 +636,7 @@ otic_result otic_reader_next(otic_reader r) {
                 return NULL; // EOF reached
             }
         }
-        // we can read one byte safely due to the check abover
+        // we can read one byte safely due to the check above
         msgtype = r->uncompressed_buffer[r->position++];
         if (msgtype == TYPE_SHIFT_TIMESTAMP_EPOCH) {
             READER_READVARUINT(varuint);
