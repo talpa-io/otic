@@ -626,19 +626,6 @@ otic_result otic_reader_next(otic_reader r) {
     }
     RETURNONERROR_READER(_ensure_header_read(r));
     while (true) {
-        otic_result res = _otic_reader_next_every_column(r);
-        if (!res) {
-            return res;
-        }
-        if (!res->ignore_column) {
-            return res;
-        }
-    }
-}
-
-
-otic_result _otic_reader_next_every_column(otic_reader r) {
-    while (true) {
         uint8_t msgtype;
         unsigned long varuint;
         unsigned long column_id;
@@ -682,14 +669,26 @@ otic_result _otic_reader_next_every_column(otic_reader r) {
         }
         otic_result column = r->columnarray[column_id];
         if (msgtype <= MAX_DIRECT_INT) {
+            if (column->ignore_column) {
+                continue;
+            }
             return _return_value_long(column, msgtype);
         } else if (msgtype == TYPE_UNMODIFIED) {
+            if (column->ignore_column) {
+                continue;
+            }
             return column;
         } else if (msgtype == TYPE_POS_INT) {
             READER_READVARUINT(varuint);
+            if (column->ignore_column) {
+                continue;
+            }
             return _return_value_long(column, (long)varuint);
         } else if (msgtype == TYPE_NEG_INT) {
             READER_READVARUINT(varuint);
+            if (column->ignore_column) {
+                continue;
+            }
             return _return_value_long(column, ~(long)varuint);
         } else if (msgtype == TYPE_DOUBLE) {
             if (r->position + 7 >= r->block_size) {
@@ -698,7 +697,7 @@ otic_result _otic_reader_next_every_column(otic_reader r) {
             }
             if (column->ignore_column) {
                 r->position += 8;
-                return column; // value not updated
+                continue;
             }
             // reinterpret cast from unsigned long
             uint64_t result = 0;
@@ -725,13 +724,16 @@ otic_result _otic_reader_next_every_column(otic_reader r) {
             if (column->ignore_column) {
                 // efficiently skip string
                 r->position += size;
-                return column; // value not updated
+                continue;
             } else {
                 char* value = r->uncompressed_buffer + r->position;
                 r->position += size;
                 return _return_value_string(column, value, size);
             }
         } else if (msgtype == TYPE_NULL) {
+            if (column->ignore_column) {
+                continue;
+            }
             return _return_value_null(column);
         }
         r->errorcode = OTIC_ERROR_FILE_CORRUPT;
