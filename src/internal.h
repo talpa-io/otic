@@ -74,6 +74,8 @@ struct otic_column {
     char * last_string_buffer; // NULL to start with
 
     char * name; // NULL to start with
+
+    long stats[2];
 };
 
 struct otic_writer {
@@ -106,6 +108,8 @@ struct otic_writer {
 
     char* compressed_buffer;
     char* other_to_free;
+
+    long stats[6];
 };
 
 otic_writer _writer_open(void);

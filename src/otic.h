@@ -24,6 +24,18 @@
 #define OTIC_TYPE_STRING 3
 #define OTIC_TYPE_NULL 4
 
+// available statistic
+
+// for writers, and columns
+#define OTIC_STAT_NUM_ROWS 0
+#define OTIC_STAT_NUM_BYTES 1
+
+// just for the writer
+#define OTIC_STAT_NUM_BYTES_TS 2
+#define OTIC_STAT_NUM_BYTES_VALUES 3
+#define OTIC_STAT_NUM_TS_SHIFT 4
+#define OTIC_STAT_NUM_BLOCKS 5
+
 // ______________________________________________________________________________________
 // writer interface
 //
@@ -51,6 +63,8 @@ int otic_writer_flush(otic_writer);
 // close and free the writer, doing a flush beforehand if necessary
 int otic_writer_close(otic_writer);
 
+// get one of a number of statistics OTIC_STAT_*
+long otic_writer_get_statistics(otic_writer, int);
 
 // writing data
 
@@ -65,6 +79,7 @@ int otic_register_column_metadata(otic_writer, char *name, char *metadata, size_
 
 size_t otic_column_get_index(otic_column);
 
+long otic_column_get_statistics(otic_column, int);
 
 // write various kinds of value at a given time into a column.
 // time is specified by the arguments epoch (a UNIX epoch) and nanoseconds.
@@ -125,6 +140,8 @@ int otic_reader_geterror(otic_reader);
 time_t otic_reader_closing_epoch(otic_reader);
 long otic_reader_closing_nanoseconds(otic_reader);
 
+long otic_reader_get_statistics(otic_reader);
+
 
 // getters for otic_result
 
@@ -148,5 +165,6 @@ size_t otic_result_get_metadata(otic_result, char** result);
 
 // make it possible to ignore all future results from a column
 int otic_result_ignore_column_from_now_on(otic_result);
+
 
 #endif // #ifndef OTIC

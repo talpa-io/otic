@@ -45,6 +45,9 @@ int otic_write_double_index(otic_writer, size_t, time_t epoch, long nanoseconds,
 int otic_write_string_index(otic_writer, size_t, time_t epoch, long nanoseconds, char *name, size_t size);
 int otic_write_null_index(otic_writer, size_t, time_t epoch, long nanoseconds);
 
+long otic_writer_get_statistics(otic_writer, int);
+long otic_column_get_statistics(otic_column, int);
+
 // reader
 typedef struct otic_reader* otic_reader;
 typedef struct otic_result* otic_result;

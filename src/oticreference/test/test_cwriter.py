@@ -431,15 +431,16 @@ def test_write_file(tmp_path):
         1,
     )
 
+def open_cwriter(p, compression):
+    if compression:
+        return lib.otic_writer_open_filename(p)
+    else:
+        return lib.otic_writer_open_filename_uncompressed(p)
 
 def test_write_file_and_read_metadata(tmp_path):
     p = tmp_path / "foo.fmt"
-    print(p)
     for c in [0, 1]:
-        if c:
-            w = lib.otic_writer_open_filename(bytes(tmp_path / "foo.fmt"))
-        else:
-            w = lib.otic_writer_open_filename_uncompressed(bytes(tmp_path / "foo.fmt"))
+        w = open_cwriter(bytes(tmp_path / "foo.fmt"), c)
         res = ffi.new("otic_column*")
         meta = b"\x00 a b"
         smeta = "\x00 a b"
@@ -640,3 +641,27 @@ def test_null_missing_maybe_flush(tmp_path):
     for i in range(100_000):
         error = lib.otic_write_null(c, i | 1, i & 1)
         assert not error
+
+
+@example(values=[])
+@given(values=values_with_repetitions)
+def test_statistics_random(values, tmp_path):
+    for compression in [False, True]:
+        cw = open_cwriter(bytes(tmp_path / "foo.fmt"), 0)
+        try:
+            _write_c(cw, values)
+            lib.otic_writer_flush(cw)
+
+            l = []
+            w = Writer(l.append, compression=False)
+            _write_all(w, values)
+            w.flush()
+
+            for i in range(6):
+                print(i)
+                assert w.stats[i] == lib.otic_writer_get_statistics(cw, i)
+        finally:
+            w.close()
+            lib.otic_writer_close(cw)
+
+

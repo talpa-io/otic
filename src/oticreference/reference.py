@@ -131,7 +131,7 @@ class BareWriter(Constants):
         self.last_nanoseconds = 0
 
         # statistics
-        self.stats = [0] * 7
+        self.stats = [0] * 6
 
     def close(self):
         self.flush()
@@ -317,7 +317,6 @@ class Column:
         self.metadata = None
 
         self.stats = [0] * 7
-        self.num_rows = 0
 
     def __repr__(self):
         return f"Column({self.name}, {self.id})"

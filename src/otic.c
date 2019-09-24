@@ -22,7 +22,7 @@
 }
 
 otic_writer _writer_open(void) {
-    otic_writer result = malloc(sizeof(struct otic_writer));
+    otic_writer result = calloc(1, sizeof(struct otic_writer));
 
     if (!result) {
         return NULL;
@@ -155,10 +155,12 @@ int otic_writer_flush(otic_writer w) {
     fflush(w->outfile);
     w->position = 0;
     w->block_started = false;
+    w->stats[OTIC_STAT_NUM_BLOCKS]++;
     return res;
 }
 
 int _write_to_output(otic_writer w, char* buffer, size_t length) {
+    w->stats[OTIC_STAT_NUM_BYTES] += length;
     if (w->outfile) {
         size_t bytes_written = fwrite(buffer, 1, length, w->outfile);
         if (bytes_written != length) {
@@ -316,12 +318,14 @@ int _write_column_id_assignment(otic_writer w, char* name, size_t namelen) {
 
 
 int _write_timestamp(otic_writer w, time_t epoch, long nanoseconds) {
+    w->stats[OTIC_STAT_NUM_ROWS]++;
     if (!w->seen_timestamp_in_block) {
         w->first_epoch = w->last_epoch = epoch;
         w->first_nanoseconds = w->last_nanoseconds = nanoseconds;
         w->seen_timestamp_in_block = true;
         return OTIC_NO_ERROR;
     }
+    size_t startpos = w->position;
     unsigned long diff = epoch - w->last_epoch;
     if (!diff) {
         diff = nanoseconds - w->last_nanoseconds;
@@ -335,6 +339,8 @@ int _write_timestamp(otic_writer w, time_t epoch, long nanoseconds) {
         _write_varuint(w, diff);
         w->last_nanoseconds = nanoseconds;
 
+        w->stats[OTIC_STAT_NUM_TS_SHIFT]++;
+        w->stats[OTIC_STAT_NUM_BYTES_TS] += w->position - startpos;
         return OTIC_NO_ERROR;
     }
     if (diff > epoch) { // underflow occured
@@ -346,6 +352,8 @@ int _write_timestamp(otic_writer w, time_t epoch, long nanoseconds) {
 
     w->last_epoch = epoch;
     w->last_nanoseconds = nanoseconds;
+    w->stats[OTIC_STAT_NUM_TS_SHIFT]++;
+    w->stats[OTIC_STAT_NUM_BYTES_TS] += w->position - startpos;
     return OTIC_NO_ERROR;
 }
 
@@ -358,6 +366,7 @@ int otic_write_long(otic_column c, time_t epoch, long nanoseconds, long value) {
     _ensure_block_started(w);
     RETURNONERROR(_write_timestamp(w, epoch, nanoseconds));
 
+    size_t startpos = w->position;
     if (c->last_value_type == OTIC_TYPE_INT &&
             c->last_value.int_value == value) {
         _write_byte(w, TYPE_UNMODIFIED);
@@ -379,6 +388,9 @@ int otic_write_long(otic_column c, time_t epoch, long nanoseconds, long value) {
         c->last_value_type = OTIC_TYPE_INT;
         c->last_value.int_value = value;
     }
+    w->stats[OTIC_STAT_NUM_BYTES_VALUES] += w->position - startpos;
+    c->stats[OTIC_STAT_NUM_BYTES] += w->position - startpos;
+    c->stats[OTIC_STAT_NUM_ROWS]++;
     return _maybe_flush(w);
 }
 
@@ -391,6 +403,7 @@ int otic_write_double(otic_column c, time_t epoch, long nanoseconds, double valu
     _ensure_block_started(w);
     RETURNONERROR(_write_timestamp(w, epoch, nanoseconds));
 
+    size_t startpos = w->position;
     if (c->last_value_type == OTIC_TYPE_DOUBLE &&
             c->last_value.double_value == value) {
         _write_byte(w, TYPE_UNMODIFIED);
@@ -418,6 +431,9 @@ int otic_write_double(otic_column c, time_t epoch, long nanoseconds, double valu
         c->last_value_type = OTIC_TYPE_DOUBLE;
         c->last_value.double_value = value;
     }
+    w->stats[OTIC_STAT_NUM_BYTES_VALUES] += w->position - startpos;
+    c->stats[OTIC_STAT_NUM_BYTES] += w->position - startpos;
+    c->stats[OTIC_STAT_NUM_ROWS]++;
     return _maybe_flush(w);
 }
 
@@ -434,6 +450,7 @@ int otic_write_string(otic_column c, time_t epoch, long nanoseconds, char* value
     _ensure_block_started(w);
     RETURNONERROR(_write_timestamp(w, epoch, nanoseconds));
 
+    size_t startpos = w->position;
     if (c->last_value_type == OTIC_TYPE_STRING &&
             c->last_value.string_size == size &&
             memcmp(c->last_string_buffer, value, size) == 0) {
@@ -454,6 +471,9 @@ int otic_write_string(otic_column c, time_t epoch, long nanoseconds, char* value
             c->last_value.string_size = size;
         }
     }
+    w->stats[OTIC_STAT_NUM_BYTES_VALUES] += w->position - startpos;
+    c->stats[OTIC_STAT_NUM_BYTES] += w->position - startpos;
+    c->stats[OTIC_STAT_NUM_ROWS]++;
     return _maybe_flush(w);
 }
 
@@ -465,9 +485,13 @@ int otic_write_null(otic_column c, time_t epoch, long nanoseconds) {
     otic_writer w = c->writer;
     _ensure_block_started(w);
     RETURNONERROR(_write_timestamp(w, epoch, nanoseconds));
+    size_t startpos = w->position;
     _write_byte(w, TYPE_NULL);
     _write_varuint(w, c->columnindex);
     c->last_value_type = OTIC_TYPE_NULL;
+    w->stats[OTIC_STAT_NUM_BYTES_VALUES] += w->position - startpos;
+    c->stats[OTIC_STAT_NUM_BYTES] += w->position - startpos;
+    c->stats[OTIC_STAT_NUM_ROWS]++;
     return _maybe_flush(w);
 }
 
@@ -498,6 +522,12 @@ void _write_uint32(char* buffer, uint32_t size) {
     }
 }
 
+long otic_writer_get_statistics(otic_writer w, int index) {
+    if (index < 0 || index > OTIC_STAT_NUM_BLOCKS) {
+        return -1;
+    }
+    return w->stats[index];
+}
 
 size_t otic_column_get_index(otic_column c) {
     return c->columnindex;
@@ -519,6 +549,13 @@ int otic_write_string_index(otic_writer w, size_t columnindex, time_t epoch, lon
 }
 int otic_write_null_index(otic_writer w, size_t columnindex, time_t epoch, long nanoseconds) {
     return otic_write_null(_get_column(w, columnindex), epoch, nanoseconds);
+}
+
+long otic_column_get_statistics(otic_column c, int index) {
+    if (index < 0 || index > OTIC_STAT_NUM_BYTES) {
+        return -1;
+    }
+    return c->stats[index];
 }
 
 // ______________________________________________________________________________________
