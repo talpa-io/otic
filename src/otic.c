@@ -671,6 +671,7 @@ otic_result _otic_reader_next_every_column(otic_reader r) {
                 return NULL;
             }
             otic_result column = r->columnarray[column_id];
+            free(column->metadata); // probably paranoid
             RETURNONERROR_READER(_read_string_copy(r, &column->metadata, &column->lenmetadata));
             continue;
         }
