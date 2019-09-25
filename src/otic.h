@@ -78,6 +78,7 @@ int otic_register_column(otic_writer, char *name, otic_column* result);
 int otic_register_column_metadata(otic_writer, char *name, char *metadata, size_t size, otic_column* result);
 
 size_t otic_column_get_index(otic_column);
+otic_column otic_writer_get_column(otic_writer, size_t);
 
 long otic_column_get_statistics(otic_column, int);
 

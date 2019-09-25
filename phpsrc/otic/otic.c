@@ -425,6 +425,23 @@ PHP_METHOD(OticWriterRaw, close)
     add_assoc_long(return_value, "num_ts_shifts", stat);
     stat = otic_writer_get_statistics(ze_obj->w, OTIC_STAT_NUM_BLOCKS);
     add_assoc_long(return_value, "num_blocks", stat);
+    int i = 0;
+    zval columns, elem;
+    array_init(&columns);
+    add_assoc_zval(return_value, "columns", &columns);
+    while (true) {
+        otic_column c = otic_writer_get_column(ze_obj->w, i);
+        if (!c) {
+            break;
+        }
+        array_init(&elem);
+        stat = otic_column_get_statistics(c, OTIC_STAT_NUM_ROWS);
+        add_assoc_long(&elem, "num_rows", stat);
+        stat = otic_column_get_statistics(c, OTIC_STAT_NUM_BYTES);
+        add_assoc_long(&elem, "num_bytes", stat);
+        add_assoc_zval(&columns, c->name, &elem);
+        i += 1;
+    }
 
     int err = otic_writer_close(ze_obj->w);
     ze_obj->w = NULL;

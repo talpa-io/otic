@@ -216,13 +216,13 @@ int otic_register_column(otic_writer w, char *name, otic_column* resultptr) {
     result->last_string_buffer = NULL;
     result->name = NULL;
     size_t namelen = strlen(name);
-    result->name = malloc(namelen);
+    result->name = malloc(namelen + 1);
     if (!result->name) {
         _column_dealloc(result);
         *resultptr = NULL;
         return OTIC_ERROR_COULDNT_ALLOCATE;
     }
-    memcpy(result->name, name, namelen);
+    memcpy(result->name, name, namelen + 1); // nul-terminate
 
     if (w->numcolumns == w->capcolumns) {
         // no space left, realloc
@@ -533,22 +533,25 @@ size_t otic_column_get_index(otic_column c) {
     return c->columnindex;
 }
 
-otic_column _get_column(otic_writer w, size_t index) {
-    return w->columnarray[index];
+otic_column otic_writer_get_column(otic_writer w, size_t index) {
+    if (index >= 0 && index < w->numcolumns) {
+        return w->columnarray[index];
+    }
+    return NULL;
 }
 
 int otic_write_long_index(otic_writer w, size_t columnindex, time_t epoch, long nanoseconds, long value) {
-    return otic_write_long(_get_column(w, columnindex), epoch, nanoseconds, value);
+    return otic_write_long(otic_writer_get_column(w, columnindex), epoch, nanoseconds, value);
 }
 
 int otic_write_double_index(otic_writer w, size_t columnindex, time_t epoch, long nanoseconds, double value) {
-    return otic_write_double(_get_column(w, columnindex), epoch, nanoseconds, value);
+    return otic_write_double(otic_writer_get_column(w, columnindex), epoch, nanoseconds, value);
 }
 int otic_write_string_index(otic_writer w, size_t columnindex, time_t epoch, long nanoseconds, char *name, size_t size) {
-    return otic_write_string(_get_column(w, columnindex), epoch, nanoseconds, name, size);
+    return otic_write_string(otic_writer_get_column(w, columnindex), epoch, nanoseconds, name, size);
 }
 int otic_write_null_index(otic_writer w, size_t columnindex, time_t epoch, long nanoseconds) {
-    return otic_write_null(_get_column(w, columnindex), epoch, nanoseconds);
+    return otic_write_null(otic_writer_get_column(w, columnindex), epoch, nanoseconds);
 }
 
 long otic_column_get_statistics(otic_column c, int index) {
