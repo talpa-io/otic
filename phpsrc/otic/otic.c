@@ -405,16 +405,32 @@ PHP_METHOD(OticWriterRaw, close)
     }
 
     ze_obj = Z_OTIC_WRITER_P(self);
-    if (ze_obj->w) {
-        int err = otic_writer_close(ze_obj->w);
-        ze_obj->w = NULL;
-        if (!err) {
-            RETURN_TRUE;
-        }
+    if (!ze_obj->w) {
+        zend_throw_exception(zend_ce_exception, "error closing writer", 0);
+        return;
     }
 
-    zend_throw_exception(zend_ce_exception, "error closing writer", 0);
-    return;
+    otic_writer_flush(ze_obj->w);
+
+    array_init(return_value);
+    long stat = otic_writer_get_statistics(ze_obj->w, OTIC_STAT_NUM_ROWS);
+    add_assoc_long(return_value, "num_rows", stat);
+    stat = otic_writer_get_statistics(ze_obj->w, OTIC_STAT_NUM_BYTES);
+    add_assoc_long(return_value, "num_bytes", stat);
+    stat = otic_writer_get_statistics(ze_obj->w, OTIC_STAT_NUM_BYTES_TS);
+    add_assoc_long(return_value, "num_bytes_ts", stat);
+    stat = otic_writer_get_statistics(ze_obj->w, OTIC_STAT_NUM_BYTES_VALUES);
+    add_assoc_long(return_value, "num_bytes_values", stat);
+    stat = otic_writer_get_statistics(ze_obj->w, OTIC_STAT_NUM_TS_SHIFT);
+    add_assoc_long(return_value, "num_ts_shifts", stat);
+    stat = otic_writer_get_statistics(ze_obj->w, OTIC_STAT_NUM_BLOCKS);
+    add_assoc_long(return_value, "num_blocks", stat);
+
+    int err = otic_writer_close(ze_obj->w);
+    ze_obj->w = NULL;
+    if (!err) {
+        return;
+    }
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_otic_writer_close, 0, 0, 0)
