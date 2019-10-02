@@ -1,6 +1,9 @@
-name: Docker Image CI
+name: Test OTIC
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
 
@@ -12,3 +15,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Test 
       run: ./kickstart.sh :test
+
+    - uses: actions/upload-artifact@master
+      with:
+          name: x86-64/otic-php-mod
+          path: ./phpsrc/otic/modules/otic.so
