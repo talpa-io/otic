@@ -1,4 +1,4 @@
-name: Test OTIC
+name: Test and Build OTIC
 
 on:
   push:
@@ -20,10 +20,11 @@ jobs:
     - name: run mkdir
       run: mkdir vendor
 
+
     - name: Test 
       run: /usr/bin/env ./kickstart.sh :test
 
     - uses: actions/upload-artifact@master
       with:
-          name: x86-64/otic-php-mod
+          name: x86_64-otic-mod-php
           path: ./phpsrc/otic/modules/otic.so
