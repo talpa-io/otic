@@ -15,6 +15,9 @@
 ### DON'T CHANGE ANY VARIABLES HERE --- see ~/.kickstartconfig or ./.kickstartconfig instead ###
 ################################################################################################
 
+
+
+
 ##
 KICKSTART_DOCKER_OPTS=""
 
