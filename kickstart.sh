@@ -450,7 +450,7 @@ run_container() {
     if [ ! -t 1 ]
     then
         # Switch to non-interactive terminal (ci-build etc)
-        dev_uid=1000
+        dev_uid=$(stat -c '%u' $PROGPATH)
     fi;
 
     cmd="docker $KICKSTART_DOCKER_OPTS run $terminal                \
