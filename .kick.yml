@@ -4,6 +4,10 @@ version: 1
 from: "infracamp/kickstart-flavor-gaia:testing"
 command:
   build:
+    - "ls -lah"
+    - "pwd"
+    - "touch wurst.txt"
+
     - "sudo apt-get update"
     - "sudo apt-get install -y pkg-config"
     - "sudo apt-get install -y libzstd1-dev build-essential"
@@ -11,7 +15,7 @@ command:
     - "sudo apt-get install -y python3-pip"
     - "sudo apt-get install -y php7.2-dom php7.2-mbstring"
     - "sudo apt-get install -y php-dev"
-    - "sudo apt-get install -y afl"
+    #- "sudo apt-get install -y afl"
     - "composer update"
     - "python3 -m pip install cffi hypothesis pytest zstandard"
     - "kick build-c-lib"
@@ -24,12 +28,12 @@ command:
     - "sudo phpenmod otic"
 
   test:
-    - "cd /opt/src && make"
-    - "cd /opt/examples && make"
-    - "cd /opt/src/oticreference/ && python3 build_cffi.py"
-    - "python3 -m pytest src/"
-    - "vendor/bin/phpunit"
-    - "cd /opt/phpsrc/otic && phpize --clean && phpize && ./configure && NO_INTERACTION=1 make test"
+  - "cd /opt/src && make"
+  - "cd /opt/examples && make"
+  - "cd /opt/src/oticreference/ && python3 build_cffi.py"
+  - "python3 -m pytest src/"
+  - "vendor/bin/phpunit"
+  - "cd /opt/phpsrc/otic && phpize --clean && phpize && ./configure && NO_INTERACTION=1 make test"
 
   testphp:
     - sudo phpenmod xdebug
