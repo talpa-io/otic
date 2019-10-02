@@ -16,4 +16,6 @@ src/otic_all.h
 /.idea
 /.vscode
 
-
+build/
+bin/
+lib/
