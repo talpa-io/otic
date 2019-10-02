@@ -13,6 +13,11 @@ jobs:
  
     steps:
     - uses: actions/checkout@v1
+    - name: Ls all
+      run: ls -lah
+    - name: run mkdir
+      run: mkdir vendor
+
     - name: Test 
       run: ./kickstart.sh :test
 
