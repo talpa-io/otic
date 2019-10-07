@@ -1,1 +1,0 @@
-/usr/bin/cc -g   CMakeFiles/pack_test.dir/pack/pack.c.o  -o ../../bin/pack_test  -L/home/talpaadmin/Dokumente/GIT/oticRev/lib -Wl,-rpath,/home/talpaadmin/Dokumente/GIT/oticRev/lib ../../lib/libotic.so -lzstd -lm -lpthread 

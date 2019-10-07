@@ -1,1 +1,0 @@
-/usr/bin/cc -g   CMakeFiles/format_test.dir/format/format.c.o CMakeFiles/format_test.dir/__/include/format/format.c.o  -o ../../bin/format_test  -L/home/talpaadmin/Dokumente/GIT/oticRev/lib -Wl,-rpath,/home/talpaadmin/Dokumente/GIT/oticRev/lib ../../lib/libotic.so -lzstd -lm -lpthread 
