@@ -1,3 +1,0 @@
-/home/talpaadmin/Dokumente/GIT/oticRev/build/_deps/zstd-subbuild/CMakeFiles/rebuild_cache.dir
-/home/talpaadmin/Dokumente/GIT/oticRev/build/_deps/zstd-subbuild/CMakeFiles/zstd-populate.dir
-/home/talpaadmin/Dokumente/GIT/oticRev/build/_deps/zstd-subbuild/CMakeFiles/edit_cache.dir

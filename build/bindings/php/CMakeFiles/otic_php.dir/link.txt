@@ -1,1 +1,0 @@
-/usr/bin/cc -fPIC -g -O2 -DHAVE_CONFIG_H -g  -shared -Wl,-soname,libotic_php.so -o ../../../lib/libotic_php.so CMakeFiles/otic_php.dir/src/otic_php.c.o  -L/home/talpaadmin/Dokumente/GIT/oticRev/lib -Wl,-rpath,/home/talpaadmin/Dokumente/GIT/oticRev/lib ../../../lib/libotic.so -lzstd -lm -lpthread 

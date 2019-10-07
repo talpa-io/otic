@@ -15,25 +15,25 @@ The C compiler identification is GNU, found in "/home/talpaadmin/Dokumente/GIT/o
 Determining if the C compiler works passed with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_f9023/fast 
-/usr/bin/make -f CMakeFiles/cmTC_f9023.dir/build.make CMakeFiles/cmTC_f9023.dir/build
+Run Build Command(s):/usr/bin/make cmTC_2c1e1/fast 
+/usr/bin/make -f CMakeFiles/cmTC_2c1e1.dir/build.make CMakeFiles/cmTC_2c1e1.dir/build
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird betreten
-Building C object CMakeFiles/cmTC_f9023.dir/testCCompiler.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_f9023.dir/testCCompiler.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/testCCompiler.c
-Linking C executable cmTC_f9023
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f9023.dir/link.txt --verbose=1
-/usr/bin/cc      CMakeFiles/cmTC_f9023.dir/testCCompiler.c.o  -o cmTC_f9023 
+Building C object CMakeFiles/cmTC_2c1e1.dir/testCCompiler.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_2c1e1.dir/testCCompiler.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_2c1e1
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2c1e1.dir/link.txt --verbose=1
+/usr/bin/cc      CMakeFiles/cmTC_2c1e1.dir/testCCompiler.c.o  -o cmTC_2c1e1 
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird verlassen
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_f72c7/fast 
-/usr/bin/make -f CMakeFiles/cmTC_f72c7.dir/build.make CMakeFiles/cmTC_f72c7.dir/build
+Run Build Command(s):/usr/bin/make cmTC_41b85/fast 
+/usr/bin/make -f CMakeFiles/cmTC_41b85.dir/build.make CMakeFiles/cmTC_41b85.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o
-/usr/bin/cc   -v -o CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o   -c /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCCompilerABI.c
+Building C object CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o
+/usr/bin/cc   -v -o CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o   -c /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCCompilerABI.c
 Using built-in specs.
 COLLECT_GCC=/usr/bin/cc
 OFFLOAD_TARGET_NAMES=nvptx-none
@@ -42,8 +42,8 @@ Target: x86_64-linux-gnu
 Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.4.0-1ubuntu1~18.04.1' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
 Thread model: posix
 gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/7/cc1 -quiet -v -imultiarch x86_64-linux-gnu /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/ccCbaE06.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/7/cc1 -quiet -v -imultiarch x86_64-linux-gnu /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/cc9By8wr.s
 GNU C11 (Ubuntu 7.4.0-1ubuntu1~18.04.1) version 7.4.0 (x86_64-linux-gnu)
 	compiled by GNU C version 7.4.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP
 
@@ -63,15 +63,15 @@ GNU C11 (Ubuntu 7.4.0-1ubuntu1~18.04.1) version 7.4.0 (x86_64-linux-gnu)
 
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
 Compiler executable checksum: fa57db1fe2d756b22d454aa8428fd3bd
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
- as -v --64 -o CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o /tmp/ccCbaE06.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o /tmp/cc9By8wr.s
 GNU assembler version 2.30 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.30
 COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/
 LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
-Linking C executable cmTC_f72c7
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f72c7.dir/link.txt --verbose=1
-/usr/bin/cc     -v CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o  -o cmTC_f72c7 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+Linking C executable cmTC_41b85
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_41b85.dir/link.txt --verbose=1
+/usr/bin/cc     -v CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o  -o cmTC_41b85 
 Using built-in specs.
 COLLECT_GCC=/usr/bin/cc
 COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
@@ -83,9 +83,9 @@ Thread model: posix
 gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1) 
 COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/
 LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f72c7' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccyZkpza.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f72c7 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f72c7' '-mtune=generic' '-march=x86-64'
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_41b85' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/cccIBzvv.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_41b85 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_41b85' '-mtune=generic' '-march=x86-64'
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 
@@ -110,11 +110,11 @@ Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/usr/bin/make cmTC_f72c7/fast ]
-  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_f72c7.dir/build.make CMakeFiles/cmTC_f72c7.dir/build]
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_41b85/fast ]
+  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_41b85.dir/build.make CMakeFiles/cmTC_41b85.dir/build]
   ignore line: [make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building C object CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o   -c /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCCompilerABI.c]
+  ignore line: [Building C object CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o   -c /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCCompilerABI.c]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/cc]
   ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
@@ -123,8 +123,8 @@ Parsed C implicit link information from above output:
   ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.4.0-1ubuntu1~18.04.1' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
   ignore line: [Thread model: posix]
   ignore line: [gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
-  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/7/cc1 -quiet -v -imultiarch x86_64-linux-gnu /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/ccCbaE06.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/7/cc1 -quiet -v -imultiarch x86_64-linux-gnu /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/cc9By8wr.s]
   ignore line: [GNU C11 (Ubuntu 7.4.0-1ubuntu1~18.04.1) version 7.4.0 (x86_64-linux-gnu)]
   ignore line: [	compiled by GNU C version 7.4.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP]
   ignore line: []
@@ -144,15 +144,15 @@ Parsed C implicit link information from above output:
   ignore line: []
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
   ignore line: [Compiler executable checksum: fa57db1fe2d756b22d454aa8428fd3bd]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
-  ignore line: [ as -v --64 -o CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o /tmp/ccCbaE06.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o /tmp/cc9By8wr.s]
   ignore line: [GNU assembler version 2.30 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.30]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
-  ignore line: [Linking C executable cmTC_f72c7]
-  ignore line: [/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f72c7.dir/link.txt --verbose=1]
-  ignore line: [/usr/bin/cc     -v CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o  -o cmTC_f72c7 ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking C executable cmTC_41b85]
+  ignore line: [/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_41b85.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/cc     -v CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o  -o cmTC_41b85 ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/cc]
   ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper]
@@ -164,13 +164,13 @@ Parsed C implicit link information from above output:
   ignore line: [gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1) ]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_f72c7' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccyZkpza.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_f72c7 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_41b85' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/cccIBzvv.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_41b85 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o]
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/ccyZkpza.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/cccIBzvv.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -189,7 +189,7 @@ Parsed C implicit link information from above output:
     arg [-znow] ==> ignore
     arg [-zrelro] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_f72c7] ==> ignore
+    arg [cmTC_41b85] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o] ==> ignore
@@ -201,7 +201,7 @@ Parsed C implicit link information from above output:
     arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
     arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
     arg [-L/usr/lib/gcc/x86_64-linux-gnu/7/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../..]
-    arg [CMakeFiles/cmTC_f72c7.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_41b85.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lgcc] ==> lib [gcc]
     arg [--push-state] ==> ignore
     arg [--as-needed] ==> ignore
@@ -233,14 +233,14 @@ Parsed C implicit link information from above output:
 Detecting C [-std=c11] compiler features compiled with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_4cc6e/fast 
-/usr/bin/make -f CMakeFiles/cmTC_4cc6e.dir/build.make CMakeFiles/cmTC_4cc6e.dir/build
+Run Build Command(s):/usr/bin/make cmTC_b8958/fast 
+/usr/bin/make -f CMakeFiles/cmTC_b8958.dir/build.make CMakeFiles/cmTC_b8958.dir/build
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird betreten
-Building C object CMakeFiles/cmTC_4cc6e.dir/feature_tests.c.o
-/usr/bin/cc   -std=c11 -o CMakeFiles/cmTC_4cc6e.dir/feature_tests.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.c
-Linking C executable cmTC_4cc6e
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4cc6e.dir/link.txt --verbose=1
-/usr/bin/cc      CMakeFiles/cmTC_4cc6e.dir/feature_tests.c.o  -o cmTC_4cc6e 
+Building C object CMakeFiles/cmTC_b8958.dir/feature_tests.c.o
+/usr/bin/cc   -std=c11 -o CMakeFiles/cmTC_b8958.dir/feature_tests.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_b8958
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b8958.dir/link.txt --verbose=1
+/usr/bin/cc      CMakeFiles/cmTC_b8958.dir/feature_tests.c.o  -o cmTC_b8958 
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird verlassen
 
 
@@ -253,14 +253,14 @@ make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/
 Detecting C [-std=c99] compiler features compiled with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_77e9f/fast 
-/usr/bin/make -f CMakeFiles/cmTC_77e9f.dir/build.make CMakeFiles/cmTC_77e9f.dir/build
+Run Build Command(s):/usr/bin/make cmTC_21eef/fast 
+/usr/bin/make -f CMakeFiles/cmTC_21eef.dir/build.make CMakeFiles/cmTC_21eef.dir/build
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird betreten
-Building C object CMakeFiles/cmTC_77e9f.dir/feature_tests.c.o
-/usr/bin/cc   -std=c99 -o CMakeFiles/cmTC_77e9f.dir/feature_tests.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.c
-Linking C executable cmTC_77e9f
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_77e9f.dir/link.txt --verbose=1
-/usr/bin/cc      CMakeFiles/cmTC_77e9f.dir/feature_tests.c.o  -o cmTC_77e9f 
+Building C object CMakeFiles/cmTC_21eef.dir/feature_tests.c.o
+/usr/bin/cc   -std=c99 -o CMakeFiles/cmTC_21eef.dir/feature_tests.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_21eef
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_21eef.dir/link.txt --verbose=1
+/usr/bin/cc      CMakeFiles/cmTC_21eef.dir/feature_tests.c.o  -o cmTC_21eef 
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird verlassen
 
 
@@ -273,14 +273,14 @@ make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/
 Detecting C [-std=c90] compiler features compiled with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_2168f/fast 
-/usr/bin/make -f CMakeFiles/cmTC_2168f.dir/build.make CMakeFiles/cmTC_2168f.dir/build
+Run Build Command(s):/usr/bin/make cmTC_2cd8e/fast 
+/usr/bin/make -f CMakeFiles/cmTC_2cd8e.dir/build.make CMakeFiles/cmTC_2cd8e.dir/build
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird betreten
-Building C object CMakeFiles/cmTC_2168f.dir/feature_tests.c.o
-/usr/bin/cc   -std=c90 -o CMakeFiles/cmTC_2168f.dir/feature_tests.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.c
-Linking C executable cmTC_2168f
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2168f.dir/link.txt --verbose=1
-/usr/bin/cc      CMakeFiles/cmTC_2168f.dir/feature_tests.c.o  -o cmTC_2168f 
+Building C object CMakeFiles/cmTC_2cd8e.dir/feature_tests.c.o
+/usr/bin/cc   -std=c90 -o CMakeFiles/cmTC_2cd8e.dir/feature_tests.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.c
+Linking C executable cmTC_2cd8e
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2cd8e.dir/link.txt --verbose=1
+/usr/bin/cc      CMakeFiles/cmTC_2cd8e.dir/feature_tests.c.o  -o cmTC_2cd8e 
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird verlassen
 
 
@@ -304,25 +304,25 @@ The CXX compiler identification is GNU, found in "/home/talpaadmin/Dokumente/GIT
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_c6c2b/fast 
-/usr/bin/make -f CMakeFiles/cmTC_c6c2b.dir/build.make CMakeFiles/cmTC_c6c2b.dir/build
+Run Build Command(s):/usr/bin/make cmTC_3be9e/fast 
+/usr/bin/make -f CMakeFiles/cmTC_3be9e.dir/build.make CMakeFiles/cmTC_3be9e.dir/build
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird betreten
-Building CXX object CMakeFiles/cmTC_c6c2b.dir/testCXXCompiler.cxx.o
-/usr/bin/c++     -o CMakeFiles/cmTC_c6c2b.dir/testCXXCompiler.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_c6c2b
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c6c2b.dir/link.txt --verbose=1
-/usr/bin/c++       CMakeFiles/cmTC_c6c2b.dir/testCXXCompiler.cxx.o  -o cmTC_c6c2b 
+Building CXX object CMakeFiles/cmTC_3be9e.dir/testCXXCompiler.cxx.o
+/usr/bin/c++     -o CMakeFiles/cmTC_3be9e.dir/testCXXCompiler.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_3be9e
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3be9e.dir/link.txt --verbose=1
+/usr/bin/c++       CMakeFiles/cmTC_3be9e.dir/testCXXCompiler.cxx.o  -o cmTC_3be9e 
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird verlassen
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_192c0/fast 
-/usr/bin/make -f CMakeFiles/cmTC_192c0.dir/build.make CMakeFiles/cmTC_192c0.dir/build
+Run Build Command(s):/usr/bin/make cmTC_6f466/fast 
+/usr/bin/make -f CMakeFiles/cmTC_6f466.dir/build.make CMakeFiles/cmTC_6f466.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o
-/usr/bin/c++    -v -o CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o -c /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp
+Building CXX object CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o
+/usr/bin/c++    -v -o CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o -c /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp
 Using built-in specs.
 COLLECT_GCC=/usr/bin/c++
 OFFLOAD_TARGET_NAMES=nvptx-none
@@ -331,8 +331,8 @@ Target: x86_64-linux-gnu
 Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.4.0-1ubuntu1~18.04.1' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
 Thread model: posix
 gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/7/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/cca282EG.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/7/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/cc2k25mf.s
 GNU C++14 (Ubuntu 7.4.0-1ubuntu1~18.04.1) version 7.4.0 (x86_64-linux-gnu)
 	compiled by GNU C version 7.4.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP
 
@@ -356,15 +356,15 @@ GNU C++14 (Ubuntu 7.4.0-1ubuntu1~18.04.1) version 7.4.0 (x86_64-linux-gnu)
 
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
 Compiler executable checksum: 38816e3807cdcb3c59571e251bd6c090
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- as -v --64 -o CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o /tmp/cca282EG.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc2k25mf.s
 GNU assembler version 2.30 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.30
 COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/
 LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
-Linking CXX executable cmTC_192c0
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_192c0.dir/link.txt --verbose=1
-/usr/bin/c++      -v CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_192c0 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+Linking CXX executable cmTC_6f466
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6f466.dir/link.txt --verbose=1
+/usr/bin/c++      -v CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_6f466 
 Using built-in specs.
 COLLECT_GCC=/usr/bin/c++
 COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
@@ -376,9 +376,9 @@ Thread model: posix
 gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1) 
 COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/
 LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_192c0' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccvH3IEK.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_192c0 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_192c0' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6f466' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccvcxCSe.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_6f466 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6f466' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 
@@ -409,11 +409,11 @@ Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/usr/bin/make cmTC_192c0/fast ]
-  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_192c0.dir/build.make CMakeFiles/cmTC_192c0.dir/build]
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_6f466/fast ]
+  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_6f466.dir/build.make CMakeFiles/cmTC_6f466.dir/build]
   ignore line: [make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building CXX object CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/usr/bin/c++    -v -o CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o -c /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Building CXX object CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/usr/bin/c++    -v -o CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o -c /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/c++]
   ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
@@ -422,8 +422,8 @@ Parsed CXX implicit link information from above output:
   ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.4.0-1ubuntu1~18.04.1' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
   ignore line: [Thread model: posix]
   ignore line: [gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/7/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/cca282EG.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/7/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/share/cmake-3.14/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o -version -fstack-protector-strong -Wformat -Wformat-security -o /tmp/cc2k25mf.s]
   ignore line: [GNU C++14 (Ubuntu 7.4.0-1ubuntu1~18.04.1) version 7.4.0 (x86_64-linux-gnu)]
   ignore line: [	compiled by GNU C version 7.4.0, GMP version 6.1.2, MPFR version 4.0.1, MPC version 1.1.0, isl version isl-0.19-GMP]
   ignore line: []
@@ -447,15 +447,15 @@ Parsed CXX implicit link information from above output:
   ignore line: []
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
   ignore line: [Compiler executable checksum: 38816e3807cdcb3c59571e251bd6c090]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  ignore line: [ as -v --64 -o CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o /tmp/cca282EG.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o /tmp/cc2k25mf.s]
   ignore line: [GNU assembler version 2.30 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.30]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  ignore line: [Linking CXX executable cmTC_192c0]
-  ignore line: [/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_192c0.dir/link.txt --verbose=1]
-  ignore line: [/usr/bin/c++      -v CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_192c0 ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking CXX executable cmTC_6f466]
+  ignore line: [/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6f466.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/c++      -v CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_6f466 ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/c++]
   ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper]
@@ -467,13 +467,13 @@ Parsed CXX implicit link information from above output:
   ignore line: [gcc version 7.4.0 (Ubuntu 7.4.0-1ubuntu1~18.04.1) ]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_192c0' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccvH3IEK.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_192c0 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6f466' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/ccvcxCSe.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_6f466 /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o]
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/ccvH3IEK.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccvcxCSe.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -492,7 +492,7 @@ Parsed CXX implicit link information from above output:
     arg [-znow] ==> ignore
     arg [-zrelro] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_192c0] ==> ignore
+    arg [cmTC_6f466] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o] ==> ignore
@@ -504,7 +504,7 @@ Parsed CXX implicit link information from above output:
     arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
     arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
     arg [-L/usr/lib/gcc/x86_64-linux-gnu/7/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/7/../../..]
-    arg [CMakeFiles/cmTC_192c0.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_6f466.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lstdc++] ==> lib [stdc++]
     arg [-lm] ==> lib [m]
     arg [-lgcc_s] ==> lib [gcc_s]
@@ -532,14 +532,14 @@ Parsed CXX implicit link information from above output:
 Detecting CXX [-std=c++1z] compiler features compiled with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_69562/fast 
-/usr/bin/make -f CMakeFiles/cmTC_69562.dir/build.make CMakeFiles/cmTC_69562.dir/build
+Run Build Command(s):/usr/bin/make cmTC_30ef7/fast 
+/usr/bin/make -f CMakeFiles/cmTC_30ef7.dir/build.make CMakeFiles/cmTC_30ef7.dir/build
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird betreten
-Building CXX object CMakeFiles/cmTC_69562.dir/feature_tests.cxx.o
-/usr/bin/c++    -std=c++1z -o CMakeFiles/cmTC_69562.dir/feature_tests.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_69562
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_69562.dir/link.txt --verbose=1
-/usr/bin/c++       CMakeFiles/cmTC_69562.dir/feature_tests.cxx.o  -o cmTC_69562 
+Building CXX object CMakeFiles/cmTC_30ef7.dir/feature_tests.cxx.o
+/usr/bin/c++    -std=c++1z -o CMakeFiles/cmTC_30ef7.dir/feature_tests.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_30ef7
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_30ef7.dir/link.txt --verbose=1
+/usr/bin/c++       CMakeFiles/cmTC_30ef7.dir/feature_tests.cxx.o  -o cmTC_30ef7 
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird verlassen
 
 
@@ -605,14 +605,14 @@ make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_5cc5c/fast 
-/usr/bin/make -f CMakeFiles/cmTC_5cc5c.dir/build.make CMakeFiles/cmTC_5cc5c.dir/build
+Run Build Command(s):/usr/bin/make cmTC_11d34/fast 
+/usr/bin/make -f CMakeFiles/cmTC_11d34.dir/build.make CMakeFiles/cmTC_11d34.dir/build
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird betreten
-Building CXX object CMakeFiles/cmTC_5cc5c.dir/feature_tests.cxx.o
-/usr/bin/c++    -std=c++14 -o CMakeFiles/cmTC_5cc5c.dir/feature_tests.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_5cc5c
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5cc5c.dir/link.txt --verbose=1
-/usr/bin/c++       CMakeFiles/cmTC_5cc5c.dir/feature_tests.cxx.o  -o cmTC_5cc5c 
+Building CXX object CMakeFiles/cmTC_11d34.dir/feature_tests.cxx.o
+/usr/bin/c++    -std=c++14 -o CMakeFiles/cmTC_11d34.dir/feature_tests.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_11d34
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_11d34.dir/link.txt --verbose=1
+/usr/bin/c++       CMakeFiles/cmTC_11d34.dir/feature_tests.cxx.o  -o cmTC_11d34 
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird verlassen
 
 
@@ -678,14 +678,14 @@ make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_b3c74/fast 
-/usr/bin/make -f CMakeFiles/cmTC_b3c74.dir/build.make CMakeFiles/cmTC_b3c74.dir/build
+Run Build Command(s):/usr/bin/make cmTC_798a5/fast 
+/usr/bin/make -f CMakeFiles/cmTC_798a5.dir/build.make CMakeFiles/cmTC_798a5.dir/build
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird betreten
-Building CXX object CMakeFiles/cmTC_b3c74.dir/feature_tests.cxx.o
-/usr/bin/c++    -std=c++11 -o CMakeFiles/cmTC_b3c74.dir/feature_tests.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_b3c74
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b3c74.dir/link.txt --verbose=1
-/usr/bin/c++       CMakeFiles/cmTC_b3c74.dir/feature_tests.cxx.o  -o cmTC_b3c74 
+Building CXX object CMakeFiles/cmTC_798a5.dir/feature_tests.cxx.o
+/usr/bin/c++    -std=c++11 -o CMakeFiles/cmTC_798a5.dir/feature_tests.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_798a5
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_798a5.dir/link.txt --verbose=1
+/usr/bin/c++       CMakeFiles/cmTC_798a5.dir/feature_tests.cxx.o  -o cmTC_798a5 
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird verlassen
 
 
@@ -751,14 +751,14 @@ make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_6e11e/fast 
-/usr/bin/make -f CMakeFiles/cmTC_6e11e.dir/build.make CMakeFiles/cmTC_6e11e.dir/build
+Run Build Command(s):/usr/bin/make cmTC_2279c/fast 
+/usr/bin/make -f CMakeFiles/cmTC_2279c.dir/build.make CMakeFiles/cmTC_2279c.dir/build
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird betreten
-Building CXX object CMakeFiles/cmTC_6e11e.dir/feature_tests.cxx.o
-/usr/bin/c++    -std=c++98 -o CMakeFiles/cmTC_6e11e.dir/feature_tests.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_6e11e
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6e11e.dir/link.txt --verbose=1
-/usr/bin/c++       CMakeFiles/cmTC_6e11e.dir/feature_tests.cxx.o  -o cmTC_6e11e 
+Building CXX object CMakeFiles/cmTC_2279c.dir/feature_tests.cxx.o
+/usr/bin/c++    -std=c++98 -o CMakeFiles/cmTC_2279c.dir/feature_tests.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_2279c
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2279c.dir/link.txt --verbose=1
+/usr/bin/c++       CMakeFiles/cmTC_2279c.dir/feature_tests.cxx.o  -o cmTC_2279c 
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird verlassen
 
 
@@ -822,14 +822,14 @@ make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/
 Performing C++ SOURCE FILE Test CXX_FLAG_STD_CPLUSPLUS11 succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_0c534/fast 
-/usr/bin/make -f CMakeFiles/cmTC_0c534.dir/build.make CMakeFiles/cmTC_0c534.dir/build
+Run Build Command(s):/usr/bin/make cmTC_27ccb/fast 
+/usr/bin/make -f CMakeFiles/cmTC_27ccb.dir/build.make CMakeFiles/cmTC_27ccb.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_0c534.dir/src.cxx.o
-/usr/bin/c++    -DCXX_FLAG_STD_CPLUSPLUS11   -std=c++11 -o CMakeFiles/cmTC_0c534.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_0c534
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0c534.dir/link.txt --verbose=1
-/usr/bin/c++   -DCXX_FLAG_STD_CPLUSPLUS11    CMakeFiles/cmTC_0c534.dir/src.cxx.o  -o cmTC_0c534 
+Building CXX object CMakeFiles/cmTC_27ccb.dir/src.cxx.o
+/usr/bin/c++    -DCXX_FLAG_STD_CPLUSPLUS11   -std=c++11 -o CMakeFiles/cmTC_27ccb.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_27ccb
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_27ccb.dir/link.txt --verbose=1
+/usr/bin/c++   -DCXX_FLAG_STD_CPLUSPLUS11    CMakeFiles/cmTC_27ccb.dir/src.cxx.o  -o cmTC_27ccb 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -837,14 +837,14 @@ int main() { return 0; }
 Performing C SOURCE FILE Test C_FLAG_STD_C99 succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_f60a5/fast 
-/usr/bin/make -f CMakeFiles/cmTC_f60a5.dir/build.make CMakeFiles/cmTC_f60a5.dir/build
+Run Build Command(s):/usr/bin/make cmTC_bd2c5/fast 
+/usr/bin/make -f CMakeFiles/cmTC_bd2c5.dir/build.make CMakeFiles/cmTC_bd2c5.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_f60a5.dir/src.c.o
-/usr/bin/cc   -DC_FLAG_STD_C99   -std=c99 -std=gnu99 -o CMakeFiles/cmTC_f60a5.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_f60a5
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f60a5.dir/link.txt --verbose=1
-/usr/bin/cc  -DC_FLAG_STD_C99    CMakeFiles/cmTC_f60a5.dir/src.c.o  -o cmTC_f60a5 
+Building C object CMakeFiles/cmTC_bd2c5.dir/src.c.o
+/usr/bin/cc   -DC_FLAG_STD_C99   -std=c99 -std=gnu99 -o CMakeFiles/cmTC_bd2c5.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_bd2c5
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bd2c5.dir/link.txt --verbose=1
+/usr/bin/cc  -DC_FLAG_STD_C99    CMakeFiles/cmTC_bd2c5.dir/src.c.o  -o cmTC_bd2c5 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -852,14 +852,14 @@ int main(void) { return 0; }
 Performing C SOURCE FILE Test C_FLAG_WALL succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_9db83/fast 
-/usr/bin/make -f CMakeFiles/cmTC_9db83.dir/build.make CMakeFiles/cmTC_9db83.dir/build
+Run Build Command(s):/usr/bin/make cmTC_b90e3/fast 
+/usr/bin/make -f CMakeFiles/cmTC_b90e3.dir/build.make CMakeFiles/cmTC_b90e3.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_9db83.dir/src.c.o
-/usr/bin/cc   -std=c99 -DC_FLAG_WALL   -Wall -std=gnu99 -o CMakeFiles/cmTC_9db83.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_9db83
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9db83.dir/link.txt --verbose=1
-/usr/bin/cc  -std=c99 -DC_FLAG_WALL    CMakeFiles/cmTC_9db83.dir/src.c.o  -o cmTC_9db83 
+Building C object CMakeFiles/cmTC_b90e3.dir/src.c.o
+/usr/bin/cc   -std=c99 -DC_FLAG_WALL   -Wall -std=gnu99 -o CMakeFiles/cmTC_b90e3.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_b90e3
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b90e3.dir/link.txt --verbose=1
+/usr/bin/cc  -std=c99 -DC_FLAG_WALL    CMakeFiles/cmTC_b90e3.dir/src.c.o  -o cmTC_b90e3 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -867,14 +867,14 @@ int main(void) { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WALL succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_01f13/fast 
-/usr/bin/make -f CMakeFiles/cmTC_01f13.dir/build.make CMakeFiles/cmTC_01f13.dir/build
+Run Build Command(s):/usr/bin/make cmTC_b2abb/fast 
+/usr/bin/make -f CMakeFiles/cmTC_b2abb.dir/build.make CMakeFiles/cmTC_b2abb.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_01f13.dir/src.cxx.o
-/usr/bin/c++    -std=c++11 -DCXX_FLAG_WALL   -Wall -o CMakeFiles/cmTC_01f13.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_01f13
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_01f13.dir/link.txt --verbose=1
-/usr/bin/c++   -std=c++11 -DCXX_FLAG_WALL    CMakeFiles/cmTC_01f13.dir/src.cxx.o  -o cmTC_01f13 
+Building CXX object CMakeFiles/cmTC_b2abb.dir/src.cxx.o
+/usr/bin/c++    -std=c++11 -DCXX_FLAG_WALL   -Wall -o CMakeFiles/cmTC_b2abb.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_b2abb
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b2abb.dir/link.txt --verbose=1
+/usr/bin/c++   -std=c++11 -DCXX_FLAG_WALL    CMakeFiles/cmTC_b2abb.dir/src.cxx.o  -o cmTC_b2abb 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -882,14 +882,14 @@ int main() { return 0; }
 Performing C SOURCE FILE Test C_FLAG_WEXTRA succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_33669/fast 
-/usr/bin/make -f CMakeFiles/cmTC_33669.dir/build.make CMakeFiles/cmTC_33669.dir/build
+Run Build Command(s):/usr/bin/make cmTC_fb2e5/fast 
+/usr/bin/make -f CMakeFiles/cmTC_fb2e5.dir/build.make CMakeFiles/cmTC_fb2e5.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_33669.dir/src.c.o
-/usr/bin/cc   -std=c99 -Wall -DC_FLAG_WEXTRA   -Wextra -std=gnu99 -o CMakeFiles/cmTC_33669.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_33669
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_33669.dir/link.txt --verbose=1
-/usr/bin/cc  -std=c99 -Wall -DC_FLAG_WEXTRA    CMakeFiles/cmTC_33669.dir/src.c.o  -o cmTC_33669 
+Building C object CMakeFiles/cmTC_fb2e5.dir/src.c.o
+/usr/bin/cc   -std=c99 -Wall -DC_FLAG_WEXTRA   -Wextra -std=gnu99 -o CMakeFiles/cmTC_fb2e5.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_fb2e5
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fb2e5.dir/link.txt --verbose=1
+/usr/bin/cc  -std=c99 -Wall -DC_FLAG_WEXTRA    CMakeFiles/cmTC_fb2e5.dir/src.c.o  -o cmTC_fb2e5 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -897,14 +897,14 @@ int main(void) { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WEXTRA succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_252a3/fast 
-/usr/bin/make -f CMakeFiles/cmTC_252a3.dir/build.make CMakeFiles/cmTC_252a3.dir/build
+Run Build Command(s):/usr/bin/make cmTC_1a5dd/fast 
+/usr/bin/make -f CMakeFiles/cmTC_1a5dd.dir/build.make CMakeFiles/cmTC_1a5dd.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_252a3.dir/src.cxx.o
-/usr/bin/c++    -std=c++11 -Wall -DCXX_FLAG_WEXTRA   -Wextra -o CMakeFiles/cmTC_252a3.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_252a3
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_252a3.dir/link.txt --verbose=1
-/usr/bin/c++   -std=c++11 -Wall -DCXX_FLAG_WEXTRA    CMakeFiles/cmTC_252a3.dir/src.cxx.o  -o cmTC_252a3 
+Building CXX object CMakeFiles/cmTC_1a5dd.dir/src.cxx.o
+/usr/bin/c++    -std=c++11 -Wall -DCXX_FLAG_WEXTRA   -Wextra -o CMakeFiles/cmTC_1a5dd.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_1a5dd
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1a5dd.dir/link.txt --verbose=1
+/usr/bin/c++   -std=c++11 -Wall -DCXX_FLAG_WEXTRA    CMakeFiles/cmTC_1a5dd.dir/src.cxx.o  -o cmTC_1a5dd 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -912,14 +912,14 @@ int main() { return 0; }
 Performing C SOURCE FILE Test C_FLAG_WUNDEF succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_e8001/fast 
-/usr/bin/make -f CMakeFiles/cmTC_e8001.dir/build.make CMakeFiles/cmTC_e8001.dir/build
+Run Build Command(s):/usr/bin/make cmTC_de5b1/fast 
+/usr/bin/make -f CMakeFiles/cmTC_de5b1.dir/build.make CMakeFiles/cmTC_de5b1.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_e8001.dir/src.c.o
-/usr/bin/cc   -std=c99 -Wall -Wextra -DC_FLAG_WUNDEF   -Wundef -std=gnu99 -o CMakeFiles/cmTC_e8001.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_e8001
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e8001.dir/link.txt --verbose=1
-/usr/bin/cc  -std=c99 -Wall -Wextra -DC_FLAG_WUNDEF    CMakeFiles/cmTC_e8001.dir/src.c.o  -o cmTC_e8001 
+Building C object CMakeFiles/cmTC_de5b1.dir/src.c.o
+/usr/bin/cc   -std=c99 -Wall -Wextra -DC_FLAG_WUNDEF   -Wundef -std=gnu99 -o CMakeFiles/cmTC_de5b1.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_de5b1
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_de5b1.dir/link.txt --verbose=1
+/usr/bin/cc  -std=c99 -Wall -Wextra -DC_FLAG_WUNDEF    CMakeFiles/cmTC_de5b1.dir/src.c.o  -o cmTC_de5b1 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -927,14 +927,14 @@ int main(void) { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WUNDEF succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_0db90/fast 
-/usr/bin/make -f CMakeFiles/cmTC_0db90.dir/build.make CMakeFiles/cmTC_0db90.dir/build
+Run Build Command(s):/usr/bin/make cmTC_41df0/fast 
+/usr/bin/make -f CMakeFiles/cmTC_41df0.dir/build.make CMakeFiles/cmTC_41df0.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_0db90.dir/src.cxx.o
-/usr/bin/c++    -std=c++11 -Wall -Wextra -DCXX_FLAG_WUNDEF   -Wundef -o CMakeFiles/cmTC_0db90.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_0db90
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0db90.dir/link.txt --verbose=1
-/usr/bin/c++   -std=c++11 -Wall -Wextra -DCXX_FLAG_WUNDEF    CMakeFiles/cmTC_0db90.dir/src.cxx.o  -o cmTC_0db90 
+Building CXX object CMakeFiles/cmTC_41df0.dir/src.cxx.o
+/usr/bin/c++    -std=c++11 -Wall -Wextra -DCXX_FLAG_WUNDEF   -Wundef -o CMakeFiles/cmTC_41df0.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_41df0
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_41df0.dir/link.txt --verbose=1
+/usr/bin/c++   -std=c++11 -Wall -Wextra -DCXX_FLAG_WUNDEF    CMakeFiles/cmTC_41df0.dir/src.cxx.o  -o cmTC_41df0 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -942,14 +942,14 @@ int main() { return 0; }
 Performing C SOURCE FILE Test C_FLAG_WSHADOW succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_8dd0a/fast 
-/usr/bin/make -f CMakeFiles/cmTC_8dd0a.dir/build.make CMakeFiles/cmTC_8dd0a.dir/build
+Run Build Command(s):/usr/bin/make cmTC_bf898/fast 
+/usr/bin/make -f CMakeFiles/cmTC_bf898.dir/build.make CMakeFiles/cmTC_bf898.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_8dd0a.dir/src.c.o
-/usr/bin/cc   -std=c99 -Wall -Wextra -Wundef -DC_FLAG_WSHADOW   -Wshadow -std=gnu99 -o CMakeFiles/cmTC_8dd0a.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_8dd0a
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8dd0a.dir/link.txt --verbose=1
-/usr/bin/cc  -std=c99 -Wall -Wextra -Wundef -DC_FLAG_WSHADOW    CMakeFiles/cmTC_8dd0a.dir/src.c.o  -o cmTC_8dd0a 
+Building C object CMakeFiles/cmTC_bf898.dir/src.c.o
+/usr/bin/cc   -std=c99 -Wall -Wextra -Wundef -DC_FLAG_WSHADOW   -Wshadow -std=gnu99 -o CMakeFiles/cmTC_bf898.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_bf898
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bf898.dir/link.txt --verbose=1
+/usr/bin/cc  -std=c99 -Wall -Wextra -Wundef -DC_FLAG_WSHADOW    CMakeFiles/cmTC_bf898.dir/src.c.o  -o cmTC_bf898 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -957,14 +957,14 @@ int main(void) { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WSHADOW succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_a8a5e/fast 
-/usr/bin/make -f CMakeFiles/cmTC_a8a5e.dir/build.make CMakeFiles/cmTC_a8a5e.dir/build
+Run Build Command(s):/usr/bin/make cmTC_dc509/fast 
+/usr/bin/make -f CMakeFiles/cmTC_dc509.dir/build.make CMakeFiles/cmTC_dc509.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_a8a5e.dir/src.cxx.o
-/usr/bin/c++    -std=c++11 -Wall -Wextra -Wundef -DCXX_FLAG_WSHADOW   -Wshadow -o CMakeFiles/cmTC_a8a5e.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_a8a5e
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a8a5e.dir/link.txt --verbose=1
-/usr/bin/c++   -std=c++11 -Wall -Wextra -Wundef -DCXX_FLAG_WSHADOW    CMakeFiles/cmTC_a8a5e.dir/src.cxx.o  -o cmTC_a8a5e 
+Building CXX object CMakeFiles/cmTC_dc509.dir/src.cxx.o
+/usr/bin/c++    -std=c++11 -Wall -Wextra -Wundef -DCXX_FLAG_WSHADOW   -Wshadow -o CMakeFiles/cmTC_dc509.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_dc509
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dc509.dir/link.txt --verbose=1
+/usr/bin/c++   -std=c++11 -Wall -Wextra -Wundef -DCXX_FLAG_WSHADOW    CMakeFiles/cmTC_dc509.dir/src.cxx.o  -o cmTC_dc509 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -972,14 +972,14 @@ int main() { return 0; }
 Performing C SOURCE FILE Test C_FLAG_WCAST_ALIGN succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_fb61c/fast 
-/usr/bin/make -f CMakeFiles/cmTC_fb61c.dir/build.make CMakeFiles/cmTC_fb61c.dir/build
+Run Build Command(s):/usr/bin/make cmTC_524ab/fast 
+/usr/bin/make -f CMakeFiles/cmTC_524ab.dir/build.make CMakeFiles/cmTC_524ab.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_fb61c.dir/src.c.o
-/usr/bin/cc   -std=c99 -Wall -Wextra -Wundef -Wshadow -DC_FLAG_WCAST_ALIGN   -Wcast-align -std=gnu99 -o CMakeFiles/cmTC_fb61c.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_fb61c
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fb61c.dir/link.txt --verbose=1
-/usr/bin/cc  -std=c99 -Wall -Wextra -Wundef -Wshadow -DC_FLAG_WCAST_ALIGN    CMakeFiles/cmTC_fb61c.dir/src.c.o  -o cmTC_fb61c 
+Building C object CMakeFiles/cmTC_524ab.dir/src.c.o
+/usr/bin/cc   -std=c99 -Wall -Wextra -Wundef -Wshadow -DC_FLAG_WCAST_ALIGN   -Wcast-align -std=gnu99 -o CMakeFiles/cmTC_524ab.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_524ab
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_524ab.dir/link.txt --verbose=1
+/usr/bin/cc  -std=c99 -Wall -Wextra -Wundef -Wshadow -DC_FLAG_WCAST_ALIGN    CMakeFiles/cmTC_524ab.dir/src.c.o  -o cmTC_524ab 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -987,14 +987,14 @@ int main(void) { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WCAST_ALIGN succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_27a5d/fast 
-/usr/bin/make -f CMakeFiles/cmTC_27a5d.dir/build.make CMakeFiles/cmTC_27a5d.dir/build
+Run Build Command(s):/usr/bin/make cmTC_6ec93/fast 
+/usr/bin/make -f CMakeFiles/cmTC_6ec93.dir/build.make CMakeFiles/cmTC_6ec93.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_27a5d.dir/src.cxx.o
-/usr/bin/c++    -std=c++11 -Wall -Wextra -Wundef -Wshadow -DCXX_FLAG_WCAST_ALIGN   -Wcast-align -o CMakeFiles/cmTC_27a5d.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_27a5d
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_27a5d.dir/link.txt --verbose=1
-/usr/bin/c++   -std=c++11 -Wall -Wextra -Wundef -Wshadow -DCXX_FLAG_WCAST_ALIGN    CMakeFiles/cmTC_27a5d.dir/src.cxx.o  -o cmTC_27a5d 
+Building CXX object CMakeFiles/cmTC_6ec93.dir/src.cxx.o
+/usr/bin/c++    -std=c++11 -Wall -Wextra -Wundef -Wshadow -DCXX_FLAG_WCAST_ALIGN   -Wcast-align -o CMakeFiles/cmTC_6ec93.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_6ec93
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6ec93.dir/link.txt --verbose=1
+/usr/bin/c++   -std=c++11 -Wall -Wextra -Wundef -Wshadow -DCXX_FLAG_WCAST_ALIGN    CMakeFiles/cmTC_6ec93.dir/src.cxx.o  -o cmTC_6ec93 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -1002,14 +1002,14 @@ int main() { return 0; }
 Performing C SOURCE FILE Test C_FLAG_WCAST_QUAL succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_4cd89/fast 
-/usr/bin/make -f CMakeFiles/cmTC_4cd89.dir/build.make CMakeFiles/cmTC_4cd89.dir/build
+Run Build Command(s):/usr/bin/make cmTC_89f5b/fast 
+/usr/bin/make -f CMakeFiles/cmTC_89f5b.dir/build.make CMakeFiles/cmTC_89f5b.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_4cd89.dir/src.c.o
-/usr/bin/cc   -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -DC_FLAG_WCAST_QUAL   -Wcast-qual -std=gnu99 -o CMakeFiles/cmTC_4cd89.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_4cd89
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4cd89.dir/link.txt --verbose=1
-/usr/bin/cc  -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -DC_FLAG_WCAST_QUAL    CMakeFiles/cmTC_4cd89.dir/src.c.o  -o cmTC_4cd89 
+Building C object CMakeFiles/cmTC_89f5b.dir/src.c.o
+/usr/bin/cc   -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -DC_FLAG_WCAST_QUAL   -Wcast-qual -std=gnu99 -o CMakeFiles/cmTC_89f5b.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_89f5b
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_89f5b.dir/link.txt --verbose=1
+/usr/bin/cc  -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -DC_FLAG_WCAST_QUAL    CMakeFiles/cmTC_89f5b.dir/src.c.o  -o cmTC_89f5b 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -1017,14 +1017,14 @@ int main(void) { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WCAST_QUAL succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_e7b22/fast 
-/usr/bin/make -f CMakeFiles/cmTC_e7b22.dir/build.make CMakeFiles/cmTC_e7b22.dir/build
+Run Build Command(s):/usr/bin/make cmTC_28508/fast 
+/usr/bin/make -f CMakeFiles/cmTC_28508.dir/build.make CMakeFiles/cmTC_28508.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_e7b22.dir/src.cxx.o
-/usr/bin/c++    -std=c++11 -Wall -Wextra -Wundef -Wshadow -Wcast-align -DCXX_FLAG_WCAST_QUAL   -Wcast-qual -o CMakeFiles/cmTC_e7b22.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_e7b22
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e7b22.dir/link.txt --verbose=1
-/usr/bin/c++   -std=c++11 -Wall -Wextra -Wundef -Wshadow -Wcast-align -DCXX_FLAG_WCAST_QUAL    CMakeFiles/cmTC_e7b22.dir/src.cxx.o  -o cmTC_e7b22 
+Building CXX object CMakeFiles/cmTC_28508.dir/src.cxx.o
+/usr/bin/c++    -std=c++11 -Wall -Wextra -Wundef -Wshadow -Wcast-align -DCXX_FLAG_WCAST_QUAL   -Wcast-qual -o CMakeFiles/cmTC_28508.dir/src.cxx.o -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_28508
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_28508.dir/link.txt --verbose=1
+/usr/bin/c++   -std=c++11 -Wall -Wextra -Wundef -Wshadow -Wcast-align -DCXX_FLAG_WCAST_QUAL    CMakeFiles/cmTC_28508.dir/src.cxx.o  -o cmTC_28508 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -1032,14 +1032,14 @@ int main() { return 0; }
 Performing C SOURCE FILE Test C_FLAG_WSTRICT_PROTOTYPES succeeded with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_575c7/fast 
-/usr/bin/make -f CMakeFiles/cmTC_575c7.dir/build.make CMakeFiles/cmTC_575c7.dir/build
+Run Build Command(s):/usr/bin/make cmTC_2438c/fast 
+/usr/bin/make -f CMakeFiles/cmTC_2438c.dir/build.make CMakeFiles/cmTC_2438c.dir/build
 make[1]: Entering directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_575c7.dir/src.c.o
-/usr/bin/cc   -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -DC_FLAG_WSTRICT_PROTOTYPES   -Wstrict-prototypes -std=gnu99 -o CMakeFiles/cmTC_575c7.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_575c7
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_575c7.dir/link.txt --verbose=1
-/usr/bin/cc  -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -DC_FLAG_WSTRICT_PROTOTYPES    CMakeFiles/cmTC_575c7.dir/src.c.o  -o cmTC_575c7 
+Building C object CMakeFiles/cmTC_2438c.dir/src.c.o
+/usr/bin/cc   -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -DC_FLAG_WSTRICT_PROTOTYPES   -Wstrict-prototypes -std=gnu99 -o CMakeFiles/cmTC_2438c.dir/src.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_2438c
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2438c.dir/link.txt --verbose=1
+/usr/bin/cc  -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -DC_FLAG_WSTRICT_PROTOTYPES    CMakeFiles/cmTC_2438c.dir/src.c.o  -o cmTC_2438c 
 make[1]: Leaving directory '/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -1047,14 +1047,14 @@ int main(void) { return 0; }
 Determining if the include file pthread.h exists passed with the following output:
 Change Dir: /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_ee05e/fast 
-/usr/bin/make -f CMakeFiles/cmTC_ee05e.dir/build.make CMakeFiles/cmTC_ee05e.dir/build
+Run Build Command(s):/usr/bin/make cmTC_c69bb/fast 
+/usr/bin/make -f CMakeFiles/cmTC_c69bb.dir/build.make CMakeFiles/cmTC_c69bb.dir/build
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird betreten
-Building C object CMakeFiles/cmTC_ee05e.dir/CheckIncludeFile.c.o
-/usr/bin/cc   -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes    -std=gnu99 -o CMakeFiles/cmTC_ee05e.dir/CheckIncludeFile.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_ee05e
-/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ee05e.dir/link.txt --verbose=1
-/usr/bin/cc  -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     CMakeFiles/cmTC_ee05e.dir/CheckIncludeFile.c.o  -o cmTC_ee05e 
+Building C object CMakeFiles/cmTC_c69bb.dir/CheckIncludeFile.c.o
+/usr/bin/cc   -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes    -std=gnu99 -o CMakeFiles/cmTC_c69bb.dir/CheckIncludeFile.c.o   -c /home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_c69bb
+/home/talpaadmin/Softwares/clion-2019.1.4/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c69bb.dir/link.txt --verbose=1
+/usr/bin/cc  -std=c99 -Wall -Wextra -Wundef -Wshadow -Wcast-align -Wcast-qual -Wstrict-prototypes     CMakeFiles/cmTC_c69bb.dir/CheckIncludeFile.c.o  -o cmTC_c69bb 
 make[1]: Verzeichnis „/home/talpaadmin/Dokumente/GIT/oticRev/build/CMakeFiles/CMakeTmp“ wird verlassen
 
 
