@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC -g  -shared -Wl,-soname,libotic.so -o ../../lib/libotic.so CMakeFiles/otic.dir/pack/pack.c.o CMakeFiles/otic.dir/unpack/unpack.c.o CMakeFiles/otic.dir/core/core.c.o  -L/home/talpaadmin/Dokumente/GIT/oticRev/lib 

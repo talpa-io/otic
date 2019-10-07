@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/core_test.dir/base/base.c.o  -o ../../bin/core_test  -L/home/talpaadmin/Dokumente/GIT/oticRev/lib -Wl,-rpath,/home/talpaadmin/Dokumente/GIT/oticRev/lib ../../lib/libotic.so -lzstd -lm -lpthread 

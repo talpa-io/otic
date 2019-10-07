@@ -9,7 +9,7 @@
 
 uint8_t format_init(format_t* format, char delimiter, size_t numb_columns)
 {
-    if (!(format->columns.content = malloc(numb_columns * sizeof(char*))))
+    if (!(format->columns.content = malloc(numb_columns * sizeof(format_t))))
         return 0;
     format->delimiter = delimiter;
     format->columns.size = numb_columns;
@@ -32,19 +32,18 @@ ptrdiff_t format_parse(format_t* format, char* line, uint8_t newLineBreak)
     return ptr - format->columns.content + 1;
 }
 
-char* escape(char* value)
+char* encode(char* value)
 {
     return 0;
 }
 
-size_t format_write(format_t* format, char* dump)
+size_t format_write(format_t* format)
 {
     static size_t counter = 0;
-    size_t written = 0;
     for (counter = 0; counter < format->columns.size - 1; counter++)
-        written += sprintf(dump + written, "%s%c", format->columns.content[counter] ? format->columns.content[counter] : "", format->delimiter);
-    written += sprintf(dump + written, "%s\n", format->columns.content[counter] ? format->columns.content[counter] : "");
-    return written;
+        printf("%s%c", format->columns.content[counter] ? format->columns.content[counter] : "", format->delimiter);
+    printf("%s\n", format->columns.content[counter] ? format->columns.content[counter] : "");
+    return 1;
 }
 
 void format_close(format_t* format)

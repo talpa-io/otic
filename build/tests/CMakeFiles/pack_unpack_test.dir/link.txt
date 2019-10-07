@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/pack_unpack_test.dir/pack_unpack/pack_unpack.c.o CMakeFiles/pack_unpack_test.dir/__/include/errHand/errHand.c.o  -o ../../bin/pack_unpack_test  -L/home/talpaadmin/Dokumente/GIT/oticRev/lib -Wl,-rpath,/home/talpaadmin/Dokumente/GIT/oticRev/lib ../../lib/libotic.so -lzstd -lm -lpthread 

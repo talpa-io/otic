@@ -1,0 +1,4 @@
+# Hashes of file build rules.
+93f1f5fbbd6f7615a3b916b6aa86878c _deps/zstd-build/CMakeFiles/clean-all
+390bc0976cdbe36d0e8f2ac64c95545f _deps/zstd-build/lib/CMakeFiles/libzstd.pc
+9b159e1288a498ccdf8b735911a1085b _deps/zstd-build/lib/CMakeFiles/uninstall

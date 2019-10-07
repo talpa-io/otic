@@ -24,8 +24,8 @@ typedef struct
 
 uint8_t format_init(format_t* format, char delimiter, size_t numb_columns);
 ptrdiff_t format_parse(format_t* format, char* line, uint8_t newLineBreak);
-char* escape(char* value);
-size_t format_write(format_t* format, char* dump);
+char* encode(char* value);
+size_t format_write(format_t* format);
 void format_close(format_t* format);
 
 
