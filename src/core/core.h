@@ -12,10 +12,14 @@ extern "C"{
 #if OTIC_BASE_CACHE_SIZE < (255 * 2)
 #error OTIC Pack requires a buffer cache bigger than twice the size of permitted string value length (255)
 #endif
+#ifndef __STDC_IEC_559__
+#error OTIC requires IEEE 754 support for handling float values
+#endif
 #define OTIC_ENTRY_STRING_SIZE 32
 #define OTIC_PACK_CACHE_SIZE 256
 #define PTR_M 31
 #define OTIC_TS_MULTIPLICATOR 10000
+#define OTIC_MAGIC_SIZE 4
 
 
 typedef enum
@@ -87,6 +91,15 @@ uint8_t         leb128_encode_unsigned(uint64_t value, uint8_t* dest);
 uint8_t         leb128_decode_unsigned(const uint8_t* encoded_values, uint32_t* value);
 uint8_t         leb128_encode_signed(int64_t value, uint8_t* dest);
 uint64_t        leb128_decode_signed(const uint8_t* encoded_values);
+
+
+typedef struct
+{
+    uint8_t magic[OTIC_MAGIC_SIZE];
+    uint8_t features;
+    uint8_t version;
+} __attribute__((packed)) otic_header_t;
+
 
 #ifdef __cpluscplus
 };

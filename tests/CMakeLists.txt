@@ -22,3 +22,9 @@ OTIC_ADDTEST(format_test
         ../include/format/format.h
         ../include/format/format.c
         )
+
+OTIC_ADDTEST(packChannel_test
+        packChannel/packChannel.c
+        ../include/errHand/errHand.c
+        ../include/errHand/errHand.h
+        )

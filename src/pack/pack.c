@@ -214,13 +214,7 @@ void static otic_metadata_write(otic_pack_t* oticPack, const char* value)
 }
 
 OTIC_PACK_INLINE
-void static otic_pack_flush_if_flushable(otic_pack_t* oticPack)
-{
-    if (oticPack->base.top > oticPack->limit)
-        otic_pack_flush(oticPack);
-}
-
-uint8_t otic_pack_flush(otic_pack_t* oticPack)
+static uint8_t otic_pack_flush(otic_pack_t* oticPack)
 {
 #if OTIC_PACK_NO_COMPRESSION
     if (!oticPack->flusher[0](oticPack->base.cache, oticPack->base.top - oticPack->base.cache)){
@@ -233,11 +227,11 @@ uint8_t otic_pack_flush(otic_pack_t* oticPack)
         otic_base_setError(&oticPack->base, OTIC_ERROR_ZSTD);
         goto fail;
     }
-    if (!oticPack->flusher[0]((uint8_t*)&ret, sizeof(uint32_t))){
+    if (!oticPack->flusher((uint8_t*)&ret, sizeof(uint32_t))){
         otic_base_setError(&oticPack->base, OTIC_ERROR_FLUSH_FAILED);
         goto fail;
     }
-    if (!oticPack->flusher[0](oticPack->zstd_out, ret)){
+    if (!oticPack->flusher(oticPack->zstd_out, ret)){
         otic_base_setError(&oticPack->base, OTIC_ERROR_FLUSH_FAILED);
         goto fail;
     }
@@ -249,7 +243,15 @@ fail:
     return 0;
 }
 
-uint8_t otic_pack_init(otic_pack_t* oticPack, uint8_t(*flusher)(uint8_t* buffer, size_t size), const char* metadata)
+OTIC_PACK_INLINE
+void static otic_pack_flush_if_flushable(otic_pack_t* oticPack)
+{
+    if (oticPack->base.top > oticPack->limit)
+        otic_pack_flush(oticPack);
+}
+
+OTIC_PACK_INLINE
+static uint8_t otic_pack_init(otic_pack_t* oticPack, uint8_t(*flusher)(uint8_t* buffer, size_t size), const char* metadata)
 {
     if (!otic_base_init(&oticPack->base))
         goto fail;
@@ -262,29 +264,28 @@ uint8_t otic_pack_init(otic_pack_t* oticPack, uint8_t(*flusher)(uint8_t* buffer,
         otic_base_setError(&oticPack->base, OTIC_ERROR_ZSTD);
         goto fail;
     }
-#pragma STDC FENV_ACCESS ON
-    fesetround(FE_UPWARD);
+//#pragma STDC FENV_ACCESS ON
+//    fesetround(FE_UPWARD);
     size_t counter;
-    for (counter = 0; counter < OTIC_PACK_BAUDWIDTH; counter++)
-        oticPack->flusher[counter] = 0;
-    oticPack->flusher[0] = flusher;
+    oticPack->flusher = flusher;
     for (counter = 0; counter < OTIC_PACK_CACHE_SIZE; counter++)
         oticPack->cache[counter] = 0;
     oticPack->totalEntries = 0;
     oticPack->limit = &oticPack->base.cache[OTIC_BASE_CACHE_SIZE - OTIC_PACK_CACHE_TOP_LIMIT];
-    memcpy(oticPack->base.cache, "otic", 5);
-    oticPack->base.top += 5;
-    otic_pack_write_byte(oticPack, OTIC_TYPE_FILE_VERSION);
-    otic_pack_write_byte(oticPack, OTIC_VERSION_MAJOR);
-    otic_metadata_write(oticPack, metadata);
+    otic_header_t oticHeader = {.features = 1, .version = OTIC_VERSION_MAJOR};
+    oticHeader.magic[0] = 'o';
+    oticHeader.magic[1] = 'c';
+    oticHeader.magic[2] = 0x07;
+    oticHeader.magic[3] = 0xFF;
+    flusher((uint8_t*)&oticHeader, sizeof(otic_header_t));
+    // TODO: Implement MetaData
     return 1;
 fail:
     otic_base_setState(&oticPack->base, OTIC_STATE_ON_ERROR);
     return 0;
 }
-
-static
-uint8_t otic_pack_inject_in(otic_pack_t *oticPack, double timestamp, const char *sensorName, const char *unit, int64_t value) {
+OTIC_PACK_INLINE
+static uint8_t otic_pack_inject_in(otic_pack_t *oticPack, double timestamp, const char *sensorName, const char *unit, int64_t value) {
     otic_ts_handler(oticPack, timestamp);
     otic_entry_t *entry = otic_pack_entry_find(oticPack, sensorName);
     if (!entry){
@@ -321,11 +322,8 @@ fail:
     return 0;
 }
 
-
-uint8_t otic_pack_inject_i(otic_pack_t *oticPack, double timestamp, const char *sensorName, const char *unit, int64_t value) {
-    if (value < 0)
-        return otic_pack_inject_in(oticPack, timestamp, sensorName, unit, -value);
-
+OTIC_PACK_INLINE
+static uint8_t otic_pack_inject_i(otic_pack_t *oticPack, double timestamp, const char *sensorName, const char *unit, int64_t value) {
     otic_ts_handler(oticPack, timestamp);
     otic_entry_t *entry = otic_pack_entry_find(oticPack, sensorName);
     if (!entry){
@@ -362,7 +360,8 @@ fail:
     return 0;
 }
 
-uint8_t otic_pack_inject_d(otic_pack_t* oticPack, double timestamp, const char* sensorName, const char* unit, double value)
+OTIC_PACK_INLINE
+static uint8_t otic_pack_inject_d(otic_pack_t* oticPack, double timestamp, const char* sensorName, const char* unit, double value)
 {
     otic_ts_handler(oticPack, timestamp);
     otic_entry_t* entry = otic_pack_entry_find(oticPack, sensorName);
@@ -397,7 +396,8 @@ fail:
     return 0;
 }
 
-uint8_t otic_pack_inject_s(otic_pack_t* oticPack, double timestamp, const char* sensorName, const char* unit, const char* value)
+OTIC_PACK_INLINE
+static uint8_t otic_pack_inject_s(otic_pack_t* oticPack, double timestamp, const char* sensorName, const char* unit, const char* value)
 {
     otic_ts_handler(oticPack, timestamp);
     otic_entry_t* entry = otic_pack_entry_find(oticPack, sensorName);
@@ -439,7 +439,8 @@ fail:
     return 0;
 }
 
-uint8_t otic_pack_inject_n(otic_pack_t* oticPack, double timestamp, const char* sensorName, const char* unit)
+OTIC_PACK_INLINE
+static uint8_t otic_pack_inject_n(otic_pack_t* oticPack, double timestamp, const char* sensorName, const char* unit)
 {
     otic_ts_handler(oticPack, timestamp);
     otic_entry_t* entry = otic_pack_entry_find(oticPack, sensorName);
@@ -474,7 +475,8 @@ fail:
     return 0;
 }
 
-uint8_t otic_pack_inject_b(otic_pack_t* oticPack, double timestamp, const char* sensorName, const char* unit, uint8_t* buffer, size_t size)
+OTIC_PACK_INLINE
+static uint8_t otic_pack_inject_b(otic_pack_t* oticPack, double timestamp, const char* sensorName, const char* unit, uint8_t* buffer, size_t size)
 {
     otic_ts_handler(oticPack, timestamp);
     otic_entry_t* entry = otic_pack_entry_find(oticPack, sensorName);
@@ -506,22 +508,8 @@ fail:
     return 0;
 }
 
-uint8_t otic_pack_setChannel(otic_pack_t* oticPack, uint8_t channelNumber, uint8_t(*flusher)(uint8_t*, size_t))
-{
-    if (channelNumber > OTIC_PACK_BAUDWIDTH)
-        return 0;
-    oticPack->flusher[channelNumber] = flusher;
-    return 1;
-}
-
-void otic_pack_clearChannel(otic_pack_t* oticPack, uint8_t channelNumber)
-{
-    if (channelNumber == 0 || channelNumber > OTIC_PACK_BAUDWIDTH)
-        return;
-    oticPack->flusher[channelNumber] = 0;
-}
-
-uint8_t otic_pack_close(otic_pack_t* oticPack)
+OTIC_PACK_INLINE
+static uint8_t otic_pack_close(otic_pack_t* oticPack)
 {
     if (!oticPack)
         goto fail;
@@ -553,4 +541,122 @@ uint8_t otic_pack_close(otic_pack_t* oticPack)
     return 1;
 fail:
     return 0;
+}
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+
+
+
+uint8_t otic_pack_channel_init(channel_t* channel, uint32_t id, channel_type_e channelType, uint8_t (*flusher)(uint8_t*, size_t), const char* metaData, otic_pack_base_t* parent)
+{
+    if (!channel)
+        return 0;
+    if (!otic_pack_init(&channel->oticPack, flusher, ""))
+        goto fail;
+    channel->channelId = id;
+    channel->channelType = channelType;
+    channel->parent = parent;
+    return 1;
+fail:
+    return 0;
+}
+
+uint8_t otic_pack_channel_close(channel_t* channel)
+{
+    if (!channel)
+        goto fail;
+    if (!otic_pack_close(&channel->oticPack))
+        goto fail;
+    // TODO: IMPLEMENT CLOSE
+    return 1;
+fail:
+    return 0;
+}
+
+uint8_t otic_pack_channel_inject_i(channel_t* channel, double timestamp, const char* sensorName, const char* sensorUnit, uint32_t value)
+{
+    return otic_pack_inject_i(&channel->oticPack, timestamp, sensorName, sensorUnit, value);
+}
+
+uint8_t otic_pack_channel_inject_i_neg(channel_t* channel, double timestamp, const char* sensorName, const char* sensorUnit, uint32_t value)
+{
+    return otic_pack_inject_in(&channel->oticPack, timestamp, sensorName, sensorUnit, value);
+}
+
+uint8_t otic_pack_channel_inject_d(channel_t* channel, double timestamp, const char* sensorName, const char* unit, double value)
+{
+    return otic_pack_inject_d(&channel->oticPack, timestamp, sensorName, unit, value);
+}
+
+uint8_t otic_pack_channel_inject_s(channel_t* channel, double timestamp, const char* sensorName, const char* unit, const char* value)
+{
+    return otic_pack_inject_s(&channel->oticPack, timestamp, sensorName, unit, value);
+}
+
+uint8_t otic_pack_channel_inject_n(channel_t* channel, double timestamp, const char* sensorName, const char* unit)
+{
+    return otic_pack_inject_n(&channel->oticPack, timestamp, sensorName, unit);
+}
+
+uint8_t otic_pack_channel_inject_b(channel_t* channel, double timestamp, const char* sensorName, const char* unit, uint8_t* buffer, size_t size)
+{
+    return otic_pack_inject_b(&channel->oticPack, timestamp, sensorName, unit, buffer, size);
+}
+
+uint8_t otic_pack_channel_flush(channel_t* channel)
+{
+    return otic_pack_flush(&channel->oticPack);
+}
+
+void otic_pack_base_init(otic_pack_base_t* oticPackBase)
+{
+    if (!oticPackBase)
+        return;
+    oticPackBase->channels = 0;
+    oticPackBase->totalChannels = 0;
+}
+
+channel_t* otic_pack_base_defineChannel(otic_pack_base_t* oticPackBase, channel_type_e channelType, uint32_t id, uint8_t(*flusher)(uint8_t*, size_t))
+{
+    if (!oticPackBase || id > UINT32_MAX)
+        return 0;
+    oticPackBase->channels = realloc(oticPackBase->channels, sizeof(channel_t*) * (oticPackBase->totalChannels + 1));
+    if (!oticPackBase->channels)
+        return 0;
+    oticPackBase->channels[oticPackBase->totalChannels] = malloc(sizeof(channel_t));
+    if (!oticPackBase->channels[oticPackBase->totalChannels])
+        return 0;
+    otic_pack_channel_init(oticPackBase->channels[oticPackBase->totalChannels], id, channelType, flusher, "", oticPackBase);
+    return oticPackBase->channels[oticPackBase->totalChannels++];
+}
+
+uint8_t otic_pack_base_closeChannel(otic_pack_base_t* oticPackBase, uint32_t id)
+{
+    uint32_t counter;
+    for (counter = 0; counter < oticPackBase->totalChannels; counter++)
+    {
+        if (oticPackBase->channels[counter]->channelId == id)
+        {
+            otic_pack_channel_close(oticPackBase->channels[counter]);
+            channel_t* temp = oticPackBase->channels[counter];
+            oticPackBase->channels[counter] = oticPackBase->channels[oticPackBase->totalChannels];
+            free(temp);
+            oticPackBase = realloc(oticPackBase, sizeof(channel_t*) * --oticPackBase->totalChannels);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void otic_pack_base_close(otic_pack_base_t* oticPackBase)
+{
+    if (!oticPackBase)
+        return;
+    uint32_t counter = 0;
+    for (counter = 0; counter < oticPackBase->totalChannels; counter++)
+    {
+        free(oticPackBase->channels[counter]);
+    }
+    free(oticPackBase->channels);
 }
