@@ -649,6 +649,11 @@ uint8_t otic_pack_base_closeChannel(otic_pack_base_t* oticPackBase, uint32_t id)
     return 0;
 }
 
+void otic_pack_base_flush(otic_pack_base_t* oticPackBase)
+{
+
+}
+
 void otic_pack_base_close(otic_pack_base_t* oticPackBase)
 {
     if (!oticPackBase)

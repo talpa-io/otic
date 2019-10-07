@@ -41,33 +41,33 @@ static uint8_t unpack_fetcher(uint8_t* cont, size_t size)
 
 int main(void)
 {
-    if (!otic_pack_init(&oticPack, pack_flusher, "Some metaData"))
-        goto fail_pack;
-    otic_pack_inject_i(&oticPack, 1.2, "sensorName", "sensorUnit", 9876);
-    otic_pack_inject_i(&oticPack, 1.2, "sensorName2", "sensorUnit2", 9876);
-    otic_pack_inject_i(&oticPack, 12345, "sensor1", "unit1", 9875);
-    otic_pack_inject_i(&oticPack, 12345, "sensor2", "unit1", 9876);
-    otic_pack_inject_d(&oticPack, 12346, "sensor9", "unit1", 9876);
-    otic_pack_inject_d(&oticPack, 12346, "sensor9", "unit1", 9876);
-    otic_pack_inject_d(&oticPack, 12346, "sensor9", "unit1", 9875.43);
-    otic_pack_inject_i(&oticPack, 12345, "sensor4", "unit1", 9877);
-    otic_pack_inject_i(&oticPack, 12345, "sensor5", "unit1", -9877);
-    otic_pack_inject_i(&oticPack, 12345, "sensor5", "unit1", -9877);
-    otic_pack_inject_i(&oticPack, 12345, "sensor5", "unit1", -9875);
-    otic_pack_inject_n(&oticPack, 23434, "sensor6", "unit3");
-    otic_pack_inject_n(&oticPack, 23434, "sensor6", "unit3");
-    otic_pack_inject_s(&oticPack, 23434, "sensor7", "unit3", "Hallo World");
-    otic_pack_inject_s(&oticPack, 23434, "sensor7", "unit3", "Hallo World");
-    otic_pack_inject_s(&oticPack, 23434, "sensor7", "unit3", "Hey man!");
-    otic_pack_flush(&oticPack);
-    if (!otic_unpack_init(&oticUnpack, unpack_fetcher, unpack_flusher))
-        goto fail_unpack;
+//    if (!otic_pack_init(&oticPack, pack_flusher, "Some metaData"))
+//        goto fail_pack;
+//    otic_pack_inject_i(&oticPack, 1.2, "sensorName", "sensorUnit", 9876);
+//    otic_pack_inject_i(&oticPack, 1.2, "sensorName2", "sensorUnit2", 9876);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor1", "unit1", 9875);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor2", "unit1", 9876);
+//    otic_pack_inject_d(&oticPack, 12346, "sensor9", "unit1", 9876);
+//    otic_pack_inject_d(&oticPack, 12346, "sensor9", "unit1", 9876);
+//    otic_pack_inject_d(&oticPack, 12346, "sensor9", "unit1", 9875.43);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor4", "unit1", 9877);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor5", "unit1", -9877);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor5", "unit1", -9877);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor5", "unit1", -9875);
+//    otic_pack_inject_n(&oticPack, 23434, "sensor6", "unit3");
+//    otic_pack_inject_n(&oticPack, 23434, "sensor6", "unit3");
+//    otic_pack_inject_s(&oticPack, 23434, "sensor7", "unit3", "Hallo World");
+//    otic_pack_inject_s(&oticPack, 23434, "sensor7", "unit3", "Hallo World");
+//    otic_pack_inject_s(&oticPack, 23434, "sensor7", "unit3", "Hey man!");
+//    otic_pack_flush(&oticPack);
+//    if (!otic_unpack_init(&oticUnpack, unpack_fetcher, unpack_flusher))
+//        goto fail_unpack;
 //    otic_unpack_flush(&oticUnpack);
 //    printf("%s\n", oticUnpack.result.content);
-    if (!otic_pack_close(&oticPack))
-        goto fail_pack;
-    if (!otic_unpack_close(&oticUnpack))
-        goto fail_pack;
+//    if (!otic_pack_close(&oticPack))
+//        goto fail_pack;
+//    if (!otic_unpack_close(&oticUnpack))
+//        goto fail_pack;
 
     return EXIT_SUCCESS;
 fail_pack:

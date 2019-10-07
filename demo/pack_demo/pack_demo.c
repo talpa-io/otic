@@ -17,21 +17,21 @@ static uint8_t flusher(uint8_t* src, size_t size)
 
 int main()
 {
-    fileOut = fopen("pack_demo.otic", "wb");
-    if (!fileOut)
-        return 1;
-    otic_pack_t oticPack = {};
-    if (!otic_pack_init(&oticPack, flusher, "Some Metadata")){
-        printOticError(otic_base_getError(&oticPack.base));
-        return 1;
-    }
-    otic_pack_inject_i(&oticPack, 12345, "sensor1", "unit1", 1234);
-    otic_pack_inject_i(&oticPack, 12345, "sensor2", "unit1", 1234);
-    otic_pack_inject_i(&oticPack, 12345, "sensor3", "unit1", 1234);
-    otic_pack_inject_i(&oticPack, 12345, "sensor4", "unit1", 1234);
-    otic_pack_inject_i(&oticPack, 12345, "sensor5", "unit1", 1234);
-    otic_pack_inject_i(&oticPack, 12345, "sensor5", "unit1", 1234);
-
-    otic_pack_close(&oticPack);
+//    fileOut = fopen("pack_demo.otic", "wb");
+//    if (!fileOut)
+//        return 1;
+//    otic_pack_t oticPack = {};
+//    if (!otic_pack_init(&oticPack, flusher, "Some Metadata")){
+//        printOticError(otic_base_getError(&oticPack.base));
+//        return 1;
+//    }
+//    otic_pack_inject_i(&oticPack, 12345, "sensor1", "unit1", 1234);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor2", "unit1", 1234);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor3", "unit1", 1234);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor4", "unit1", 1234);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor5", "unit1", 1234);
+//    otic_pack_inject_i(&oticPack, 12345, "sensor5", "unit1", 1234);
+//
+//    otic_pack_close(&oticPack);
     return 0;
 }

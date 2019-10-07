@@ -7,6 +7,17 @@ set(CMAKE_C_STANDARD 99)
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0 -Wall -std=gnu99 -fvisibility=hidden")
 set(CMAKE_C_FLAGS "-g -O2 -DHAVE_CONFIG_H")
 
+function(FROM_SHELL VARIABLE)
+    set(TO_RETURN "")
+    execute_process(
+            COMMAND ${ARGN}
+            OUTPUT_VARIABLE TO_RETURN
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "Output: ${TO_RETURN}")
+    set(${VARIABLE} ${TO_RETURN} PARENT_SCOPE)
+endfunction()
+
 execute_process(
         COMMAND php-config --include-dir
         OUTPUT_VARIABLE PHP_INCLUDE_DIR
@@ -47,16 +58,9 @@ include_directories(
         ${OTIC_UNPACK_FILES}
         ${OTIC_CORE_FILES}
 )
+
 #  php -dextension=`pwd`/libotic_php.so -f test.php
 
-#include_directories(
-#        "${PHP_INCLUDE_DIR}"
-#        "${PHP_INCLUDE_DIR}/main"
-#        "${PHP_INCLUDE_DIR}/Zend"
-#        "${PHP_INCLUDE_DIR}/TSRM"
-#        "${PHP_INCLUDE_DIR}/ext"
-#        "${PHP_INCLUDE_DIR}/sapi"
-#)
 #FILE(GLOB KernelHeaders ./kernel/*.h)
 #FILE(GLOB KernelSources ./kernel/*.c)
 
@@ -75,4 +79,5 @@ endif()
 
 #add_library(php_test SHARED ${PHPOTIC_SRC_FILES})
 add_library(otic_php SHARED src/otic_php.h src/otic_php.c)
+#target_include_directories(otic_php PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(otic_php otic zstd m pthread)

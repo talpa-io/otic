@@ -21,6 +21,5 @@ int main()
     channel_t* channel;
     if (!(channel = otic_pack_base_defineChannel(&oticPackBase, OTIC_PACK_CHANNEL_SENSOR, 1, flusher)))
         return 1;
-
     return EXIT_SUCCESS;
 }

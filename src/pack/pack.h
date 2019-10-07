@@ -82,6 +82,7 @@ struct otic_pack_base_t
 void        otic_pack_base_init(otic_pack_base_t* oticPackBase);
 channel_t*  otic_pack_base_defineChannel(otic_pack_base_t* oticPackBase, channel_type_e channelType, uint32_t id, uint8_t(*flusher)(uint8_t*, size_t));
 uint8_t     otic_pack_base_closeChannel(otic_pack_base_t* oticPackBase, uint32_t id);
+void        otic_pack_base_flush(otic_pack_base_t* oticPackBase);
 void        otic_pack_base_close(otic_pack_base_t* oticPackBase);
 
 
