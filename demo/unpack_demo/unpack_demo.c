@@ -32,6 +32,10 @@ int main()
         printOticError(oticUnpack.base.error);
         return 1;
     }
+
+
+
+
     printOticError(oticUnpack.base.error);
     return 0;
 }

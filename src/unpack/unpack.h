@@ -35,7 +35,6 @@ typedef struct
         } string_value;
     } last_value;
     otic_types_e type;
-
 } otic_unpack_entry_t;
 
 typedef struct

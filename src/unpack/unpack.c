@@ -309,7 +309,7 @@ static uint8_t otic_unpack_readBlock(otic_unpack_t* oticUnpack)
     return 1;
 }
 
-uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t), uint8_t(*flusher)(uint8_t*, size_t))
+/*uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t), uint8_t(*flusher)(uint8_t*, size_t))
 {
     if (!otic_base_init(&oticUnpack->base))
         goto fail;
@@ -338,6 +338,32 @@ uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, 
     }
     oticUnpack->base.top += 5;
     otic_unpack_parseBlock(oticUnpack);
+    return 1;
+fail:
+    return 0;
+}*/
+
+uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t), uint8_t(*flusher)(uint8_t*, size_t))
+{
+    if (!otic_base_init(&oticUnpack->base))
+        goto fail;
+    if (!fetcher || !flusher) {
+        otic_base_setError(&oticUnpack->base, OTIC_ERROR_INVALID_POINTER);
+        goto fail;
+    }
+    otic_header_t header;
+    fetcher((uint8_t*)&header, sizeof(header));
+    if (strcmp((char*)header.magic, "OC\x07\xFF") != 0){
+        otic_base_setError(&oticUnpack->base, OTIC_ERROR_DATA_CORRUPTED);
+        goto fail;
+    }
+    if (header.version > OTIC_VERSION_MAJOR){
+        otic_base_setError(&oticUnpack->base, OTIC_ERROR_VERSION_UNSUPPORTED);
+        goto fail;
+    }
+
+
+
     return 1;
 fail:
     return 0;

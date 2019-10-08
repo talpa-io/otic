@@ -8,7 +8,7 @@ option(BUILD_DEMOS "Build demos and examples" ON)
 
 project(otic
         VERSION 1.0.0
-        DESCRIPTION "Timestamp Row Format"
+        DESCRIPTION "Open Telemetry Interchange Container Format"
         LANGUAGES C
         )
 

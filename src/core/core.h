@@ -2,7 +2,7 @@
 #define OTIC_CORE_H
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
 
 #include <stdint.h>
@@ -68,6 +68,42 @@ typedef enum
     OTIC_STATE_CLOSED
 } otic_state_e;
 
+typedef enum
+{
+    OTIC_FEATURE_COMPRESSION_ZSTD,
+    OTIC_FEATURE_COMPRESSION_ZLIB,
+    OTIC_FEATURE_COMPRESSION_GZIP,
+} otic_features_e;
+
+typedef enum
+{
+    OTIC_META_TYPE_CHANNEL_DEFINE,
+    OTIC_META_TYPE_CHANNEL_TYPE,
+    OTIC_META_TYPE_COMPRESSION_METHOD,
+    OTIC_META_TYPE_END_OF_META = 0xFF
+} otic_meta_type_e;
+
+typedef struct
+{
+    uint8_t magic[OTIC_MAGIC_SIZE];
+    uint8_t features;
+    uint8_t version;
+} __attribute__((packed)) otic_header_t;
+
+typedef struct
+{
+    uint8_t metaType;
+    uint8_t channelId;
+    uint16_t opt_value;
+} __attribute__((packed)) otic_meta_channel_t;
+
+typedef struct
+{
+    uint8_t channelId;
+    uint32_t dataLen;
+    uint64_t startTimestamp;
+} __attribute__((packed)) otic_payload_t;
+
 typedef struct otic_base_t otic_base_t;
 struct otic_base_t
 {
@@ -80,6 +116,11 @@ struct otic_base_t
     size_t rowCounter;
 };
 
+typedef enum {
+    OTIC_CHANNEL_TYPE_SENSOR,
+    OTIC_CHANNEL_TYPE_BINARY
+} channel_type_e;
+
 uint8_t         otic_base_init(otic_base_t* base);
 void            otic_base_setError(otic_base_t *base, otic_errors_e error);
 otic_errors_e   otic_base_getError(otic_base_t *base);
@@ -91,15 +132,6 @@ uint8_t         leb128_encode_unsigned(uint64_t value, uint8_t* dest);
 uint8_t         leb128_decode_unsigned(const uint8_t* encoded_values, uint32_t* value);
 uint8_t         leb128_encode_signed(int64_t value, uint8_t* dest);
 uint64_t        leb128_decode_signed(const uint8_t* encoded_values);
-
-
-typedef struct
-{
-    uint8_t magic[OTIC_MAGIC_SIZE];
-    uint8_t features;
-    uint8_t version;
-} __attribute__((packed)) otic_header_t;
-
 
 #ifdef __cpluscplus
 };
