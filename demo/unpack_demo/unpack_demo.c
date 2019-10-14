@@ -21,21 +21,22 @@ uint8_t flusher(uint8_t* src, size_t size)
     return 1;
 }
 
-
 int main()
 {
     srcFile = fopen("pack_demo.otic", "rb");
     destFile = fopen("dump.txt", "w");
 
-    otic_unpack_t oticUnpack = {};
-    if (!otic_unpack_init(&oticUnpack, fetcher, flusher)){
-        printOticError(oticUnpack.base.error);
-        return 1;
-    }
+    otic_unpack_t oticUnpack;
+    if (!otic_unpack_init(&oticUnpack, fetcher))
+        goto fail;
 
 
 
 
-    printOticError(oticUnpack.base.error);
+    if (oticUnpack.state == OTIC_STATE_ON_ERROR)
+        goto fail;
     return 0;
+fail:
+    printOticError(oticUnpack.error);
+    return 1;
 }

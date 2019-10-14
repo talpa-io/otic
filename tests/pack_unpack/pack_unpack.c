@@ -70,12 +70,12 @@ int main(void)
 //        goto fail_pack;
 
     return EXIT_SUCCESS;
-fail_pack:
-    fprintf(stderr, "Pack_error->");
-    printOticError(otic_base_getError(&oticPack.base));
-    return EXIT_FAILURE;
-fail_unpack:
-    fprintf(stderr, "Unpack_error->");
-    printOticError(otic_base_getError(&oticUnpack.base));
-    return EXIT_FAILURE;
+//fail_pack:
+//    fprintf(stderr, "Pack_error->");
+//    printOticError(otic_base_getError(&oticPack.base));
+//    return EXIT_FAILURE;
+//fail_unpack:
+//    fprintf(stderr, "Unpack_error->");
+//    printOticError(otic_base_getError(&oticUnpack.base));
+//    return EXIT_FAILURE;
 }

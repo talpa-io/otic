@@ -3,15 +3,14 @@
 //
 
 #include <stdio.h>
-#include "core/core.h"
-#include "../test_asserts.h"
 #include <limits.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include "core/core.h"
+#include "../test_asserts.h"
 
 
-static void test_leb128(void)
+static void test_leb128_unsigned(void)
 {
     uint32_t counter = 0;
     uint8_t buffer[10] = {};
@@ -26,6 +25,20 @@ static void test_leb128(void)
     leb128_encode_unsigned(UINT32_MAX, buffer);
     leb128_decode_unsigned(buffer, &temp);
     assert(UINT32_MAX == temp);
+}
+
+static void test_leb128_signed(void)
+{
+    uint32_t counter = 0;
+    uint8_t buffer[10] = {};
+    int64_t temp = 0;
+    while (counter < 100000000)
+    {
+        leb128_encode_signed(counter, buffer);
+        leb128_decode_signed(buffer, &temp);
+        OTIC_ASSERT_THROW(counter == temp)
+        counter++;
+    }
 }
 
 static void test_base_init(void)
@@ -58,11 +71,13 @@ static void test_state_handling(void)
     assert(OTIC_STATE_ON_ERROR == otic_base_getState(&oticBase));
 }
 
+
 int main()
 {
     test_base_init();
     test_error_handling();
     test_state_handling();
-    test_leb128();
+    test_leb128_unsigned();
+    test_leb128_signed();
     return 0;
 }

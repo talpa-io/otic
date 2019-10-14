@@ -1,4 +1,4 @@
-message(STATUS "Hey from PHP bindings")
+message(STATUS "Greetings from PHP bindings")
 
 cmake_minimum_required(VERSION 3.10)
 project(php_otic C)
@@ -49,7 +49,7 @@ string(REPLACE "-I" "" PHP_INCLUDES ${PHP_INCLUDES})
 separate_arguments(PHP_INCLUDES)
 message(STATUS "PHP Including: ")
 foreach (X ${PHP_INCLUDES})
-    message(STATUS ${X})
+    message(STATUS "\t\t${X}")
 endforeach ()
 
 include_directories(
@@ -76,7 +76,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
     add_definitions(-DHAVE_CONFIG_H)
     set(SOURCE_FILES "${SOURCE_FILES};config.h")
 endif()
-
+include_directories(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../include ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../src)
 #add_library(php_test SHARED ${PHPOTIC_SRC_FILES})
 add_library(otic_php SHARED src/otic_php.h src/otic_php.c)
 #target_include_directories(otic_php PUBLIC ${PROJECT_SOURCE_DIR}/include)

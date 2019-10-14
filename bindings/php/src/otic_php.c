@@ -5,16 +5,16 @@
 #include <php.h>
 #include <Zend/zend_exceptions.h>
 #include <Zend/zend.h>
-#include "../../../include/config/config.h"
-#include "../../../src/pack/pack.h"
-#include "../../../src/unpack/unpack.h"
+#include "config/config.h"
+#include "pack/pack.h"
+#include "unpack/unpack.h"
 #define PHP_OTIC_EXTVER "1.0"
 #define PHP_OTIC_EXTNAME "otic"
 
 zend_object_handlers oticPack_handlers;
 typedef struct
 {
-    otic_pack_base_t* oticPackBase;
+    otic_pack_t* oticPackBase;
     zend_object std;
 } oticPack_object;
 
@@ -32,7 +32,7 @@ PHP_METHOD(OticPack, __construct)
     zval* id = getThis();
     oticPack_object* intern = Z_TSTOBJ_P(id);
     if (intern)
-        intern->oticPackBase = emalloc(sizeof(otic_pack_base_t));
+        intern->oticPackBase = emalloc(sizeof(otic_pack_t));
 }
 
 PHP_METHOD(OticPack, close)
@@ -43,7 +43,7 @@ PHP_METHOD(OticPack, close)
         RETURN_NULL()
     intern = Z_TSTOBJ_P(id);
     if (intern){
-        otic_pack_base_close(intern->oticPackBase);
+        otic_pack_close(intern->oticPackBase);
     }
 }
 
@@ -55,7 +55,7 @@ PHP_METHOD(OticPack, flush)
         RETURN_NULL()
     intern = Z_TSTOBJ_P(id);
     if (intern) {
-        otic_pack_base_close(intern->oticPackBase);
+        otic_pack_close(intern->oticPackBase);
     }
 }
 

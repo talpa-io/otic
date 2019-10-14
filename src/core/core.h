@@ -20,7 +20,7 @@ extern "C" {
 #define PTR_M 31
 #define OTIC_TS_MULTIPLICATOR 10000
 #define OTIC_MAGIC_SIZE 4
-
+#define OTIC_ZSTD_COMPRESSION_LEVEL 7
 
 typedef enum
 {
@@ -58,7 +58,10 @@ typedef enum
     OTIC_ERROR_INVALID_FILE,
     OTIC_ERROR_DATA_CORRUPTED,
     OTIC_ERROR_VERSION_UNSUPPORTED,
-    OTIC_ERROR_ROW_COUNT_MISMATCH
+    OTIC_ERROR_ROW_COUNT_MISMATCH,
+    OTIC_ERROR_INVALID_ARGUMENT,
+    OTIC_ERROR_AT_INVALID_STATE,
+    OTIC_ERROR_ALLOCATION_FAILURE,
 } otic_errors_e;
 
 typedef enum
@@ -126,12 +129,12 @@ void            otic_base_setError(otic_base_t *base, otic_errors_e error);
 otic_errors_e   otic_base_getError(otic_base_t *base);
 void            otic_base_setState(otic_base_t* base, otic_state_e state);
 otic_state_e    otic_base_getState(otic_base_t* base);
+void            otic_base_close(otic_base_t* base);
 
-// TODO: Improve granularity and test signed versions
-uint8_t         leb128_encode_unsigned(uint64_t value, uint8_t* dest);
-uint8_t         leb128_decode_unsigned(const uint8_t* encoded_values, uint32_t* value);
-uint8_t         leb128_encode_signed(int64_t value, uint8_t* dest);
-uint64_t        leb128_decode_signed(const uint8_t* encoded_values);
+uint8_t         leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest);
+uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value) ;
+uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest);
+uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value);
 
 #ifdef __cpluscplus
 };

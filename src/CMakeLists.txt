@@ -13,5 +13,5 @@ set(OTIC_UNPACK_FILES
         unpack/unpack.h
         )
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src)
 add_library(otic SHARED ${OTIC_PACK_FILES} ${OTIC_UNPACK_FILES} ${OTIC_CORE_FILES})

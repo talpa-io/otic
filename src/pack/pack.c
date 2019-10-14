@@ -1,10 +1,20 @@
-#include "../core/core.h"
-#include "pack.h"
 #include <string.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <fenv.h>
+#include "pack.h"
 
+/**
+ * The purpose of the following 6-7 lines, is to inline each static functions defines in this file.
+ * This allows the use of the concerned functions without calling them, as their body gets replaced
+ * in each call, resulting in a performance improvement.
+ * So if this improves performance, why is \a inline an option?
+ * The cost to pay for aligning each static function, is that the executable/library file considerably
+ * increases for each \a inline.
+ *
+ * It is therefore recommended to disable \a inline if the user intends to use this library on a device
+ * with little RAM and for which the wholesome performance is of little value.
+ */
 #define OTIC_PACK_INLINE_ALL_STATIC 1
 
 #if OTIC_PACK_INLINE_ALL_STATIC
@@ -89,7 +99,6 @@ static otic_entry_t* otic_pack_entry_insert_un(otic_pack_channel_t* channel, con
     ptr->last_value.int_value = value;
     return ptr;
 }
-
 
 OTIC_PACK_INLINE
 static otic_entry_t* otic_pack_entry_insert_d(otic_pack_channel_t* channel, const char* o, const char* unit, uint16_t index, double value)
@@ -214,61 +223,34 @@ void static otic_metadata_write(otic_pack_channel_t* channel, const char* value)
 }
 
 OTIC_PACK_INLINE
-static uint8_t otic_pack_flush(otic_pack_channel_t* channel)
-{
-#if OTIC_PACK_NO_COMPRESSION
-    if (!channel->flusher[0](channel->base.cache, channel->base.top - channel->base.cache)){
-        otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
-        goto fail;
-    }
-#else
-    size_t ret = ZSTD_compressCCtx(channel->cCtx, channel->ztd_out, ZSTD_OUT_SIZE, channel->base.cache, channel->base.top - channel->base.cache, 1);
-    if (ZSTD_isError(ret)){
-        otic_base_setError(&channel->base, OTIC_ERROR_ZSTD);
-        goto fail;
-    }
-//    if (!channel->flusher((uint8_t*)&ret, sizeof(uint32_t))){
-//        otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
-//        goto fail;
-//    }
-//    if (!channel->flusher(channel->zstd_out, ret)){
-//        otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
-//        goto fail;
-//    }
-#endif
-    channel->base.top = channel->base.cache;
-    return 1;
-fail:
-    otic_base_setState(&channel->base, OTIC_STATE_ON_ERROR);
-    return 0;
-}
-
-OTIC_PACK_INLINE
 void static otic_pack_flush_if_flushable(otic_pack_channel_t* channel)
 {
     if (channel->base.top > channel->threshold)
-        otic_pack_flush(channel);
+        otic_pack_channel_flush(channel);
 }
 
 OTIC_PACK_INLINE
-static uint8_t otic_pack_init(otic_pack_channel_t* channel)
+static void otic_pack_setError(otic_pack_t* restrict oticPack, otic_errors_e error)
 {
-    if (!otic_base_init(&channel->base))
-        goto fail;
-    channel->cCtx = ZSTD_createCCtx();
-    if (!channel->cCtx){
-        otic_base_setError(&channel->base, OTIC_ERROR_ZSTD);
-        goto fail;
-    }
-    size_t counter;
-    for (counter = 0; counter < OTIC_PACK_CACHE_SIZE; counter++)
-        channel->cache[counter] = 0;
-    channel->totalEntries = 0;
-    channel->threshold = &channel->base.cache[OTIC_BASE_CACHE_SIZE - OTIC_PACK_CACHE_TOP_LIMIT];
-    return 1;
-fail:
-    otic_base_setState(&channel->base, OTIC_STATE_ON_ERROR);
-    return 0;
+    oticPack->error = error;
+}
+
+OTIC_PACK_INLINE
+static otic_errors_e otic_pack_getError(otic_pack_t* restrict oticPack)
+{
+    return oticPack->error;
+}
+
+OTIC_PACK_INLINE
+static void otic_pack_setState(otic_pack_t* restrict oticPack, otic_state_e state)
+{
+    oticPack->state = state;
+}
+
+OTIC_PACK_INLINE
+static otic_state_e otic_pack_getState(otic_pack_t* restrict oticPack)
+{
+    return oticPack->state;
 }
 
 uint8_t otic_pack_channel_inject_i_neg(otic_pack_channel_t* channel, double timestamp, const char *sensorName, const char *unit, uint32_t value) {
@@ -489,41 +471,6 @@ fail:
     return 0;
 }
 
-OTIC_PACK_INLINE
-static uint8_t otic_pack_close(otic_pack_channel_t* channel)
-{
-    if (!channel)
-        goto fail;
-    otic_pack_write_byte(channel, OTIC_TYPE_EOF);
-    write_long(channel, channel->base.rowCounter);
-    otic_pack_flush(channel);
-    ZSTD_freeCCtx(channel->cCtx);
-    size_t counter;
-    for (counter = 0; counter < OTIC_PACK_CACHE_SIZE; counter++)
-    {
-        if (channel->cache[counter] != 0)
-        {
-            free(channel->cache[counter]->name);
-            if (channel->cache[counter]->last_value.string_value.size)
-                free(channel->cache[counter]->last_value.string_value.value);
-            // TODO: Free
-//            free(channel->cache[counter]);
-//            otic_entry_t* ptr = channel->cache[counter];
-//            otic_entry_t* next = 0;
-//            while(ptr != 0)
-//            {
-//                next = ptr->next;
-//                free(ptr);
-//                ptr = next;
-//            }
-//            free(channel->cache[counter]);
-        }
-    }
-    return 1;
-fail:
-    return 0;
-}
-
 uint8_t otic_pack_channel_init(otic_pack_channel_t* channel, uint8_t id, channel_type_e channelType, const char* metaData, otic_pack_t* parent)
 {
     if (!channel)
@@ -540,9 +487,9 @@ uint8_t otic_pack_channel_init(otic_pack_channel_t* channel, uint8_t id, channel
         channel->cache[counter] = 0;
     channel->totalEntries = 0;
     channel->threshold = &channel->base.cache[OTIC_PACK_CACHE_SIZE - OTIC_PACK_CACHE_TOP_LIMIT];
-    channel->info_t.channelId = id;
-    channel->info_t.channelType = channelType;
-    channel->info_t.parent = parent;
+    channel->info.channelId = id;
+    channel->info.channelType = channelType;
+    channel->info.parent = parent;
     return 1;
 fail:
     return 0;
@@ -551,25 +498,88 @@ fail:
 uint8_t otic_pack_channel_close(otic_pack_channel_t* channel)
 {
     if (!channel)
+        return 0;
+    otic_pack_write_byte(channel, OTIC_TYPE_EOF);
+    write_long(channel, channel->base.rowCounter);
+    otic_pack_channel_flush(channel);
+    ZSTD_freeCCtx(channel->cCtx);
+    size_t counter;
+    for (counter = 0; counter < OTIC_PACK_CACHE_SIZE; counter++)
+    {
+        if (channel->cache[counter] != 0){
+            free(channel->cache[counter]->name);
+            if (!channel->cache[counter]->last_value.string_value.value)
+                free(channel->cache[counter]->last_value.string_value.value);
+            otic_entry_t* next = channel->cache[counter]->next;
+            while (next != 0)
+            {
+                otic_entry_t* temp = next;
+                next = next->next;
+                free(temp);
+            }
+            free(channel->cache[counter]);
+        }
+    }
+    return 1;
+}
+
+uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel)
+{
+#if OTIC_PACK_NO_COMPRESSION
+    if (!channel->info.parent->flusher(channel->base.cache, channel->base.top - channel->base.cache)){
+        otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
         goto fail;
-    // TODO: IMPLEMENT CLOSE
+    }
+#else
+    size_t ret = ZSTD_compressCCtx(
+            channel->cCtx,
+            channel->ztd_out,
+            ZSTD_OUT_SIZE,
+            channel->base.cache,
+            channel->base.top - channel->base.cache,
+            OTIC_ZSTD_COMPRESSION_LEVEL
+            );
+    if (ZSTD_isError(ret)) {
+        otic_base_setError(&channel->base, OTIC_ERROR_ZSTD);
+        goto fail;
+    }
+    otic_payload_t payload = {.startTimestamp = channel->base.timestamp_current, .dataLen = ret, .channelId = channel->info.channelId};
+    if (!channel->info.parent->flusher((uint8_t*)&payload, sizeof(otic_payload_t))) {
+        otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
+        goto fail;
+    }
+    if (!channel->info.parent->flusher(channel->ztd_out, ret)) {
+        otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
+        goto fail;
+    }
+#endif
+    channel->base.top = channel->base.cache;
     return 1;
 fail:
+    otic_base_setState(&channel->base, OTIC_STATE_ON_ERROR);
+    otic_pack_setState(channel->info.parent, OTIC_STATE_ON_ERROR);
     return 0;
 }
 
-uint8_t otic_pack_base_init(otic_pack_t* oticPack, uint8_t(*flusher)(uint8_t*, size_t))
+uint8_t otic_pack_init(otic_pack_t* oticPack, uint8_t(*flusher)(uint8_t*, size_t))
 {
     if (!oticPack)
         return 0;
-    if (!flusher)
-        return 0;
+    if (!flusher) {
+        otic_pack_setError(oticPack, OTIC_ERROR_INVALID_POINTER);
+        goto fail;
+    }
     oticPack->flusher = flusher;
     oticPack->channels = 0;
     oticPack->totalChannels = 0;
     otic_header_t header = {.magic = "OC\x07\xFF", .features = 0x00, .version = OTIC_VERSION_MAJOR};
     flusher((uint8_t*)&header, sizeof(otic_header_t));
+    otic_pack_setState(oticPack, OTIC_STATE_OPENED);
+    otic_pack_setError(oticPack, OTIC_ERROR_NONE);
     return 1;
+fail:
+    otic_pack_setState(oticPack, OTIC_STATE_ON_ERROR);
+    return 0;
 }
 
 /**
@@ -577,27 +587,37 @@ uint8_t otic_pack_base_init(otic_pack_t* oticPack, uint8_t(*flusher)(uint8_t*, s
  * @param channelType
  * @param id
  * @param features
- * @warning The result of this function needs to be used. \a __attribute__((warn_unused_result)) is specified to warn the
+ * @warning The result of this function needs to be used! \a __attribute__((warn_unused_result)) is specified to warn the
  * developer if this shouldn't be the case
  * @attention 0 is the reserved ID for end of file.
  * @return A Pointer to the new channel in case of successful allocation, else a nullptr in case of failure
  * Reasons for failure could be an invalid or already occupied id, allocation/reallocation failure or an invalid
  * pointer to \a oticPack
  */
-otic_pack_channel_t* otic_pack_base_defineChannel(otic_pack_t* oticPack, channel_type_e channelType, uint8_t id, otic_features_e features)
+otic_pack_channel_t* otic_pack_defineChannel(otic_pack_t* oticPack, channel_type_e channelType, uint8_t id, otic_features_e features)
 {
-    if (!oticPack || id == 0)
+    if (!oticPack)
         return 0;
+    if (otic_pack_getState(oticPack) != OTIC_STATE_OPENED) {
+        otic_pack_setError(oticPack, OTIC_ERROR_AT_INVALID_STATE);
+        goto fail;
+    }
     uint8_t counter;
     for (counter = 0; counter < oticPack->totalChannels; counter++)
-        if (oticPack->channels[counter]->info_t.channelId == id)
-            return 0;
+        if (oticPack->channels[counter]->info.channelId == id) {
+            otic_pack_setError(oticPack, OTIC_ERROR_INVALID_ARGUMENT);
+            goto fail;
+        }
     oticPack->channels = realloc(oticPack->channels, sizeof(otic_pack_channel_t*) * (oticPack->totalChannels + 1));
-    if (!oticPack->channels)
-        return 0;
+    if (!oticPack->channels) {
+        otic_pack_setError(oticPack, OTIC_ERROR_ALLOCATION_FAILURE);
+        goto fail;
+    }
     oticPack->channels[oticPack->totalChannels] = malloc(sizeof(otic_pack_channel_t));
-    if (!oticPack->channels[oticPack->totalChannels])
-        return 0;
+    if (!oticPack->channels[oticPack->totalChannels]){
+        otic_pack_setError(oticPack, OTIC_ERROR_ALLOCATION_FAILURE);
+        goto fail;
+    }
     otic_meta_channel_t oticMetaChannel[3] = {
             {.metaType = OTIC_META_TYPE_CHANNEL_DEFINE, .channelId = id, .opt_value = 0x00},
             {.metaType = OTIC_META_TYPE_CHANNEL_TYPE, .channelId = id, .opt_value = channelType},
@@ -606,14 +626,17 @@ otic_pack_channel_t* otic_pack_base_defineChannel(otic_pack_t* oticPack, channel
     oticPack->flusher((uint8_t*)&oticMetaChannel, sizeof(oticMetaChannel));
     otic_pack_channel_init(oticPack->channels[oticPack->totalChannels], id, channelType, "", oticPack);
     return oticPack->channels[oticPack->totalChannels++];
+fail:
+    otic_pack_setState(oticPack, OTIC_STATE_ON_ERROR);
+    return 0;
 }
 
-uint8_t otic_pack_base_closeChannel(otic_pack_t* oticPack, uint8_t id)
+uint8_t otic_pack_closeChannel(otic_pack_t* oticPack, uint8_t id)
 {
     uint8_t counter;
     for (counter = 0; counter < oticPack->totalChannels; counter++)
     {
-        if (oticPack->channels[counter]->info_t.channelId == id)
+        if (oticPack->channels[counter]->info.channelId == id)
         {
             otic_pack_channel_close(oticPack->channels[counter]);
             otic_pack_channel_t* temp = oticPack->channels[counter];
@@ -623,10 +646,11 @@ uint8_t otic_pack_base_closeChannel(otic_pack_t* oticPack, uint8_t id)
             return 1;
         }
     }
+    otic_pack_setError(oticPack, OTIC_ERROR_INVALID_ARGUMENT);
     return 0;
 }
 
-uint8_t otic_pack_base_flush(otic_pack_t* oticPack)
+uint8_t otic_pack_flush(otic_pack_t* oticPack)
 {
     uint8_t counter;
 #if OTIC_PACK_NO_COMPRESSION
@@ -643,12 +667,16 @@ uint8_t otic_pack_base_flush(otic_pack_t* oticPack)
     otic_payload_t payload;
     for (counter = 0; counter < oticPack->totalChannels; counter++)
     {
-        ret = ZSTD_compressCCtx(oticPack->channels[counter]->cCtx, oticPack->channels[counter]->ztd_out, ZSTD_OUT_SIZE, oticPack->channels[counter]->base.cache, oticPack->channels[counter]->base.top - oticPack->channels[counter]->base.cache, 1);
+        ret = ZSTD_compressCCtx(
+                oticPack->channels[counter]->cCtx, oticPack->channels[counter]->ztd_out, ZSTD_OUT_SIZE,
+                oticPack->channels[counter]->base.cache,
+                oticPack->channels[counter]->base.top - oticPack->channels[counter]->base.cache, OTIC_ZSTD_COMPRESSION_LEVEL
+                );
         if (ZSTD_isError(ret)){
-            otic_base_setError(&oticPack->channels[counter]->base, OTIC_ERROR_FLUSH_FAILED);
+            otic_base_setError(&oticPack->channels[counter]->base, OTIC_ERROR_ZSTD);
             goto fail;
         }
-        payload.channelId = oticPack->channels[counter]->info_t.channelId;
+        payload.channelId = oticPack->channels[counter]->info.channelId;
         payload.dataLen = ret;
         payload.startTimestamp = oticPack->channels[counter]->base.timestamp_current;
         if (!oticPack->flusher((uint8_t*)&payload, sizeof(otic_payload_t))){
@@ -663,16 +691,20 @@ uint8_t otic_pack_base_flush(otic_pack_t* oticPack)
     }
 #endif
 fail:
+    otic_pack_setState(oticPack, OTIC_STATE_ON_ERROR);
     return 0;
 }
 
-void otic_pack_base_close(otic_pack_t* oticPack)
-{
+void otic_pack_close(otic_pack_t* oticPack) {
     if (!oticPack)
         return;
     uint8_t counter = 0;
-    otic_pack_base_flush(oticPack);
+    otic_pack_flush(oticPack);
     for (counter = 0; counter < oticPack->totalChannels; counter++)
+    {
+        otic_pack_channel_close(oticPack->channels[counter]);
         free(oticPack->channels[counter]);
+    }
     free(oticPack->channels);
+    otic_pack_setState(oticPack, OTIC_STATE_CLOSED);
 }

@@ -11,35 +11,41 @@ static inline const char* otic_getError(otic_errors_e e)
     switch (e)
     {
         case OTIC_ERROR_NONE:
-            return "Error: None";
+            return "None";
         case OTIC_ERROR_INVALID_POINTER:
-            return "Error: Invalid Pointer";
+            return "Invalid Pointer";
         case OTIC_ERROR_BUFFER_OVERFLOW:
-            return "Error: Buffer Overflow";
+            return "Buffer Overflow";
         case OTIC_ERROR_INVALID_TIMESTAMP:
-            return "Error: Invalid Timestamp";
+            return "Invalid Timestamp";
         case OTIC_ERROR_ENTRY_INSERTION_FAILURE:
-            return "Error: Entry insertion failed";
+            return "Entry insertion failed";
         case OTIC_ERROR_ZSTD:
-            return "Error: Zstd Operation failed";
+            return "zstd operation failed";
         case OTIC_ERROR_FLUSH_FAILED:
-            return "Error: Flush failure";
+            return "Flush failure";
         case OTIC_ERROR_EOF:
-            return "Error: Invalid End Of File";
+            return "Invalid End Of File";
         case OTIC_ERROR_INVALID_FILE:
-            return "Error: Invalid file";
+            return "Invalid file";
         case OTIC_ERROR_DATA_CORRUPTED:
-            return "Error: Data corrupted";
+            return "Data corrupted";
         case OTIC_ERROR_VERSION_UNSUPPORTED:
-            return "Error: Unsupported Version detected";
+            return "Unsupported Version detected";
         case OTIC_ERROR_ROW_COUNT_MISMATCH:
-            return "Error: Rows count mismatch";
+            return "Rows count mismatch";
+        case OTIC_ERROR_INVALID_ARGUMENT:
+            return "Invalid Argument";
+        case OTIC_ERROR_AT_INVALID_STATE:
+            return "Operation at invalid state";
+        case OTIC_ERROR_ALLOCATION_FAILURE:
+            return "Allocation failure";
         default:
-            return "Error: Unknown";
+            return "Unknown";
     }
 }
 
 void printOticError(otic_errors_e e)
 {
-    fprintf(stderr, "%s\n", otic_getError(e));
+    fprintf(stderr, "Error: %s\n", otic_getError(e));
 }
