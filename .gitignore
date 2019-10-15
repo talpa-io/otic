@@ -7,3 +7,10 @@ bindings/php/src/*
 !bindings/php/src/otic_php.c
 !bindings/php/src/otic_php.h
 !bindings/php/src/config.m4
+
+
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+CTestTestfile.cmake
