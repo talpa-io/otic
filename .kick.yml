@@ -12,6 +12,7 @@ command:
     - "echo build goes here!"
 
   test:
+    - "echo Todo"
   run:
   dev:
     - "echo 'I am executed in dev mode'"
