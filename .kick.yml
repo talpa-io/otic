@@ -1,0 +1,17 @@
+# Kickstart container config file - see https://gitub.com/infracamp/kickstart
+# Run ./kickstart.sh to start a development-container for this project
+version: 1
+from: "infracamp/kickstart-flavor-base"
+command:
+  build:
+    - "sudo apt-get update"
+    - "sudo apt-get install -y pkg-config libzstd1-dev build-essential php7.2-dom php7.2-mbstring php-dev cmake"
+  init:
+
+  make:
+    - "echo build goes here!"
+
+  test:
+  run:
+  dev:
+    - "echo 'I am executed in dev mode'"
