@@ -52,4 +52,16 @@ if (BUILD_DEMOS)
     add_subdirectory(demo)
 endif()
 
-add_subdirectory(bindings/php)
+
+function(get_search_dirs)
+    set(search_dirs)
+    execute_process(
+            COMMAND cpp -print-search-dirs | tr : '\n'
+            OUTPUT_VARIABLE search_dirs
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS ${search_dirs})
+endfunction()
+
+
+#add_subdirectory(bindings/php)

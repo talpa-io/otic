@@ -4,6 +4,7 @@
 
 #include "core.h"
 
+
 uint8_t otic_base_init(otic_base_t* base)
 {
     if (!base)
@@ -101,7 +102,7 @@ uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* re
 {
     *result = 0;
     uint8_t shift = 0;
-    uint8_t sizse = sizeof(uint64_t) * 8;
+    uint8_t size = sizeof(uint64_t) * 8;
     uint8_t byte = 0;
     uint8_t counter = 0;
     do {
@@ -109,8 +110,8 @@ uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* re
         *result |= (byte & ~0x80u) << shift;
         shift += 7;
     } while (byte >> 7u);
-    byte &= ~0x80u;
-    if ((shift < sizse) && (byte >> 6u))
+//    byte &= ~0x80u;
+    if ((shift < size) && (byte >> 6u))
         *result |= (~0u << shift);
     return shift / 7;
 }

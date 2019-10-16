@@ -1,3 +1,3 @@
 ## Installation  
 
-The whole project is build using Cmake.
+The whole project is built using Cmake.

@@ -22,6 +22,8 @@ extern "C" {
 #define OTIC_MAGIC_SIZE 4
 #define OTIC_ZSTD_COMPRESSION_LEVEL 7
 
+
+// TODO: HANDLE Memory allocation failure
 typedef enum
 {
     OTIC_TYPE_NULL,
@@ -42,7 +44,8 @@ typedef enum
     OTIC_TYPE_FILE_VERSION,
     OTIC_TYPE_NAME_ASSIGN,
     OTIC_TYPE_EOF,
-    OTIC_TYPE_METADATA
+    OTIC_TYPE_METADATA,
+    OTIC_TYPE_DATA,
 } otic_types_e;
 
 typedef enum
@@ -83,7 +86,6 @@ typedef enum
     OTIC_META_TYPE_CHANNEL_DEFINE,
     OTIC_META_TYPE_CHANNEL_TYPE,
     OTIC_META_TYPE_COMPRESSION_METHOD,
-    OTIC_META_TYPE_END_OF_META = 0xFF
 } otic_meta_type_e;
 
 typedef struct
@@ -95,10 +97,15 @@ typedef struct
 
 typedef struct
 {
+    uint8_t otic_type;         // Should be OTIC_TYPE_META
+    uint8_t metaDataSize;
+} __attribute__((packed)) otic_meta_head_t;
+
+typedef struct
+{
     uint8_t metaType;
-    uint8_t channelId;
-    uint16_t opt_value;
-} __attribute__((packed)) otic_meta_channel_t;
+    uint8_t metaArg;
+} __attribute__((packed)) otic_meta_data_t;
 
 typedef struct
 {

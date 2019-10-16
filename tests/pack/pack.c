@@ -52,18 +52,6 @@ static void test_pack_writes(void)
 //    otic_pack_close(&oticPack);
 }
 
-typedef struct
-{
-    int a;
-    double b;
-} myStruct_t;
-
-
-void t(myStruct_t* myStruct)
-{
-
-}
-
 int main(void)
 {
     test_pack_init_close();

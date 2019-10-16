@@ -62,29 +62,28 @@ typedef struct
     double doubleTs;
     struct
     {
-//        otic_unp
+        otic_unpack_t *parent;
+        channel_type_e channelType;
+        uint8_t channelId;
+        otic_meta_data_t* metaData;
     } info;
+    uint32_t entryIndex;
 } otic_unpack_channel_t;
-
-//uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t), uint8_t(*flusher)(uint8_t*, size_t));
-//uint8_t otic_unpack_parseBlock(otic_unpack_t*);
-//void otic_unpack_flush(otic_unpack_t* oticUnpack);
-//uint8_t otic_unpack_close(otic_unpack_t* oticUnpack);
-
-
 
 // TODO: ADD A GETINFO() FUNCTIONALITY IN EACH BINDING
 struct otic_unpack_t
 {
     otic_unpack_channel_t** channels;
-    size_t totalChannels;
+    uint8_t totalChannels;
     otic_errors_e error;
     otic_state_e state;
     uint8_t(*fetcher)(uint8_t*, size_t);
+    uint8_t(*seeker)(uint32_t);
 } ;
 
-uint8_t otic_unpack_init(otic_unpack_t* oticUnpackBase, uint8_t(*fetcher)(uint8_t*, size_t)) __attribute__((nonnull(1,2)));
-uint8_t otic_unpack_defineChannel(otic_unpack_t* oticUnpackBase, uint8_t id, uint8_t(*flusher)(uint8_t*, size_t)) __attribute__((nonnull(1, 3)));
+uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t), uint8_t(*seeker)(uint32_t)) __attribute__((nonnull(1,2)));
+uint8_t otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(uint8_t*, size_t)) __attribute__((nonnull(1, 3)));
+uint8_t otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8_t id);
 uint8_t otic_unpack_parse(otic_unpack_t* oticUnpackBase);
 uint8_t otic_unpack_close(otic_unpack_t* oticUnpackBase);
 
