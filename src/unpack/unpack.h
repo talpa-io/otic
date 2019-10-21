@@ -1,7 +1,3 @@
-//
-// Created by hp on 9/20/19.
-//
-
 #ifndef OTIC_UNPACK_H
 #define OTIC_UNPACK_H
 

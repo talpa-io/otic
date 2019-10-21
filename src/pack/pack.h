@@ -1,7 +1,3 @@
-//
-// Created by hp on 9/18/19.
-//
-
 #ifndef OTIC_PACK_H
 #define OTIC_PACK_H
 
@@ -84,7 +80,7 @@ uint8_t                 otic_pack_closeChannel(otic_pack_t* oticPackBase, uint8_
 uint8_t                 otic_pack_flush(otic_pack_t* oticPack);
 void                    otic_pack_close(otic_pack_t* oticPack);
 
-#ifdef __cpluscplus
+#ifdef __cplusplus
 }
 #endif
 

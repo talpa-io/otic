@@ -143,8 +143,8 @@ uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, u
 uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest);
 uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value);
 
-#ifdef __cpluscplus
-};
+#ifdef __cplusplus
+}
 #endif
 
-#endif // OTIC_CORE_H
+#endif //OTIC_CORE_H

@@ -1,7 +1,3 @@
-//
-// Created by hp on 9/18/19.
-//
-
 #ifndef OTIC_CONFIG_H
 #define OTIC_CONFIG_H
 

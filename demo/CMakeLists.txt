@@ -5,5 +5,14 @@ function(add_demo DEMO_NAME)
     target_link_libraries(${DEMO_NAME} otic zstd m pthread)
 endfunction()
 
-add_demo(pack_demo pack_demo/pack_demo.c ../include/errHand/errHand.h ../include/errHand/errHand.c)
-add_demo(unpack_demo unpack_demo/unpack_demo.c ../include/errHand/errHand.h ../include/errHand/errHand.c)
+add_demo(pack_demo
+        pack_demo/pack_demo.c
+        ../include/errHand/errHand.h
+        ../include/errHand/errHand.c
+        )
+
+add_demo(unpack_demo
+        unpack_demo/unpack_demo.c
+        ../include/errHand/errHand.h
+        ../include/errHand/errHand.c
+        )
