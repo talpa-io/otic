@@ -24,11 +24,7 @@ struct otic_entry_t
     {
         uint32_t int_value;
         double double_value;
-        struct
-        {
-            char* value;
-            size_t size;
-        } string_value;
+        otic_str_t string_value;
     } last_value;
     otic_types_e type;
     otic_entry_t* next;

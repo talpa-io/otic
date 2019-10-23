@@ -14,10 +14,12 @@ option(ALLOW_CMAKE_LIB_FETCH "Allow CMake to Fetch the missing libs from the Web
 option(ENABLE_OPTIC_TESTS "Enable tests of the core otic" ON)
 option(BUILD_DEMOS "Build demos and examples" ON)
 
-if (NOT ${CMAKE_BUILD_TYPE})
-    message(STATUS "Setting the build type to: Release")
-    set(CMAKE_BUILD_TYPE Release)
-endif()
+#if (NOT ${CMAKE_BUILD_TYPE})
+#    message(STATUS "Setting the build type to: Release")
+#    set(CMAKE_BUILD_TYPE Release)
+#else()
+#    message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+#endif()
 
 project(otic
         VERSION 1.0.0
@@ -76,9 +78,13 @@ generate_single_file(otic.h
 install(TARGETS otic
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib)
-
-
+        ARCHIVE DESTINATION lib
+        )
+install(FILES "${PROJECT_BINARY_DIR}/otic.h"
+        CONFIGURATIONS Release | Debug
+        DESTINATION include
+        COMPONENT Devel
+        )
 #install(TARGETS libotic
 #        CONFIGURATIONS Release | Debug
 #        LIBRARY DESTINATION lib
@@ -91,12 +97,6 @@ install(TARGETS otic
 #        DESTINATION include
 #        COMPONENT Development
 #        )
-
-install(FILES "${PROJECT_BINARY_DIR}/otic.h"
-        CONFIGURATIONS Release | Debug
-        DESTINATION include
-        COMPONENT Devel
-        )
 
 #install(DIRECTORY src/
 #        DESTINATION include/otic

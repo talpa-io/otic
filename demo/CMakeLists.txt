@@ -16,3 +16,11 @@ add_demo(unpack_demo
         ../include/errHand/errHand.h
         ../include/errHand/errHand.c
         )
+
+add_demo(tsvParser
+        tsvParser/tsvParser.c
+        ../include/errHand/errHand.c
+        ../include/errHand/errHand.h
+        ../include/format/format.h
+        ../include/format/format.c
+        )

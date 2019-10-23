@@ -6,7 +6,7 @@
 #include "errHand.h"
 
 
-static inline const char* otic_getError(otic_errors_e e)
+const char* otic_getError(otic_errors_e e)
 {
     switch (e)
     {

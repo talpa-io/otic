@@ -1,8 +1,5 @@
 #include <string.h>
-#include <limits.h>
 #include <stdlib.h>
-#include <fenv.h>
-#include <stdio.h>
 #include "pack.h"
 
 /**
@@ -52,9 +49,9 @@ static otic_entry_t* otic_pack_entry_find(otic_pack_channel_t* pack, const char*
 }
 
 OTIC_PACK_INLINE
-static otic_entry_t* otic_pack_entry_insert_routine(otic_pack_channel_t* channel, const char* o, const char* unit, uint16_t index)
+static otic_entry_t* otic_pack_entry_insert_routine(otic_pack_channel_t* channel, const otic_str_t* o, const otic_str_t* unit, uint16_t index)
 {
-    uint32_t hash_address = otic_hashFunction(o);
+    uint32_t hash_address = otic_hashFunction(o->ptr);
     otic_entry_t* ptr = channel->cache[hash_address];
     while (ptr)
     {
@@ -66,13 +63,12 @@ static otic_entry_t* otic_pack_entry_insert_routine(otic_pack_channel_t* channel
     if (!ptr)
         return 0;
     ptr->next = 0;
-    ptr->last_value.string_value.value = 0;
+    ptr->last_value.string_value.ptr = 0;
     ptr->last_value.string_value.size = 0;
-    uint8_t len[2] = {strlen(o), strlen(unit)};
-    ptr->name = malloc(len[0] + len[1] + 1);
-    strcpy(ptr->name, o);
-    ptr->name[len[0] + 1] = ':';
-    strcpy(ptr->name + len[0] + 2, unit);
+    ptr->name = malloc(o->size + unit->size + 1);
+    memcpy(ptr->name, o->ptr, o->size);
+    ptr->name[o->size + 1] = ':';
+    memcpy(ptr->name + o->size + 2, unit, unit->size);
     ptr->index = index;
     ptr->next = channel->cache[hash_address];
     channel->cache[hash_address] = ptr;
@@ -80,7 +76,7 @@ static otic_entry_t* otic_pack_entry_insert_routine(otic_pack_channel_t* channel
 }
 
 OTIC_PACK_INLINE
-static otic_entry_t* otic_pack_entry_insert_u(otic_pack_channel_t* channel, const char* o, const char* unit, uint16_t index, uint32_t value)
+static otic_entry_t* otic_pack_entry_insert_u(otic_pack_channel_t* channel, const otic_str_t* o, const otic_str_t* unit, uint16_t index, uint32_t value)
 {
     otic_entry_t* ptr = otic_pack_entry_insert_routine(channel, o, unit, index);
     if (!ptr)
@@ -91,7 +87,7 @@ static otic_entry_t* otic_pack_entry_insert_u(otic_pack_channel_t* channel, cons
 }
 
 OTIC_PACK_INLINE
-static otic_entry_t* otic_pack_entry_insert_un(otic_pack_channel_t* channel, const char* o, const char* unit, uint16_t index, uint32_t value)
+static otic_entry_t* otic_pack_entry_insert_un(otic_pack_channel_t* channel, const otic_str_t* o, const otic_str_t* unit, uint16_t index, uint32_t value)
 {
     otic_entry_t* ptr = otic_pack_entry_insert_routine(channel, o, unit, index);
     if (!ptr)
@@ -102,7 +98,7 @@ static otic_entry_t* otic_pack_entry_insert_un(otic_pack_channel_t* channel, con
 }
 
 OTIC_PACK_INLINE
-static otic_entry_t* otic_pack_entry_insert_d(otic_pack_channel_t* channel, const char* o, const char* unit, uint16_t index, double value)
+static otic_entry_t* otic_pack_entry_insert_d(otic_pack_channel_t* channel, const otic_str_t* o, const otic_str_t* unit, uint16_t index, double value)
 {
     otic_entry_t* ptr = otic_pack_entry_insert_routine(channel, o, unit, index);
     if (!ptr)
@@ -113,20 +109,20 @@ static otic_entry_t* otic_pack_entry_insert_d(otic_pack_channel_t* channel, cons
 }
 
 OTIC_PACK_INLINE
-static otic_entry_t* otic_pack_entry_insert_s(otic_pack_channel_t* channel, const char* o, const char* unit, uint16_t index, const char* value)
+static otic_entry_t* otic_pack_entry_insert_s(otic_pack_channel_t* channel, const otic_str_t* o, const otic_str_t* unit, uint16_t index, const otic_str_t* value)
 {
     otic_entry_t* ptr = otic_pack_entry_insert_routine(channel, o, unit, index);
     if (!ptr)
         return 0;
     ptr->type = OTIC_TYPE_STRING;
-    ptr->last_value.string_value.size = strlen(value);
-    ptr->last_value.string_value.value = malloc(ptr->last_value.string_value.size + 1);
-    strcpy(ptr->last_value.string_value.value, value);
+    ptr->last_value.string_value.size = value->size;
+    ptr->last_value.string_value.ptr = malloc(ptr->last_value.string_value.size + 1);
+    memcpy((char*)ptr->last_value.string_value.ptr, value->ptr, value->size);
     return ptr;
 }
 
 OTIC_PACK_INLINE
-static otic_entry_t* otic_pack_entry_insert_n(otic_pack_channel_t* channel, const char* o, const char* unit, uint16_t index){
+static otic_entry_t* otic_pack_entry_insert_n(otic_pack_channel_t* channel, const otic_str_t* o, const otic_str_t* unit, uint16_t index){
     otic_entry_t* ptr = otic_pack_entry_insert_routine(channel, o, unit, index);
     if (!ptr)
         return 0;
@@ -135,7 +131,7 @@ static otic_entry_t* otic_pack_entry_insert_n(otic_pack_channel_t* channel, cons
 }
 
 OTIC_PACK_INLINE
-static otic_entry_t* otic_pack_entry_insert_b(otic_pack_channel_t* channel, const char* o, const char* unit, uint16_t index)
+static otic_entry_t* otic_pack_entry_insert_b(otic_pack_channel_t* channel, const otic_str_t* o, const otic_str_t* unit, uint16_t index)
 {
     otic_entry_t* ptr = otic_pack_entry_insert_routine(channel, o, unit, index);
     if (!ptr)
@@ -164,11 +160,11 @@ static void write_double(otic_pack_channel_t* channel, double value)
 }
 
 OTIC_PACK_INLINE
-static void write_string(otic_pack_channel_t* channel, const char* value, uint8_t len)
+static void write_string(otic_pack_channel_t* channel, otic_str_t* value)
 {
-    otic_pack_write_byte(channel, len);
-    memcpy(channel->base.top, value, len);
-    channel->base.top += len;
+    otic_pack_write_byte(channel, value->size);
+    memcpy(channel->base.top, value, value->size);
+    channel->base.top += value->size;
 }
 
 OTIC_PACK_INLINE
@@ -181,16 +177,15 @@ static void write_buffer(otic_pack_channel_t* channel, uint8_t* buffer, size_t s
 }
 
 OTIC_PACK_INLINE
-void static otic_pack_id_assign(otic_pack_channel_t* channel, const char* sensorName, const char* unit)
+void static otic_pack_id_assign(otic_pack_channel_t* channel, const otic_str_t* sensorName, const otic_str_t* unit)
 {
     otic_pack_write_byte(channel, OTIC_TYPE_NAME_ASSIGN);
-    uint8_t len[2] = {strlen(sensorName), strlen(unit)};
-    otic_pack_write_byte(channel, len[0] + len[1] + 1);
-    memcpy(channel->base.top, sensorName, len[0]);
-    channel->base.top += len[0];
+    otic_pack_write_byte(channel, sensorName->size + unit->size + 1);
+    memcpy(channel->base.top, sensorName, sensorName->size);
+    channel->base.top += sensorName->size;
     otic_pack_write_byte(channel, ':');
-    memcpy(channel->base.top, unit, len[1]);
-    channel->base.top += len[1];
+    memcpy(channel->base.top, unit, unit->size);
+    channel->base.top += unit->size;
 }
 
 /*OTIC_PACK_INLINE
@@ -240,13 +235,6 @@ uint8_t static otic_ts_handler(otic_pack_channel_t* channel, double ts)
 }
 
 OTIC_PACK_INLINE
-void static otic_metadata_write(otic_pack_channel_t* channel, const char* value)
-{
-    otic_pack_write_byte(channel, OTIC_TYPE_METADATA);
-    write_string(channel, value, strlen(value));
-}
-
-OTIC_PACK_INLINE
 void static otic_pack_flush_if_flushable(otic_pack_channel_t* channel)
 {
     if (channel->base.top > channel->threshold)
@@ -281,16 +269,16 @@ uint8_t otic_pack_channel_inject_i_neg(otic_pack_channel_t* channel, double time
     otic_ts_handler(channel, timestamp);
     otic_entry_t *entry = otic_pack_entry_find(channel, sensorName);
     if (!entry){
-        size_t len[2] = {strlen(sensorName), strlen(unit)};
-        if (len[0] + len[1] > UINT8_MAX){
+        otic_str_t s = {sensorName, strlen(sensorName)}, u = {unit, strlen(unit)};
+        if (s.size + u.size > UINT8_MAX){
             otic_base_setError(&channel->base, OTIC_ERROR_BUFFER_OVERFLOW);
             goto fail;
         }
-        if (!otic_pack_entry_insert_un(channel, sensorName, unit, channel->totalEntries, value)){
+        if (!otic_pack_entry_insert_un(channel, &s, &u, channel->totalEntries, value)){
             otic_base_setError(&channel->base, OTIC_ERROR_ENTRY_INSERTION_FAILURE);
             goto fail;
         }
-        otic_pack_id_assign(channel, sensorName, unit);
+        otic_pack_id_assign(channel, &s, &u);
         otic_pack_write_byte(channel, OTIC_TYPE_INT32_NEG);
         write_long(channel, channel->totalEntries);
         write_long(channel, value);
@@ -318,8 +306,7 @@ uint8_t otic_pack_channel_inject_i(otic_pack_channel_t* channel, double timestam
     otic_ts_handler(channel, timestamp);
     otic_entry_t *entry = otic_pack_entry_find(channel, sensorName);
     if (!entry){
-        size_t len[2] = {strlen(sensorName), strlen(sensorUnit)};
-        if (len[0] + len[1] > UINT8_MAX){
+        if (sensorUnit && strlen(sensorName) + strlen(sensorUnit) > UINT8_MAX){
             otic_base_setError(&channel->base, OTIC_ERROR_BUFFER_OVERFLOW);
             goto fail;
         }
@@ -583,6 +570,7 @@ uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel)
         otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
         goto fail;
     }
+
 #endif
     channel->base.timestamp_start = 0;
     channel->base.top = channel->base.cache;
@@ -703,7 +691,6 @@ uint8_t otic_pack_flush(otic_pack_t* oticPack)
             otic_base_setError(&oticPack->channels[counter]->base, OTIC_ERROR_FLUSH_FAILED);
             goto fail;
         }
-        printf("Diff: %ld\n", oticPack->channels[counter]->base.top - oticPack->channels[counter]->base.cache);
         oticPack->channels[counter]->base.top = oticPack->channels[counter]->base.cache;
     }
 #else
@@ -742,7 +729,6 @@ void otic_pack_close(otic_pack_t* oticPack) {
     if (!oticPack)
         return;
     uint8_t counter = 0;
-//    otic_pack_flush(oticPack);
     for (counter = 0; counter < oticPack->totalChannels; counter++)
     {
         otic_pack_channel_close(oticPack->channels[counter]);

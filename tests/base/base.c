@@ -85,6 +85,5 @@ int main()
     test_state_handling();
     test_leb128_unsigned();
 //    test_leb128_signed();
-
     return 0;
 }

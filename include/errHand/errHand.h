@@ -7,6 +7,7 @@
 
 #include "../../src/core/core.h"
 
+const char* otic_getError(otic_errors_e e);
 void printOticError(otic_errors_e e);
 
 #endif //OTIC_ERRORHAND_H

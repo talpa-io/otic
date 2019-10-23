@@ -19,7 +19,19 @@ add_library(otic SHARED
         ${OTIC_CORE_FILES}
         )
 
+add_library(otic_static STATIC
+        ${OTIC_PACK_FILES}
+        ${OTIC_UNPACK_FILES}
+        ${OTIC_CORE_FILES}
+        )
+
 target_include_directories(otic
+        PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+        )
+
+target_include_directories(otic_static
         PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
@@ -30,4 +42,9 @@ set_target_properties(
         PROPERTIES OUTPUT_NAME otic
         VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
         SOVERSION ${PROJECT_VERSION_MAJOR}
+)
+
+set_target_properties(
+        otic_static
+        PROPERTIES OUTPUT_NAME otic
 )

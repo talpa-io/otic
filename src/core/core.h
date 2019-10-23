@@ -8,6 +8,7 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 
+
 #define OTIC_BASE_CACHE_SIZE 1024
 #if OTIC_BASE_CACHE_SIZE < (255 * 2)
 #error OTIC Pack requires a buffer cache bigger than twice the size of permitted string value length (255)
@@ -131,6 +132,15 @@ typedef enum {
     OTIC_CHANNEL_TYPE_BINARY
 } channel_type_e;
 
+typedef struct
+{
+    const char* ptr;
+    size_t size;
+} otic_str_t;
+
+
+
+
 uint8_t         otic_base_init(otic_base_t* base);
 void            otic_base_setError(otic_base_t *base, otic_errors_e error);
 otic_errors_e   otic_base_getError(otic_base_t *base);
@@ -142,6 +152,10 @@ uint8_t         leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest);
 uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value) ;
 uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest);
 uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value);
+
+otic_str_t*     otic_setStr(const char* ptr, size_t size);
+void            otic_freeStr(otic_str_t* oticStr);
+void            otic_updateStr(otic_str_t* oticStr, const char* ptr, size_t size);
 
 #ifdef __cplusplus
 }
