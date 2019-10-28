@@ -137,11 +137,16 @@ uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* re
     return counter;
 }
 
-otic_str_t* otic_setStr(const char* ptr, size_t size)
+otic_str_t* otic_setStr(const char* ptr)
 {
-    otic_str_t* oticStr = malloc(size);
-    oticStr->ptr = ptr;
-    oticStr->size = size;
+    otic_str_t* oticStr = malloc(sizeof(otic_str_t));
+    if (!ptr) {
+        oticStr->size = 0;
+        oticStr->ptr = 0;
+    } else {
+        oticStr->ptr = ptr;
+        oticStr->size = strlen(ptr);
+    }
     return oticStr;
 }
 
@@ -150,8 +155,13 @@ void otic_freeStr(otic_str_t* oticStr)
     free(oticStr);
 }
 
-void otic_updateStr(otic_str_t* oticStr, const char* ptr, size_t size)
+void otic_updateStr(otic_str_t* oticStr, const char* ptr)
 {
-    oticStr->size = size;
+    if (!ptr){
+        oticStr->ptr = 0;
+        oticStr->size = 0;
+        return;
+    }
+    oticStr->size = strlen(ptr);
     oticStr->ptr = ptr;
 }

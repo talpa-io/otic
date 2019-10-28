@@ -8,7 +8,7 @@ extern "C" {
 #include <zstd.h>
 #include "core/core.h"
 
-#define OTIC_UNPACK_OUT_SIZE 1024
+#define OTIC_UNPACK_OUT_SIZE 12000
 #define OTIC_UNPACK_OUTPUT_LIMIT 512
 #define OTIC_UNPACK_RESULT_OUTSIZE 2056
 #if OTIC_UNPACK_RESULT_OUTSIZE < (OTIC_UNPACK_OUTPUT_LIMIT * 2)

@@ -48,3 +48,5 @@ set_target_properties(
         otic_static
         PROPERTIES OUTPUT_NAME otic
 )
+
+target_compile_options(otic PRIVATE -Wall -Wextra -pedantic)

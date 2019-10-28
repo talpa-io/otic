@@ -8,14 +8,14 @@
 #include <errno.h>
 #include <format/format.h>
 #include <assert.h>
-
+#include <sys/stat.h>
 
 #include "pack/pack.h"
 #include "unpack/unpack.h"
 #include "errHand/errHand.h"
 #include "format/format.h"
 
-// Almost 1MB
+// Almost 1 MB ... memory friendly 1 MB. Did you know that 1 byte is actually 9 bits and not 8 bits?
 #define READ_BUFFERSIZE 1048576
 
 
@@ -87,7 +87,7 @@ inline static size_t power2(size_t value)
     return counter;
 }
 
-inline static uint8_t numericChecker(char value)
+inline static uint8_t isNumericChar(char value)
 {
     static const char* numeric = "0123456789.-";
     const char* fCharacter = numeric;
@@ -102,29 +102,32 @@ inline static uint8_t numericChecker(char value)
 inline static uint8_t isNumeric(const char* value)
 {
     while (*value) {
-        if (!numericChecker(*value))
+        if (!isNumericChar(*value++))
             return 0;
-        ++value;
     }
     return 1;
 }
 
-
-typedef struct
-{
-    double ts;
-    char* sensorName;
-    char* sensorUnit;
-} tsv_content_t;
-
 static FILE* inputFile = 0;
 static FILE* outputFile = 0;
-
 
 // TODO: CHANGE STREAM BUFFER
 static inline uint8_t flusher(uint8_t* value, size_t size)
 {
     fwrite(value, 1, size, outputFile);
+    fflush(outputFile);
+    return 1;
+}
+
+static inline uint8_t fetcher(uint8_t* value, size_t size)
+{
+    fread(value, 1, size, inputFile);
+    return 1;
+}
+
+static inline uint8_t seeker(uint32_t pos)
+{
+    fseek(inputFile, pos, SEEK_CUR);
     return 1;
 }
 
@@ -147,26 +150,169 @@ static inline uint8_t getDecPos(char* ptr)
     return end - ptr;
 }
 
-
-typedef struct
+int fpeek(FILE* stream)
 {
-    const char* ptr;
-    size_t len;
-} otic_str_t;
+    int c = getc(stream);
+    ungetc(c, stream);
+    return c;
+}
 
+static inline uint8_t flusher2(uint8_t* buffer, size_t size)
+{
+    fwrite(buffer, 1, size, outputFile);
+    return 1;
+}
 
-void test(otic_str_t* ptr)
+size_t getLinesNumber(const char* fileName)
+{
+    FILE* file = fopen(fileName, "r");
+    size_t counter = 0;
+
+    char buffer[512];
+    while(!feof(file))
+    {
+        fscanf(file, "%[^\n]\n", buffer);
+        ++counter;
+    }
+    return counter;
+}
+
+// TODO: 0.0000 == 0
+static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
 {
 
+    inputFile = fopen(fileNameIn, "r");
+    outputFile = fopen(fileNameOut, "wb");
+    if (!inputFile || !outputFile)
+        return 0;
+
+    otic_pack_t oticPack;
+    if (!otic_pack_init(&oticPack, flusher))
+        return 0;
+
+    otic_pack_channel_t* channel = otic_pack_defineChannel(&oticPack, OTIC_CHANNEL_TYPE_SENSOR, 0x1, 0x0);
+    if (!channel)
+        return 0;
+
+    format_chunker_t formatChunker;
+    if (!format_init(&formatChunker.format, '\t', 5))
+        return 0;
+
+    char buffer[READ_BUFFERSIZE];
+    size_t read = 0;
+    while (fpeek(inputFile) != EOF)
+    {
+        read = fread(buffer, 1, READ_BUFFERSIZE - 1024, inputFile);
+        read += fscanf(inputFile, "%[^\n]\n", buffer + read);
+        buffer[read] = 0;
+        format_chunker_set(&formatChunker, buffer, read);
+        int64_t int_value = 0;
+        uint8_t decPos = 0;
+        while (formatChunker.ptr_current - formatChunker.ptr_start < formatChunker.size) {
+            formatChunker.ptr_current = format_chunker_parse(&formatChunker);
+            if (!formatChunker.format.columns.content[4])
+            {
+                 otic_pack_channel_inject_n(channel, strtod(formatChunker.format.columns.content[0], 0),
+                                           formatChunker.format.columns.content[1],
+                                           formatChunker.format.columns.content[3]);
+            } else if (isNumeric(formatChunker.format.columns.content[4])) {
+                if (!(decPos = getDecPos(formatChunker.format.columns.content[4])))
+                {
+                    if ((int_value = strtol(formatChunker.format.columns.content[4], 0, 10)) >= 0)
+                    {
+                        otic_pack_channel_inject_i(channel,
+                                                   strtod(formatChunker.format.columns.content[0], 0),
+                                                   formatChunker.format.columns.content[1],
+                                                   formatChunker.format.columns.content[3],
+                                                   int_value
+                        );
+                    } else {
+                        otic_pack_channel_inject_i_neg(channel,
+                                                       strtod(formatChunker.format.columns.content[0], 0),
+                                                       formatChunker.format.columns.content[1],
+                                                       formatChunker.format.columns.content[3],
+                                                       -int_value
+                        );
+                    }
+                } else {
+                    otic_pack_channel_inject_d(channel,
+                                               strtod(formatChunker.format.columns.content[0], 0),
+                                               formatChunker.format.columns.content[1],
+                                               formatChunker.format.columns.content[3],
+                                               strtod(formatChunker.format.columns.content[4], 0)
+                    );
+                }
+            } else {
+                otic_pack_channel_inject_s(channel,
+                                           strtod(formatChunker.format.columns.content[0], 0),
+                                           formatChunker.format.columns.content[1],
+                                           formatChunker.format.columns.content[3],
+                                           formatChunker.format.columns.content[4]
+                );
+            }
+        }
+    }
+    otic_pack_close(&oticPack);
+    fclose(inputFile);
+    fclose(outputFile);
+    return 1;
+}
+
+uint8_t decompress(const char* fileNameIn, const char* fileNameOut)
+{
+    inputFile = fopen(fileNameIn, "rb");
+    outputFile = fopen(fileNameOut, "w");
+    if (!inputFile || !outputFile)
+        return 0;
+    otic_unpack_t oticUnpack;
+    if (!otic_unpack_init(&oticUnpack, fetcher, seeker))
+        return 0;
+    if (!otic_unpack_defineChannel(&oticUnpack, 0x01, flusher2))
+        return 0;
+    size_t counter = 0;
+    while(!feof(inputFile) && counter < 2)
+    {
+        otic_unpack_parse(&oticUnpack);
+        printf("Counter: %lu\n", counter++);
+    }
+
+    otic_unpack_close(&oticUnpack);
+    fclose(inputFile);
+    fclose(outputFile);
+    return 1;
+}
+
+
+// Total number of lines 5090023
+// TODO: Add a otic_file info fetcher
+// TODO: Decide Buffer Size: Either use BUFSIZE or 12000
+
+int main(void)
+{
+  /*  struct stat stats;
+    inputFile = fopen("dump.otic", "r");
+    if (fstat(fileno(inputFile), &stats) == -1)
+    {
+        perror("fstat");
+        return 1;
+    }
+    printf("Buffize: %d Optimal Size %ld\n", BUFSIZ, stats.st_blksize);*/
+
+//    return !compress("bigFile.txt", "dump.otic");
+    return !decompress("dump.otic", "output.tsv");
+
+    return EXIT_SUCCESS;
 }
 
 
 
+/*
 int main(int argc, char** argv)
 {
     tsv_parser_error_e error;
 
-    /*if (argc == 1) {
+    */
+/*if (argc == 1) {
         toConsole_usage();
         return EXIT_FAILURE;
     }
@@ -174,10 +320,13 @@ int main(int argc, char** argv)
         toConsole("Invalid Input\n");
         toConsole_usage();
         return EXIT_FAILURE;
-    }*/
+    }*//*
 
+
+*/
 /*    if ((error = inputCheck(argv) != TSV_PARSER_ERROR_NONE))
-        goto fail;*/
+        goto fail;*//*
+
 
     size_t read = 0;
 
@@ -290,4 +439,4 @@ fail:
     toConsole("\n");
     toConsole_usage();
     return EXIT_FAILURE;
-}
+}*/

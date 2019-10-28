@@ -282,6 +282,7 @@ static void otic_unpack_read_metadata(otic_unpack_t* oticUnpack)
     if ((arg = otic_unpack_getMeta(oticMetaData, size, OTIC_META_TYPE_CHANNEL_DEFINE)) == -1)
         return;
     uint8_t counter;
+
     for (counter = 0; counter < oticUnpack->totalChannels; counter++)
         if (oticUnpack->channels[counter]->info.channelId == arg){
             oticUnpack->channels[counter]->info.metaData = malloc(size * sizeof(otic_meta_data_t));
@@ -312,7 +313,6 @@ parser_printer parsers[] = {
 
 uint8_t otic_unpack_parseBlock(otic_unpack_channel_t* channel)
 {
-    // TODO: Wohldefinitheit
     while (channel->base.top - channel->out < channel->blockSize)
         parsers[*channel->base.top++].parserFunc(channel);
     return 1;
@@ -452,13 +452,13 @@ uint8_t otic_unpack_channel_close(otic_unpack_channel_t* channel)
     otic_unpack_channel_flush(channel);
     ZSTD_freeDCtx(channel->dCtx);
     size_t counter;
-    for (counter = 0; counter < channel->cache_t.cache_allocated; counter++)
+    for (counter = 0; counter < channel->cache_t.cache_allocated; ++counter)
     {
         if (channel->cache_t.cache[counter]){
             if (channel->cache_t.cache[counter]->last_value.string_value.size != 0) {
                 free(channel->cache_t.cache[counter]->last_value.string_value.value);
             }
-            free(channel->cache_t.cache);
+            free(channel->cache_t.cache[counter]);
         }
     }
     channel->cache_t.cache_allocated = channel->cache_t.allocationLeft == 0;
@@ -498,7 +498,6 @@ uint8_t otic_unpack_parse(otic_unpack_t* oticUnpack) {
         return 0;
     static uint8_t value;
     oticUnpack->fetcher(&value, 1);
-
     if (value == OTIC_TYPE_METADATA)
         otic_unpack_read_metadata(oticUnpack);
     else if (value == OTIC_TYPE_DATA)

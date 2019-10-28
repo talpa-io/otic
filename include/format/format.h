@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
+// TODO: WIN32 \r\n parsing
 
 typedef struct
 {
@@ -23,7 +24,7 @@ typedef struct
 } format_t;
 
 uint8_t     format_init(format_t *restrict format, char delimiter, size_t numb_columns);
-char*       format_parse(format_t *restrict format, char* line, uint8_t newLineBreak);
+char*       format_parse(format_t *restrict format, char* line);
 size_t      format_write(format_t *restrict format, char* dest);
 void        format_reset(format_t *restrict format);
 void        format_close(format_t *restrict format);

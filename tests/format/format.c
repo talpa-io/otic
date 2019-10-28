@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include <format/format.h>
 #include "format/format.h"
 
 
@@ -24,7 +23,7 @@ static void test_format_parseSimple(void)
     char buffer[24] = {}, line[24], result[24] = {};
     strcpy(buffer, "This:is:a:simple:test");
     strcpy(line, "This:is:a:simple:test");
-    format_parse(&format, buffer, '\n');
+    format_parse(&format, buffer);
     assert(strcmp(format.columns.content[0], "This") == 0);
     assert(strcmp(format.columns.content[1], "is") == 0);
     assert(strcmp(format.columns.content[2], "a") == 0);
@@ -41,7 +40,7 @@ static void test_format_parseComplex(void)
     char buffer[24] = {}, line[24], result[24] = {};
     strcpy(buffer, "This\t\tTest");
     strcpy(line, "This\t\tTest");
-    format_parse(&format, buffer, 1);
+    format_parse(&format, buffer);
     assert(strcmp(format.columns.content[0], "This") == 0);
     assert(format.columns.content[1] == 0);
     assert(strcmp(format.columns.content[2], "Test") == 0);
@@ -57,7 +56,7 @@ static void test_format_parseComplexer(void)
     char buffer[24] = {}, line[24], result[24] = {};
     strcpy(buffer, "This,,,,value");
     strcpy(line, "This,,,,value");
-    format_parse(&format, buffer, 1);
+    format_parse(&format, buffer);
     assert(strcmp(format.columns.content[0], "This") == 0);
     assert(format.columns.content[1] == 0);
     assert(format.columns.content[2] == 0);

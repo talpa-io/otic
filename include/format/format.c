@@ -3,8 +3,8 @@
 //
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
+#include <stdio.h>
 #include "format.h"
 
 
@@ -17,7 +17,7 @@ uint8_t format_init(format_t *restrict format, char delimiter, size_t numb_colum
     return 1;
 }
 
-char* format_parse(format_t *restrict format, char* line, uint8_t newLineBreak)
+char* format_parse(format_t *restrict format, char* line)
 {
     char** ptr = format->columns.content;
     format->columns.parsed = 1;
@@ -30,8 +30,8 @@ char* format_parse(format_t *restrict format, char* line, uint8_t newLineBreak)
         }
         if (*line == format->delimiter) {
             *line = 0;
-            *++ptr = *(line + 1) == format->delimiter ? 0 :line + 1;
-            format->columns.parsed++;
+            *++ptr = (*(line + 1) == format->delimiter || *(line + 1) == '\n') ? 0 : line + 1;
+            ++format->columns.parsed;
         }
         line++;
     }
@@ -61,7 +61,6 @@ void format_close(format_t *restrict format)
     free(format->columns.content);
 }
 
-
 uint8_t format_chunker_init(format_chunker_t* formatChunker, char delimiter, size_t columnSize)
 {
     if (!formatChunker)
@@ -79,7 +78,7 @@ void format_chunker_set(format_chunker_t* formatChunker, char* chunk, size_t siz
 
 char* format_chunker_parse(format_chunker_t* formatChunker)
 {
-    return format_parse(&formatChunker->format, formatChunker->ptr_current, 1);
+    return format_parse(&formatChunker->format, formatChunker->ptr_current);
 }
 
 void format_chunker_close(format_chunker_t* formatChunker)

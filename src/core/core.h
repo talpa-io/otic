@@ -9,7 +9,7 @@ extern "C" {
 #include <stddef.h>
 
 
-#define OTIC_BASE_CACHE_SIZE 1024
+#define OTIC_BASE_CACHE_SIZE 12000
 #if OTIC_BASE_CACHE_SIZE < (255 * 2)
 #error OTIC Pack requires a buffer cache bigger than twice the size of permitted string value length (255)
 #endif
@@ -17,7 +17,7 @@ extern "C" {
 #error OTIC requires IEEE 754 support for handling float values
 #endif
 #define OTIC_ENTRY_STRING_SIZE 32
-#define OTIC_PACK_CACHE_SIZE 256
+#define OTIC_PACK_CACHE_SIZE 255
 #define PTR_M 31
 #define OTIC_TS_MULTIPLICATOR 10000
 #define OTIC_MAGIC_SIZE 4
@@ -25,6 +25,9 @@ extern "C" {
 
 
 // TODO: HANDLE Memory allocation failure
+// TODO: signal.h for error handling?
+// TODO: Portablity: LSB? MSB?
+
 typedef enum
 {
     OTIC_TYPE_NULL,
@@ -153,9 +156,9 @@ uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, u
 uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest);
 uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value);
 
-otic_str_t*     otic_setStr(const char* ptr, size_t size);
+otic_str_t*     otic_setStr(const char* ptr);
 void            otic_freeStr(otic_str_t* oticStr);
-void            otic_updateStr(otic_str_t* oticStr, const char* ptr, size_t size);
+void            otic_updateStr(otic_str_t* oticStr, const char* ptr);
 
 #ifdef __cplusplus
 }

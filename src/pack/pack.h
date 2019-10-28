@@ -10,7 +10,7 @@ extern "C" {
 #include "core/core.h"
 
 
-#define ZSTD_OUT_SIZE 1024
+#define ZSTD_OUT_SIZE 12000
 #define OTIC_PACK_CACHE_TOP_LIMIT 255
 #define OTIC_PACK_NO_COMPRESSION 0
 

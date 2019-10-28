@@ -24,3 +24,6 @@ add_demo(tsvParser
         ../include/format/format.h
         ../include/format/format.c
         )
+
+#target_compile_options(tsvParser PRIVATE -Wall -Wextra -pedantic -Werror)
+#target_compile_options(tsvParser PRIVATE -Wall -Wextra -pedantic)

@@ -80,6 +80,11 @@ install(TARGETS otic
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         )
+install(TARGETS otic_static
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lin
+        ARCHIVE DESTINATION lib
+        )
 install(FILES "${PROJECT_BINARY_DIR}/otic.h"
         CONFIGURATIONS Release | Debug
         DESTINATION include
