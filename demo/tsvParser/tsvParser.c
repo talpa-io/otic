@@ -341,7 +341,7 @@ static uint8_t getLines(const char* fileInName, const char* fileOutName, size_t 
 // 2057929
 int main(void)
 {
-//    return compress("smallFile.txt", "dump.otic");
+    return compress("bigFile.txt", "dump.otic");
 //    return decompress("dump.otic", "output.tsv");
     printf("%u\n", compare("smallFile.txt", "output.tsv"));
 
