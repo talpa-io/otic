@@ -8,7 +8,6 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 
-
 #define OTIC_BASE_CACHE_SIZE 12000
 #if OTIC_BASE_CACHE_SIZE < (255 * 2)
 #error OTIC Pack requires a buffer cache bigger than twice the size of permitted string value length (255)
@@ -49,7 +48,7 @@ typedef enum
     OTIC_TYPE_NAME_ASSIGN,
     OTIC_TYPE_EOF,
     OTIC_TYPE_METADATA,
-    OTIC_TYPE_DATA,
+    OTIC_TYPE_DATA
 } otic_types_e;
 
 typedef enum
@@ -140,9 +139,6 @@ typedef struct
     const char* ptr;
     size_t size;
 } otic_str_t;
-
-
-
 
 uint8_t         otic_base_init(otic_base_t* base);
 void            otic_base_setError(otic_base_t *base, otic_errors_e error);

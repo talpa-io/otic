@@ -22,7 +22,6 @@ typedef struct
 } parser_printer;
 parser_printer parsers[];
 
-// TODO: USE INDEX instead of total entries
 OTIC_UNPACK_INLINE
 static otic_unpack_entry_t* otic_unpack_insert_entry(otic_unpack_channel_t* channel, char* value, const char* end) {
     if (channel->cache_t.allocationLeft == 0) {
@@ -108,6 +107,8 @@ OTIC_UNPACK_INLINE
 static void otic_unpack_read_null(otic_unpack_channel_t* channel)
 {
     channel->base.top += leb128_decode_unsigned(channel->base.top, &channel->entryIndex);
+    channel->cache_t.currentEntry = channel->cache_t.cache[channel->entryIndex];
+    channel->cache_t.currentEntry->type = OTIC_TYPE_NULL;
     otic_unpack_printer_n(channel);
     channel->base.rowCounter++;
 }
@@ -220,7 +221,6 @@ static void otic_unpack_read_rawbuffer(otic_unpack_channel_t* channel)
 OTIC_UNPACK_INLINE
 static void otic_unpack_read_setTimestamp(otic_unpack_channel_t* channel)
 {
-
     channel->base.top += leb128_decode_unsigned(channel->base.top, (uint32_t*)&channel->base.timestamp_start);
     channel->base.timestamp_current = channel->base.timestamp_start;
     channel->doubleTs = (double)channel->base.timestamp_current / OTIC_TS_MULTIPLICATOR;
@@ -311,13 +311,11 @@ parser_printer parsers[] = {
         {otic_unpack_read_eof, 0},
 };
 
-uint8_t otic_unpack_parseBlock(otic_unpack_channel_t* channel)
+OTIC_UNPACK_INLINE
+static void otic_unpack_parseBlock(otic_unpack_channel_t* channel)
 {
     while (channel->base.top - channel->out < channel->blockSize)
         parsers[*channel->base.top++].parserFunc(channel);
-    return 1;
-fail:
-    return 0;
 }
 
 OTIC_UNPACK_INLINE
@@ -338,6 +336,9 @@ static void otic_unpack_read_data(otic_unpack_t* oticUnpack)
                 otic_base_setError(&oticUnpack->channels[counter]->base, OTIC_ERROR_ZSTD);
                 return;
             }
+            FILE* file = fopen("check.bin", "wb");
+            fwrite(oticUnpack->channels[counter]->out, 1, oticUnpack->channels[counter]->blockSize, file);
+            fflush(file);
             oticUnpack->channels[counter]->base.top = oticUnpack->channels[counter]->out;
             otic_unpack_parseBlock(oticUnpack->channels[counter]);
             return;

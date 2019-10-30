@@ -14,10 +14,11 @@
 #include "unpack/unpack.h"
 #include "errHand/errHand.h"
 #include "format/format.h"
+#include "compare/compare.h"
+#include "utilities/utilities.h"
 
 // Almost 1 MB ... memory friendly 1 MB. Did you know that 1 byte is actually 9 bits and not 8 bits?
 #define READ_BUFFERSIZE 1048576
-
 
 static otic_errors_e otic_error;
 
@@ -36,7 +37,7 @@ static void toConsole(const char* message)
     fprintf(stderr, "%s", message);
 }
 
-static const char* tsv_parser_getError(tsv_parser_error_e error)
+static inline const char* tsv_parser_getError(tsv_parser_error_e error)
 {
     switch (error)
     {
@@ -57,7 +58,7 @@ static const char* tsv_parser_getError(tsv_parser_error_e error)
     }
 }
 
-static void toConsole_usage(void)
+static inline void toConsole_usage(void)
 {
     toConsole("Usage: ");
     toConsole("./otic [-p|-u] [-i] inputFileName [-o] outputFileName\n");
@@ -79,7 +80,7 @@ static tsv_parser_error_e inputCheck(char** argv)
     return TSV_PARSER_ERROR_NONE;
 }
 
-inline static size_t power2(size_t value)
+inline static size_t getMemFriendlyApprox(size_t value)
 {
     size_t counter = 1;
     while (counter < value)
@@ -101,10 +102,9 @@ inline static uint8_t isNumericChar(char value)
 
 inline static uint8_t isNumeric(const char* value)
 {
-    while (*value) {
+    while (*value)
         if (!isNumericChar(*value++))
             return 0;
-    }
     return 1;
 }
 
@@ -150,7 +150,7 @@ static inline uint8_t getDecPos(char* ptr)
     return end - ptr;
 }
 
-int fpeek(FILE* stream)
+static inline int fpeek(FILE* stream)
 {
     int c = getc(stream);
     ungetc(c, stream);
@@ -160,10 +160,11 @@ int fpeek(FILE* stream)
 static inline uint8_t flusher2(uint8_t* buffer, size_t size)
 {
     fwrite(buffer, 1, size, outputFile);
+    fflush(outputFile);
     return 1;
 }
 
-size_t getLinesNumber(const char* fileName)
+inline static size_t getLinesNumber(const char* fileName)
 {
     FILE* file = fopen(fileName, "r");
     size_t counter = 0;
@@ -178,9 +179,14 @@ size_t getLinesNumber(const char* fileName)
 }
 
 // TODO: 0.0000 == 0
+/**
+ * @param fileNameIn
+ * @param fileNameOut
+ * @return Otic_error number. 0 for success, everything else represents a failure.
+ * Use \a otic_getError to print the error.
+ */
 static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
 {
-
     inputFile = fopen(fileNameIn, "r");
     outputFile = fopen(fileNameOut, "wb");
     if (!inputFile || !outputFile)
@@ -197,19 +203,39 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
     format_chunker_t formatChunker;
     if (!format_init(&formatChunker.format, '\t', 5))
         return 0;
-
     char buffer[READ_BUFFERSIZE];
     size_t read = 0;
-    while (fpeek(inputFile) != EOF)
-    {
+    char* end = 0;
+    int scanned = 0;
+    int sCounter = 0;
+    while (fpeek(inputFile) != EOF) {
         read = fread(buffer, 1, READ_BUFFERSIZE - 1024, inputFile);
-        read += fscanf(inputFile, "%[^\n]\n", buffer + read);
+        buffer[read] = 0;
+        scanned = fscanf(inputFile, "%[^\n]\n", (end = buffer + read));
+        if (scanned != -1)
+            read += strlen(end);
         buffer[read] = 0;
         format_chunker_set(&formatChunker, buffer, read);
         int64_t int_value = 0;
         uint8_t decPos = 0;
+//        if (channel->base.rowCounter == 2057929)
+//        {
+//            printf("sCounter: %d\n", sCounter);
+////            return 1;
+//            printf("%s\n", buffer);
+//        }
+//        if (sCounter == 127) {
+//            printf("%s\n", buffer);
+//            printf("End: %s\n", end);
+//        }
+        sCounter++;
+//        continue;
         while (formatChunker.ptr_current - formatChunker.ptr_start < formatChunker.size) {
             formatChunker.ptr_current = format_chunker_parse(&formatChunker);
+            if (channel->base.rowCounter == 160)
+            {
+                printf("Reached!");
+            }
             if (!formatChunker.format.columns.content[4])
             {
                  otic_pack_channel_inject_n(channel, strtod(formatChunker.format.columns.content[0], 0),
@@ -252,13 +278,15 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
             }
         }
     }
+    printf("Row Counter: %lu\n", channel->base.rowCounter);
     otic_pack_close(&oticPack);
+    format_chunker_close(&formatChunker);
     fclose(inputFile);
     fclose(outputFile);
-    return 1;
+    return oticPack.error;
 }
 
-uint8_t decompress(const char* fileNameIn, const char* fileNameOut)
+inline static uint8_t decompress(const char* fileNameIn, const char* fileNameOut)
 {
     inputFile = fopen(fileNameIn, "rb");
     outputFile = fopen(fileNameOut, "w");
@@ -270,173 +298,54 @@ uint8_t decompress(const char* fileNameIn, const char* fileNameOut)
     if (!otic_unpack_defineChannel(&oticUnpack, 0x01, flusher2))
         return 0;
     size_t counter = 0;
-    while(!feof(inputFile) && counter < 2)
+    while(fpeek(inputFile) != EOF)
     {
         otic_unpack_parse(&oticUnpack);
-        printf("Counter: %lu\n", counter++);
     }
-
+    uint8_t error = oticUnpack.channels[0]->base.error;
+    printf("Read: %lu\n", oticUnpack.channels[0]->base.rowCounter);
     otic_unpack_close(&oticUnpack);
     fclose(inputFile);
     fclose(outputFile);
-    return 1;
+    return error;
 }
-
 
 // Total number of lines 5090023
 // TODO: Add a otic_file info fetcher
-// TODO: Decide Buffer Size: Either use BUFSIZE or 12000
-
-int main(void)
+// TODO: Decide Buffer Size: Either use BUFSIZE or 12000 (Mem. friendly = 16384)
+static uint8_t compare(const char* origFileName, const char* decompFileName)
 {
-  /*  struct stat stats;
-    inputFile = fopen("dump.otic", "r");
-    if (fstat(fileno(inputFile), &stats) == -1)
-    {
-        perror("fstat");
-        return 1;
-    }
-    printf("Buffize: %d Optimal Size %ld\n", BUFSIZ, stats.st_blksize);*/
-
-//    return !compress("bigFile.txt", "dump.otic");
-    return !decompress("dump.otic", "output.tsv");
-
-    return EXIT_SUCCESS;
+    FILE* originalFile = fopen(origFileName, "r");
+    FILE* decompFile = fopen(decompFileName, "r");
+    if (!originalFile || !decompFile)
+        return 0;
+//    return compare_compareNumbLines(originalFile, decompFile);
+    return compare_compareLineValues(originalFile, decompFile);
 }
 
-
-
-/*
-int main(int argc, char** argv)
+static uint8_t getLines(const char* fileInName, const char* fileOutName, size_t size)
 {
-    tsv_parser_error_e error;
-
-    */
-/*if (argc == 1) {
-        toConsole_usage();
-        return EXIT_FAILURE;
+    inputFile = fopen(fileInName, "r");
+    outputFile = fopen(fileOutName, "w");
+    char buffer[254];
+    size_t counter;
+    for (counter = 0; counter < size; counter++)
+    {
+        fscanf(inputFile, "%[^\n]\n", buffer);
+        fwrite(buffer, 1, strlen(buffer), outputFile);
+        fwrite("\n", 1, 1, outputFile);
     }
-    if (argc != 6) {
-        toConsole("Invalid Input\n");
-        toConsole_usage();
-        return EXIT_FAILURE;
-    }*//*
+    return counter;
+}
 
+// 2057929
+int main(void)
+{
+//    return compress("smallFile.txt", "dump.otic");
+//    return decompress("dump.otic", "output.tsv");
+    printf("%u\n", compare("smallFile.txt", "output.tsv"));
 
-*/
-/*    if ((error = inputCheck(argv) != TSV_PARSER_ERROR_NONE))
-        goto fail;*//*
-
-
-    size_t read = 0;
-
-//    if (same("-p", argv[1], 2)) {
-//        inputFile = fopen(argv[3], "r");
-//        outputFile = fopen(argv[5], "wb");
-
-        inputFile = fopen("bigFile.txt", "r");
-        outputFile = fopen("dump.otic", "wb");
-        if (!inputFile || !outputFile) {
-            error = TSV_PARSER_ERROR_FILE;
-            goto fail;
-        }
-
-        otic_pack_t oticPack;
-        if (!otic_pack_init(&oticPack, flusher)) {
-            otic_error = oticPack.error;
-            goto fail;
-        }
-        otic_pack_channel_t* channel = otic_pack_defineChannel(&oticPack, OTIC_CHANNEL_TYPE_SENSOR, 1, 0x0);
-
-        format_chunker_t formatChunker;
-        char buffer[READ_BUFFERSIZE];
-        if (!format_chunker_init(&formatChunker, '\t', 5)){
-            error = TSV_PARSER_ERROR_FORMATTER;
-            goto fail;
-        }
-        uint8_t decPos;
-        tsv_content_t content;
-        while (!feof(inputFile))
-        {
-            read = fread(buffer, 1, READ_BUFFERSIZE - 1024, inputFile);
-            read += fscanf(inputFile, "%[^\n]\n", buffer + read);
-            format_chunker_set(&formatChunker, buffer, read);
-            uint32_t sCounter = 0;
-            int32_t int_value;
-            while (formatChunker.ptr_current - formatChunker.ptr_start < formatChunker.size)
-            {
-                formatChunker.ptr_current = format_chunker_parse(&formatChunker);
-                char sBuffer[254] = {};
-                format_write(&formatChunker.format, sBuffer);
-                printf("%s\n", sBuffer);
-
-
-                if (!formatChunker.format.columns.content[4])
-                {
-                    otic_pack_channel_inject_n(channel, strtod(formatChunker.format.columns.content[4], 0),
-                                               formatChunker.format.columns.content[1],
-                                               formatChunker.format.columns.content[3]);
-                } else if (isNumeric(formatChunker.format.columns.content[4])) {
-                    if (!(decPos = getDecPos(formatChunker.format.columns.content[4])))
-                    {
-                        if ((int_value = strtol(formatChunker.format.columns.content[4], 0, 10)) >= 0)
-                        {
-                            otic_pack_channel_inject_i(channel,
-                                                       strtod(formatChunker.format.columns.content[0], 0),
-                                                       formatChunker.format.columns.content[1],
-                                                       formatChunker.format.columns.content[3],
-                                                       int_value
-                            );
-                        } else {
-                            otic_pack_channel_inject_i_neg(channel,
-                                                        strtod(formatChunker.format.columns.content[0], 0),
-                                                        formatChunker.format.columns.content[1],
-                                                        formatChunker.format.columns.content[3],
-                                                        -int_value
-                                                        );
-                        }
-                    } else {
-                        otic_pack_channel_inject_d(channel,
-                                                   strtod(formatChunker.format.columns.content[0], 0),
-                                                   formatChunker.format.columns.content[1],
-                                                   formatChunker.format.columns.content[3],
-                                                   strtod(formatChunker.format.columns.content[4], 0)
-                                                    );
-                    }
-                } else {
-                    otic_pack_channel_inject_s(channel,
-                                               strtod(formatChunker.format.columns.content[0], 0),
-                                               formatChunker.format.columns.content[1],
-                                               formatChunker.format.columns.content[3],
-                                               formatChunker.format.columns.content[4]
-                            );
-                }
-            }
-            break;
-        }
-
-        format_chunker_close(&formatChunker);
-        otic_pack_close(&oticPack);
-        fclose(inputFile);
-        fclose(outputFile);
-
-//    } else if (same("-u", argv[1], 2)) {
-//        inputFile = fopen(argv[3], "rb");
-//        outputFile = fopen(argv[5], "w");
-//        if (!inputFile || !outputFile){
-//            error = TSV_PARSER_ERROR_FILE;
-//            goto fail;
-//        }
-//    } else {
-//        error = TSV_PARSER_ERROR_INVALID_INPUT;
-//        goto fail;
-//    }
+//    getLines("bigFile.txt", "smallFile.txt", 1020391);
+//    getLines("bigFile.txt", "smallFile.txt", 200000);
     return EXIT_SUCCESS;
-
-fail:
-    toConsole("Error: ");
-    toConsole(tsv_parser_getError(error));
-    toConsole("\n");
-    toConsole_usage();
-    return EXIT_FAILURE;
-}*/
+}

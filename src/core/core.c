@@ -2,10 +2,10 @@
 // Created by hp on 9/18/19.
 //
 
-#include "core.h"
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
+#include "core.h"
 
 uint8_t otic_base_init(otic_base_t* base)
 {

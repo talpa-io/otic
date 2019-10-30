@@ -10,7 +10,7 @@ extern "C" {
 
 #define OTIC_UNPACK_OUT_SIZE 12000
 #define OTIC_UNPACK_OUTPUT_LIMIT 512
-#define OTIC_UNPACK_RESULT_OUTSIZE 2056
+#define OTIC_UNPACK_RESULT_OUTSIZE 1048576
 #if OTIC_UNPACK_RESULT_OUTSIZE < (OTIC_UNPACK_OUTPUT_LIMIT * 2)
 #error OTIC unpack requires the Output buffer to be twice as big as the threshold limit
 #endif
@@ -75,14 +75,13 @@ struct otic_unpack_t
     otic_state_e state;
     uint8_t(*fetcher)(uint8_t*, size_t);
     uint8_t(*seeker)(uint32_t);
-} ;
+};
 
 uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t), uint8_t(*seeker)(uint32_t)) __attribute__((nonnull(1,2)));
 uint8_t otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(uint8_t*, size_t)) __attribute__((nonnull(1, 3)));
 uint8_t otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8_t id);
 uint8_t otic_unpack_parse(otic_unpack_t* oticUnpackBase);
 uint8_t otic_unpack_close(otic_unpack_t* oticUnpackBase);
-
 
 #ifdef __cplusplus
 }

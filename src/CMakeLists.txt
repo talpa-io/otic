@@ -49,4 +49,4 @@ set_target_properties(
         PROPERTIES OUTPUT_NAME otic
 )
 
-target_compile_options(otic PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(otic PRIVATE -Wall -Wextra -Wpedantic)

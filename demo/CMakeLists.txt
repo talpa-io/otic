@@ -23,6 +23,10 @@ add_demo(tsvParser
         ../include/errHand/errHand.h
         ../include/format/format.h
         ../include/format/format.c
+        ../include/compare/compare.c
+        ../include/compare/compare.h
+        ../include/utilities/utilities.c
+        ../include/utilities/utilities.h
         )
 
 #target_compile_options(tsvParser PRIVATE -Wall -Wextra -pedantic -Werror)
