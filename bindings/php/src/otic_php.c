@@ -3,11 +3,10 @@
 #endif
 
 #include <php.h>
-#include <Zend/zend_exceptions.h>
+#include <otic.h>
 #include <Zend/zend.h>
-#include "config/config.h"
-#include "pack/pack.h"
-#include "unpack/unpack.h"
+#include <Zend/zend_exceptions.h>
+
 #define PHP_OTIC_EXTVER "1.0"
 #define PHP_OTIC_EXTNAME "otic"
 
@@ -33,18 +32,66 @@ PHP_METHOD(OticPack, __construct)
     oticPack_object* intern = Z_TSTOBJ_P(id);
     if (intern)
         intern->oticPackBase = emalloc(sizeof(otic_pack_t));
+
+
 }
 
 PHP_METHOD(OticPack, close)
 {
     zval* id = getThis();
     oticPack_object* intern;
-    if (zend_parse_parameters_none() == FAILURE)
+//    if (zend_parse_parameters_none() == FAILURE)
+//        RETURN_NULL()
+//    intern = Z_TSTOBJ_P(id);
+//    if (intern){
+//        otic_pack_close(intern->oticPackBase);
+//    }
+
+    php_printf("%s\n", __PRETTY_FUNCTION__);
+    if (zend_parse_parameters_none() != FAILURE)
         RETURN_NULL()
     intern = Z_TSTOBJ_P(id);
-    if (intern){
-        otic_pack_close(intern->oticPackBase);
+
+    zval call_func_name, call_func_ret, func_params[2];
+    uint32_t param_count = 2;
+    ZVAL_STRING(&call_func_name, "my_sum");
+    ZVAL_LONG(&func_params[9], 10)
+    ZVAL_LONG(&func_params[1], 20)
+
+    if (SUCCESS != call_user_function(EG(function_table), NULL, &call_func_name, &call_func_ret, param_count, func_params))
+        RETURN_FALSE
+    RETURN_LONG(Z_LVAL(call_func_ret))
+}
+
+PHP_METHOD(OticPack, test)
+{
+    php_printf("%s\n", __PRETTY_FUNCTION__);
+    zval* id = getThis();
+    oticPack_object* intern;
+    zend_fcall_info fcallInfo;
+    zend_fcall_info_cache fcallInfoCache;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f", &fcallInfo, &fcallInfoCache) == FAILURE)
+        RETURN_FALSE
+
+    php_printf("%ld\n", fcallInfo.param_count);
+
+//    if (SUCCESS != zend_call_function(&(fcallInfo), &fcallInfoCache))
+//        RETURN_LONG(-2)
+    printf("Reached");
+    /*php_printf("%s\n", __PRETTY_FUNCTION__);
+    zval* id = getThis();
+    oticPack_object* intern;
+    zval call_func_name, call_func_ret, func_params[2];
+    uint32_t param_count = 2;
+    ZVAL_STRING(&call_func_name, "my_sum");
+    ZVAL_LONG(&func_params[0], 10)
+    ZVAL_LONG(&func_params[1], 20)
+    if (SUCCESS != call_user_function(EG(function_table), NULL, &call_func_name, &call_func_ret, param_count, func_params))
+    {
+        RETURN_LONG(-1)
     }
+    php_printf("%s\n", "Reached");
+    RETURN_LONG(Z_LVAL(call_func_ret))*/
 }
 
 PHP_METHOD(OticPack, flush)
@@ -97,11 +144,17 @@ ZEND_BEGIN_ARG_INFO_EX(argInfo_closeChannel, 0, 0, 1)
     ZEND_ARG_INFO(0, channelId)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(FUNCTION_PARAM, 0, 0, 1)
+    ZEND_ARG_INFO(0, callable)
+ZEND_END_ARG_INFO()
+
+
 const zend_function_entry oticPack_methods[] = {
     PHP_ME(OticPack, __construct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(OticPack, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
     PHP_ME(OticPack, flush, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(OticPack, close, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(OticPack, test, FUNCTION_PARAM, ZEND_ACC_PUBLIC)
     PHP_ME(OticPack, defineChannel, argInfo_defineChannel, ZEND_ACC_PUBLIC)
     PHP_ME(OticPack, closeChannel, argInfo_closeChannel, ZEND_ACC_PUBLIC)
     PHP_FE_END
@@ -131,7 +184,7 @@ static void oticPack_object_free(zend_object* object)
 PHP_MINIT_FUNCTION(otic)
 {
     zend_class_entry ce;
-    INIT_CLASS_ENTRY(ce, "OticPack", oticPack_methods);
+    INIT_CLASS_ENTRY(ce, "Otic\\OticPack", oticPack_methods);
     oticPack_ce = zend_register_internal_class(&ce TSRMLS_CC);
     oticPack_ce->create_object = oticPack_object_new;
 
@@ -174,8 +227,6 @@ ZEND_GET_MODULE(otic)
 #include "../../../src/unpack/unpack.h"
 #define OTIC_PHP_VERSION "1.0"
 #define OTIC_PHP_EXTNAME "otic"
-
-// https://www.maplenerds.com/blog/2018/6/14/writing-php-72-extensions-with-c
 
 
 zend_object_handlers otic_pack_handlers;

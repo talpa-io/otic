@@ -9,6 +9,7 @@
 #include <format/format.h>
 #include <assert.h>
 #include <sys/stat.h>
+#include <fenv.h>
 
 #include "pack/pack.h"
 #include "unpack/unpack.h"
@@ -218,24 +219,9 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
         format_chunker_set(&formatChunker, buffer, read);
         int64_t int_value = 0;
         uint8_t decPos = 0;
-//        if (channel->base.rowCounter == 2057929)
-//        {
-//            printf("sCounter: %d\n", sCounter);
-////            return 1;
-//            printf("%s\n", buffer);
-//        }
-//        if (sCounter == 127) {
-//            printf("%s\n", buffer);
-//            printf("End: %s\n", end);
-//        }
         sCounter++;
-//        continue;
         while (formatChunker.ptr_current - formatChunker.ptr_start < formatChunker.size) {
             formatChunker.ptr_current = format_chunker_parse(&formatChunker);
-            if (channel->base.rowCounter == 160)
-            {
-                printf("Reached!");
-            }
             if (!formatChunker.format.columns.content[4])
             {
                  otic_pack_channel_inject_n(channel, strtod(formatChunker.format.columns.content[0], 0),
@@ -319,7 +305,6 @@ static uint8_t compare(const char* origFileName, const char* decompFileName)
     FILE* decompFile = fopen(decompFileName, "r");
     if (!originalFile || !decompFile)
         return 0;
-//    return compare_compareNumbLines(originalFile, decompFile);
     return compare_compareLineValues(originalFile, decompFile);
 }
 
@@ -338,14 +323,16 @@ static uint8_t getLines(const char* fileInName, const char* fileOutName, size_t 
     return counter;
 }
 
-// 2057929
+// 357470
 int main(void)
 {
-    return compress("bigFile.txt", "dump.otic");
+    fesetround(FE_UPWARD);
+
+//    return compress("smallFile.txt", "dump.otic");
 //    return decompress("dump.otic", "output.tsv");
-    printf("%u\n", compare("smallFile.txt", "output.tsv"));
+//    printf("%u\n", compare("smallFile.txt", "output.tsv"));
 
 //    getLines("bigFile.txt", "smallFile.txt", 1020391);
-//    getLines("bigFile.txt", "smallFile.txt", 200000);
+//    getLines("bigFile.txt", "smallFile.txt", 500000);
     return EXIT_SUCCESS;
 }

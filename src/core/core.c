@@ -65,35 +65,29 @@ inline void otic_base_close(otic_base_t* base)
  */
 uint8_t leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest)
 {
-    static uint8_t byte;
-    static uint8_t counter;
-    counter = 0;
-    do {
-        byte = value;
+    uint8_t* p = dest;
+    while (value >= 128)
+    {
+        *p++ = 0x80u | (value & 0x7Fu);
         value >>= 7u;
-        byte &= ~0x80u;
-        dest[counter++] = byte | 0x80u;
-    } while (value != 0);
-    dest[counter - 1] &= ~0x80u;
-    return counter;
+    }
+    *p++ = (uint8_t)value;
+    return p - dest;
 }
 
 uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value)
 {
-    static uint8_t shift;
-    static uint8_t byte;
-    static uint8_t counter;
+    const uint8_t* ptr = encoded_values;
+    uint8_t shift = 0;
     *value = 0;
-    counter = 0;
-    shift = 0;
-    while (1) {
-        byte = encoded_values[counter++];
-        *value |= (byte &~0x80u) << shift;
-        if (!(byte >> 7u))
+    while(1)
+    {
+        *value |= ((*ptr & 0x7Fu) << shift);
+        if (!(*ptr++ >> 7u))
             break;
         shift += 7;
     }
-    return counter;
+    return ptr - encoded_values;
 }
 
 uint8_t leb128_encode_signed(int64_t value, uint8_t* restrict dest)
@@ -126,14 +120,14 @@ uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* re
     uint8_t shift = 0;
     uint8_t size = sizeof(int64_t) * CHAR_BIT;
     uint8_t byte;
-    uint8_t counter = 0;
+    int8_t counter = 0;
     do {
         byte = encoded_values[counter++];
-        *result |= (byte & ~0x80u) << shift;
+        *result |= (byte & ~0x80) << shift;
         shift += 7;
-    } while ((byte >> 7u));
-    if ((shift < size) && (byte & ~0xBFu) >> 6u)
-        *result |= (~0u << shift);
+    } while ((byte >> 7));
+    if ((shift < size) && (byte & ~0xBF) >> 6)
+        *result |= (~0 << shift);
     return counter;
 }
 

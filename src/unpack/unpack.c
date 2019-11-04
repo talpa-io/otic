@@ -46,6 +46,7 @@ static otic_unpack_entry_t* otic_unpack_insert_entry(otic_unpack_channel_t* chan
     memcpy(channel->cache_t.cache[channel->cache_t.totalEntries]->name, value, lengthValue);
     channel->cache_t.cache[channel->cache_t.totalEntries]->name[lengthValue] = 0;
     channel->cache_t.cache[channel->cache_t.totalEntries]->unit = malloc((end - ptr + 1u) * sizeof(char));
+    channel->cache_t.cache[channel->cache_t.totalEntries]->unit[end - ptr] = 0;
     memcpy(channel->cache_t.cache[channel->cache_t.totalEntries]->unit, ptr,  end - ptr);
     channel->cache_t.cache[channel->cache_t.totalEntries]->last_value.string_value.size = 0;
     channel->cache_t.cache[channel->cache_t.totalEntries]->last_value.string_value.value = 0;
@@ -204,6 +205,10 @@ static void otic_unpack_read_string(otic_unpack_channel_t* channel)
 OTIC_UNPACK_INLINE
 static void otic_unpack_read_unmodified(otic_unpack_channel_t* channel)
 {
+    if (channel->base.rowCounter == 357470)
+    {
+        printf("Called");
+    }
     channel->base.top += leb128_decode_unsigned(channel->base.top, &channel->entryIndex);
     channel->cache_t.currentEntry = channel->cache_t.cache[channel->entryIndex];
     parsers[channel->cache_t.currentEntry->type].printerFunc(channel);
@@ -336,9 +341,6 @@ static void otic_unpack_read_data(otic_unpack_t* oticUnpack)
                 otic_base_setError(&oticUnpack->channels[counter]->base, OTIC_ERROR_ZSTD);
                 return;
             }
-            FILE* file = fopen("check.bin", "wb");
-            fwrite(oticUnpack->channels[counter]->out, 1, oticUnpack->channels[counter]->blockSize, file);
-            fflush(file);
             oticUnpack->channels[counter]->base.top = oticUnpack->channels[counter]->out;
             otic_unpack_parseBlock(oticUnpack->channels[counter]);
             return;
@@ -467,7 +469,6 @@ uint8_t otic_unpack_channel_close(otic_unpack_channel_t* channel)
     otic_base_setState(&channel->base, OTIC_STATE_CLOSED);
     return 1;
 }
-
 
 uint8_t otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8_t id)
 {

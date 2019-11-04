@@ -1,7 +1,8 @@
 #include <string.h>
 #include <stdlib.h>
+#include <printf.h>
 #include "pack.h"
-
+#include <stdio.h>
 /**
  * The purpose of the following 6-7 lines, is to inline each static functions defines in this file.
  * This allows the use of the concerned functions without calling them, as their body gets replaced
@@ -264,8 +265,9 @@ static otic_state_e otic_pack_getState(otic_pack_t* restrict oticPack)
 {
     return oticPack->state;
 }
-
+#include <stdio.h>
 uint8_t otic_pack_channel_inject_i_neg(otic_pack_channel_t* channel, double timestamp, const char *sensorName, const char *unit, uint32_t value) {
+
     otic_ts_handler(channel, timestamp);
     otic_entry_t *entry = otic_pack_entry_find(channel, sensorName);
     if (!entry){
@@ -289,6 +291,7 @@ uint8_t otic_pack_channel_inject_i_neg(otic_pack_channel_t* channel, double time
             write_long(channel, entry->index);
         } else {
             entry->last_value.int_value = value;
+            entry->type = OTIC_TYPE_INT32_NEG;
             otic_pack_write_byte(channel, OTIC_TYPE_INT32_NEG);
             write_long(channel, entry->index);
             write_long(channel, value);
@@ -336,7 +339,7 @@ uint8_t otic_pack_channel_inject_i(otic_pack_channel_t* channel, double timestam
     otic_pack_flush_if_flushable(channel);
     return 1u;
 fail:
-    otic_base_setState(&channel->base, OTIC_STATE_CLOSED);
+    otic_base_setState(&channel->base, OTIC_STATE_ON_ERROR);
     return 0;
 }
 
@@ -599,8 +602,7 @@ uint8_t otic_pack_init(otic_pack_t* oticPack, uint8_t(*flusher)(uint8_t*, size_t
     oticPack->flusher = flusher;
     oticPack->channels = 0;
     oticPack->totalChannels = 0;
-    otic_header_t header = {.magic = "OC\x07\xFF", .features = 0x00, .version = OTIC_VERSION_MAJOR};
-    flusher((uint8_t*)&header, sizeof(otic_header_t));
+    flusher((uint8_t*)&(otic_header_t){.magic = "OC\x07\xFF", .features=0x00, .version = OTIC_VERSION_MAJOR}, sizeof(otic_header_t));
     otic_pack_setState(oticPack, OTIC_STATE_OPENED);
     otic_pack_setError(oticPack, OTIC_ERROR_NONE);
     return 1;

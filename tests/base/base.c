@@ -77,7 +77,6 @@ static void test_state_handling(void)
     assert(OTIC_STATE_ON_ERROR == otic_base_getState(&oticBase));
 }
 
-
 int main()
 {
     test_base_init();
@@ -85,5 +84,15 @@ int main()
     test_state_handling();
     test_leb128_unsigned();
 //    test_leb128_signed();
+
+//    int64_t value = -123456;
+    /*int64_t value = INT16_MIN;
+    unsigned char buffer[10] = {};
+    int64_t decoded = 0;
+    uint8_t ret = leb128_encode_signed(value, buffer);
+    leb128_decode_signed(buffer, &decoded);
+    printf("Decoded: %ld\n", decoded);
+    assert(value == decoded);*/
+
     return 0;
 }
