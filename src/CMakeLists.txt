@@ -13,7 +13,7 @@ set(OTIC_UNPACK_FILES
         unpack/unpack.h
         )
 
-add_library(otic SHARED
+add_library(otic_shared SHARED
         ${OTIC_PACK_FILES}
         ${OTIC_UNPACK_FILES}
         ${OTIC_CORE_FILES}
@@ -25,7 +25,7 @@ add_library(otic_static STATIC
         ${OTIC_CORE_FILES}
         )
 
-target_include_directories(otic
+target_include_directories(otic_shared
         PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
@@ -38,7 +38,7 @@ target_include_directories(otic_static
         )
 
 set_target_properties(
-        otic
+        otic_shared
         PROPERTIES OUTPUT_NAME otic
         VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
         SOVERSION ${PROJECT_VERSION_MAJOR}
@@ -49,4 +49,15 @@ set_target_properties(
         PROPERTIES OUTPUT_NAME otic
 )
 
-target_compile_options(otic PRIVATE -Wall -Wextra -Wpedantic)
+target_compile_options(otic_shared PRIVATE -Wall -Wextra -Wpedantic)
+
+install(TARGETS otic_shared
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        )
+install(TARGETS otic_static
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        )

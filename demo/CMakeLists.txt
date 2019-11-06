@@ -29,5 +29,15 @@ add_demo(tsvParser
         ../include/utilities/utilities.h
         )
 
+set_target_properties(
+        tsvParser
+        PROPERTIES OUTPUT_NAME otic
+)
+
+install(
+        TARGETS tsvParser
+        RUNTIME DESTINATION bin
+        )
+
 #target_compile_options(tsvParser PRIVATE -Wall -Wextra -pedantic -Werror)
 #target_compile_options(tsvParser PRIVATE -Wall -Wextra -pedantic)

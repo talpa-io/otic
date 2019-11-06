@@ -10,7 +10,7 @@
 
 uint8_t format_init(format_t *restrict format, char delimiter, size_t numb_columns)
 {
-    if (!format || !(format->columns.content = malloc(numb_columns * sizeof(format_t))))
+    if (!format || !(format->columns.content = malloc(numb_columns * sizeof(char*))))
         return 0;
     format->delimiter = delimiter;
     format->columns.size = numb_columns;

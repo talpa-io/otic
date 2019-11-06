@@ -1,9 +1,8 @@
 enable_testing()
-
 function(OTIC_ADDTEST testName)
     add_executable(${testName} ${ARGN} test_asserts.h)
     target_link_libraries(${testName} otic zstd m pthread)
-    add_test(${testName} testName)
+    add_test(NAME ${testName} COMMAND ${testName})
     set_target_properties(${testName} PROPERTIES LINKER_LANGUAGE C)
     target_include_directories(${testName} PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/include)
 endfunction()

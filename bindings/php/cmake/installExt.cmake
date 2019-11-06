@@ -14,10 +14,11 @@ message(STATUS "PHP Ini Path: ${PHP_INI_PATH}")
 set(EXTENSION_PARAMETERS ";extension=libotic_php.so")
 
 FILE(READ ${PHP_INI_PATH} PHP_INI_CONTENT)
-string(REGEX MATCH ";extension=[^x]*xmlrpc" EXT_RES ${PHP_INI_CONTENT})
+string(REGEX MATCH "[Inter[^]]*]" EXT_RES ${PHP_INI_CONTENT})
+
 
 #if (NOT ${EXT_RES})
 #    message(STATUS "NOT Found!")
 #else()
     message(STATUS "Found: ${EXT_RES}")
-#endi f()
+#endif()

@@ -55,7 +55,7 @@ string(REPLACE "-I" "" PHP_INCLUDES ${PHP_INCLUDES})
 separate_arguments(PHP_INCLUDES)
 message(STATUS "PHP Including: ")
 foreach (X ${PHP_INCLUDES})
-    message(STATUS "\t\t${X}")
+    message(STATUS "\t${X}")
 endforeach ()
 
 include_directories(

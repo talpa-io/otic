@@ -1,12 +1,12 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.10)
 
 if (POLICY CMP0048)
-    message(STATUS "To CMP0048 NEW")
+    message(STATUS "To newer CMP0048 Policy")
     cmake_policy(SET CMP0048 NEW)
 endif()
 
 if (POLICY CMP0054)
-    message(STATUS "To CMP0054 NEW")
+    message(STATUS "To newer CMP0054 Policy")
     cmake_policy(SET CMP0054 NEW)
 endif()
 
@@ -40,26 +40,31 @@ configure_file(
 
 include(cmake/tools.cmake)
 
-if (ALLOW_CMAKE_LIB_FETCH)
-    set(ZSTD_BUILD_PROGRAMS OFF CACHE BOOL "Disable Zstd programs build")
-    include(FetchContent)
-#    set(FETCHCONTENT_BASE_DIR ${PROJECT_SOURCE_DIR}/deps)
-    FetchContent_Declare(
-            zstd
-            GIT_REPOSITORY https://github.com/facebook/zstd.git
-            GIT_TAG        v1.4.3
-    )
-    FetchContent_GetProperties(zstd)
-    if (NOT zstd_POPULATED)
-        FetchContent_Populate(zstd)
-        add_subdirectory(${zstd_SOURCE_DIR}/build/cmake ${zstd_BINARY_DIR})
-    endif()
-    include_directories(${zstd_SOURCE_DIR}/lib)
-endif(ALLOW_CMAKE_LIB_FETCH)
+CHECK_INCLUDE_FILE(zstd.h ZSTD_EXISTS)
+
+if (NOT ZSTD_EXISTS)
+    if (ALLOW_CMAKE_LIB_FETCH)
+        set(ZSTD_BUILD_PROGRAMS OFF CACHE BOOL "Disable Zstd programs build")
+        include(FetchContent)
+    #    set(FETCHCONTENT_BASE_DIR ${PROJECT_SOURCE_DIR}/deps)
+        FetchContent_Declare(
+                zstd
+                GIT_REPOSITORY https://github.com/facebook/zstd.git
+                GIT_TAG        v1.4.3
+        )
+        FetchContent_GetProperties(zstd)
+        if (NOT zstd_POPULATED)
+            FetchContent_Populate(zstd)
+            add_subdirectory(${zstd_SOURCE_DIR}/build/cmake ${zstd_BINARY_DIR})
+        endif()
+        include_directories(${zstd_SOURCE_DIR}/lib)
+    endif(ALLOW_CMAKE_LIB_FETCH)
+endif()
 
 add_subdirectory(src)
 
 if (ENABLE_OPTIC_TESTS)
+    include(CTest)
     add_subdirectory(tests)
 endif()
 
@@ -75,21 +80,13 @@ generate_single_file(otic.h
         src/pack/pack.h
         src/unpack/unpack.h
         )
-install(TARGETS otic
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        )
-install(TARGETS otic_static
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lin
-        ARCHIVE DESTINATION lib
-        )
+
 install(FILES "${PROJECT_BINARY_DIR}/otic.h"
         CONFIGURATIONS Release | Debug
         DESTINATION include
         COMPONENT Devel
         )
+
 #install(TARGETS libotic
 #        CONFIGURATIONS Release | Debug
 #        LIBRARY DESTINATION lib

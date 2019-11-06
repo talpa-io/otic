@@ -1,10 +1,12 @@
 <?php
-    use Otic as Otic;
-    function my_sum($a, $b) {
-        return $a + $b;
-    }
-    $x = new Otic\OticPack();
-    echo "Returned: ".$x->test('my_sum')."\n";
-//    var_dump($x->test)
-    $x = null;
-	echo "Hallo World\n";
+    use Otic\OticPack;
+
+    $outputFile = fopen('dump.otic', 'wb');
+
+    $x = new OticPack(function($content, $size) use ($outputFile){ fwrite($outputFile, $content,$size); });
+    $x->defineChannel(1, "sensor", 0);
+
+    //$y = new OticPackChannel();
+
+
+    fclose($outputFile);

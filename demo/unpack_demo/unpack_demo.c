@@ -50,6 +50,8 @@ int main()
     srcFile = fopen("pack_demo.otic", "rb");
     destFile = fopen("dump.tsv", "w");
 
+
+    // TODO: CHECK SEGFAULT
     otic_unpack_t oticUnpack;
     if (!otic_unpack_init(&oticUnpack, fetcher, seeker))
         goto fail;

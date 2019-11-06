@@ -71,21 +71,27 @@ static void otic_unpack_flush_if_flushable(otic_unpack_channel_t* channel)
 OTIC_UNPACK_INLINE
 static void otic_unpack_printer_i(otic_unpack_channel_t* channel)
 {
-    channel->result.top += sprintf(channel->result.top, "%lf\t%s\t%s\t%u\n", channel->doubleTs, channel->cache_t.currentEntry->name, channel->cache_t.currentEntry->unit, channel->cache_t.currentEntry->last_value.int_value);
+    channel->result.top += sprintf(channel->result.top, "%lf\t%s\t%s\t%u\n", channel->doubleTs,
+                                   channel->cache_t.currentEntry->name, channel->cache_t.currentEntry->unit,
+                                   channel->cache_t.currentEntry->last_value.int_value);
     otic_unpack_flush_if_flushable(channel);
 }
 
 OTIC_UNPACK_INLINE
 static void otic_unpack_printer_in(otic_unpack_channel_t* channel)
 {
-    channel->result.top += sprintf(channel->result.top, "%lf\t%s\t%s\t-%u\n", channel->doubleTs, channel->cache_t.currentEntry->name, channel->cache_t.currentEntry->unit, channel->cache_t.currentEntry->last_value.int_value);
+    channel->result.top += sprintf(channel->result.top, "%lf\t%s\t%s\t-%u\n", channel->doubleTs,
+                                   channel->cache_t.currentEntry->name, channel->cache_t.currentEntry->unit,
+                                   channel->cache_t.currentEntry->last_value.int_value);
     otic_unpack_flush_if_flushable(channel);
 }
 
 OTIC_UNPACK_INLINE
 static void otic_unpack_printer_d(otic_unpack_channel_t* channel)
 {
-    channel->result.top += sprintf(channel->result.top, "%lf\t%s\t%s\t%lf\n", channel->doubleTs, channel->cache_t.currentEntry->name, channel->cache_t.currentEntry->unit, channel->cache_t.currentEntry->last_value.double_value);
+    channel->result.top += sprintf(channel->result.top, "%lf\t%s\t%s\t%lf\n", channel->doubleTs,
+                                   channel->cache_t.currentEntry->name, channel->cache_t.currentEntry->unit,
+                                   channel->cache_t.currentEntry->last_value.double_value);
     otic_unpack_flush_if_flushable(channel);
 }
 
@@ -93,14 +99,17 @@ static void otic_unpack_printer_d(otic_unpack_channel_t* channel)
 OTIC_UNPACK_INLINE
 static void otic_unpack_printer_s(otic_unpack_channel_t* channel)
 {
-    channel->result.top += sprintf(channel->result.top, "%lf\t%s\t%s\t%s\n", channel->doubleTs, channel->cache_t.currentEntry->name, channel->cache_t.currentEntry->unit, channel->cache_t.currentEntry->last_value.string_value.value);
+    channel->result.top += sprintf(channel->result.top, "%lf\t%s\t%s\t%s\n", channel->doubleTs,
+                                   channel->cache_t.currentEntry->name, channel->cache_t.currentEntry->unit,
+                                   channel->cache_t.currentEntry->last_value.string_value.value);
     otic_unpack_flush_if_flushable(channel);
 }
 
 OTIC_UNPACK_INLINE
 static void otic_unpack_printer_n(otic_unpack_channel_t* channel)
 {
-    channel->result.top += sprintf(channel->result.top, "%lf\t%s\t%s\t\n", channel->doubleTs, channel->cache_t.currentEntry->name, channel->cache_t.currentEntry->unit);
+    channel->result.top += sprintf(channel->result.top, "%lf\t%s\t%s\t\n", channel->doubleTs,
+                                   channel->cache_t.currentEntry->name, channel->cache_t.currentEntry->unit);
     otic_unpack_flush_if_flushable(channel);
 }
 
@@ -205,10 +214,6 @@ static void otic_unpack_read_string(otic_unpack_channel_t* channel)
 OTIC_UNPACK_INLINE
 static void otic_unpack_read_unmodified(otic_unpack_channel_t* channel)
 {
-    if (channel->base.rowCounter == 357470)
-    {
-        printf("Called");
-    }
     channel->base.top += leb128_decode_unsigned(channel->base.top, &channel->entryIndex);
     channel->cache_t.currentEntry = channel->cache_t.cache[channel->entryIndex];
     parsers[channel->cache_t.currentEntry->type].printerFunc(channel);

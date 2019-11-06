@@ -9,10 +9,14 @@ command:
   init:
 
   make:
-    - "echo build goes here!"
+    - "if [ -d `pwd`/kbuild ]; then rm -rf `pwd`/kbuild/*; else mkdir kbuild; fi"
+    - "cmake . -Bkbuild -DCMAKE_BUILD_TYPE=Release"
+    - "make -C kbuild"
+    - "sudo make install -C kbuild"
+    - "sudo ldconfig"
 
   test:
-    - "echo Todo"
+    - "cd kbuild && ctest"
   run:
   dev:
     - "echo 'I am executed in dev mode'"

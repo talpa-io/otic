@@ -33,11 +33,6 @@ typedef enum
     TSV_PARSER_ERROR_OTIC
 } tsv_parser_error_e;
 
-static void toConsole(const char* message)
-{
-    fprintf(stderr, "%s", message);
-}
-
 static inline const char* tsv_parser_getError(tsv_parser_error_e error)
 {
     switch (error)
@@ -57,12 +52,6 @@ static inline const char* tsv_parser_getError(tsv_parser_error_e error)
         default:
             return "Unknown Error";
     }
-}
-
-static inline void toConsole_usage(void)
-{
-    toConsole("Usage: ");
-    toConsole("./otic [-p|-u] [-i] inputFileName [-o] outputFileName\n");
 }
 
 inline static uint8_t same(const char* value1, const char* value2, uint32_t max)
@@ -122,8 +111,7 @@ static inline uint8_t flusher(uint8_t* value, size_t size)
 
 static inline uint8_t fetcher(uint8_t* value, size_t size)
 {
-    fread(value, 1, size, inputFile);
-    return 1;
+    return fread(value, 1, size, inputFile) != 0;
 }
 
 static inline uint8_t seeker(uint32_t pos)
@@ -169,11 +157,11 @@ inline static size_t getLinesNumber(const char* fileName)
 {
     FILE* file = fopen(fileName, "r");
     size_t counter = 0;
-
     char buffer[512];
+    int ret;
     while(!feof(file))
     {
-        fscanf(file, "%[^\n]\n", buffer);
+        ret = fscanf(file, "%[^\n]\n", buffer);
         ++counter;
     }
     return counter;
@@ -215,11 +203,16 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
         scanned = fscanf(inputFile, "%[^\n]\n", (end = buffer + read));
         if (scanned != -1)
             read += strlen(end);
+        if (scanned == 0)
+        {
+            int got;
+            if ((got = fgetc(inputFile)) != '\n')
+                ungetc(got, inputFile);
+        }
         buffer[read] = 0;
         format_chunker_set(&formatChunker, buffer, read);
         int64_t int_value = 0;
         uint8_t decPos = 0;
-        sCounter++;
         while (formatChunker.ptr_current - formatChunker.ptr_start < formatChunker.size) {
             formatChunker.ptr_current = format_chunker_parse(&formatChunker);
             if (!formatChunker.format.columns.content[4])
@@ -264,7 +257,6 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
             }
         }
     }
-    printf("Row Counter: %lu\n", channel->base.rowCounter);
     otic_pack_close(&oticPack);
     format_chunker_close(&formatChunker);
     fclose(inputFile);
@@ -283,13 +275,11 @@ inline static uint8_t decompress(const char* fileNameIn, const char* fileNameOut
         return 0;
     if (!otic_unpack_defineChannel(&oticUnpack, 0x01, flusher2))
         return 0;
-    size_t counter = 0;
     while(fpeek(inputFile) != EOF)
     {
         otic_unpack_parse(&oticUnpack);
     }
     uint8_t error = oticUnpack.channels[0]->base.error;
-    printf("Read: %lu\n", oticUnpack.channels[0]->base.rowCounter);
     otic_unpack_close(&oticUnpack);
     fclose(inputFile);
     fclose(outputFile);
@@ -314,25 +304,45 @@ static uint8_t getLines(const char* fileInName, const char* fileOutName, size_t 
     outputFile = fopen(fileOutName, "w");
     char buffer[254];
     size_t counter;
+    int ret;
     for (counter = 0; counter < size; counter++)
     {
-        fscanf(inputFile, "%[^\n]\n", buffer);
+        ret = fscanf(inputFile, "%[^\n]\n", buffer);
         fwrite(buffer, 1, strlen(buffer), outputFile);
         fwrite("\n", 1, 1, outputFile);
     }
     return counter;
 }
 
-// 357470
-int main(void)
+int main(int argc, char** argv)
 {
-    fesetround(FE_UPWARD);
+    if (argc == 1)
+        goto usage;
+    if (argc == 2 && same("-h", argv[1], 2))
+        goto usage;
+    if (argc == 2 && same("-v", argv[1], 2))
+        goto version;
+    if (argc == 6)
+    {
+        fesetround(FE_UPWARD);
+        if (same("-i", argv[2], 2) && same("-o", argv[4], 2)) {
+            if (same("-p", argv[1], 2))
+                return compress(argv[3], argv[5]);
+            else if (same("-u", argv[1], 2))
+                return decompress(argv[3], argv[5]);
+            else if (same("-c", argv[1], 2))
+                return compare(argv[3], argv[5]);
+        }
+    }
+    goto invalid_input;
 
-//    return compress("smallFile.txt", "dump.otic");
-//    return decompress("dump.otic", "output.tsv");
-//    printf("%u\n", compare("smallFile.txt", "output.tsv"));
-
-//    getLines("bigFile.txt", "smallFile.txt", 1020391);
-//    getLines("bigFile.txt", "smallFile.txt", 500000);
+usage:
+    fprintf(stderr, "%s", "Usage: otic [-p|-u|-c|-h|-v] [-i] inputFileName [-o] outputFileName\n");
     return EXIT_SUCCESS;
+version:
+    fprintf(stderr, "v%d.%d.%d\n", OTIC_VERSION_MAJOR, OTIC_VERSION_MINOR, OTIC_VERSION_PATCH);
+    return EXIT_SUCCESS;
+invalid_input:
+    fprintf(stderr, "%s", "Invalid Input\n");
+    goto usage;
 }
