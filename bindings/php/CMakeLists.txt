@@ -18,9 +18,9 @@ include(cmake/php.cmake)
 include(CheckIncludeFile)
 
 CHECK_INCLUDE_FILE(otic.h HAS_OTIC_H CMAKE_REQUIRED_INCLUDES)
-if (NOT HAS_OTIC_H)
-    message(FATAL_ERROR "otic.h was not found on the system! Make sure to build and/or install libotic first")
-endif()
+#if (NOT HAS_OTIC_H)
+#    message(FATAL_ERROR "otic.h was not found on the system! Make sure to build and/or install libotic first")
+#endif()
 
 
 execute_process(

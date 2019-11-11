@@ -337,7 +337,7 @@ int main(int argc, char** argv)
     goto invalid_input;
 
 usage:
-    fprintf(stderr, "%s", "Usage: otic [-p|-u|-c|-h|-v] [-i] inputFileName [-o] outputFileName\n");
+    fprintf(stderr, "%s", "Usage: otic [-p|-u|-c|-h|-v] [-i] <inputFileName> [-o] <outputFileName>\n");
     return EXIT_SUCCESS;
 version:
     fprintf(stderr, "v%d.%d.%d\n", OTIC_VERSION_MAJOR, OTIC_VERSION_MINOR, OTIC_VERSION_PATCH);

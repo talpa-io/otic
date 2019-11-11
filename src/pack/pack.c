@@ -1,8 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <printf.h>
-#include "pack.h"
 #include <stdio.h>
+#include "pack.h"
+
 /**
  * The purpose of the following 6-7 lines, is to inline each static functions defines in this file.
  * This allows the use of the concerned functions without calling them, as their body gets replaced
@@ -265,7 +266,7 @@ static otic_state_e otic_pack_getState(otic_pack_t* restrict oticPack)
 {
     return oticPack->state;
 }
-#include <stdio.h>
+
 uint8_t otic_pack_channel_inject_i_neg(otic_pack_channel_t* channel, double timestamp, const char *sensorName, const char *unit, uint32_t value) {
 
     otic_ts_handler(channel, timestamp);
@@ -580,7 +581,6 @@ uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel)
         otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
         goto fail;
     }
-
 #endif
     channel->base.timestamp_start = 0;
     channel->base.top = channel->base.cache;
@@ -648,6 +648,7 @@ otic_pack_channel_t* otic_pack_defineChannel(otic_pack_t* oticPack, channel_type
         otic_pack_setError(oticPack, OTIC_ERROR_ALLOCATION_FAILURE);
         goto fail;
     }
+
     otic_meta_data_t oticMetaData[3] = {
             {.metaType = OTIC_META_TYPE_CHANNEL_DEFINE, .metaArg = id},
             {.metaType = OTIC_META_TYPE_CHANNEL_TYPE, .metaArg = channelType},
