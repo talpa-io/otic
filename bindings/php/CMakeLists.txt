@@ -22,7 +22,6 @@ CHECK_INCLUDE_FILE(otic.h HAS_OTIC_H CMAKE_REQUIRED_INCLUDES)
 #    message(FATAL_ERROR "otic.h was not found on the system! Make sure to build and/or install libotic first")
 #endif()
 
-
 execute_process(
         COMMAND php-config --include-dir
         OUTPUT_VARIABLE PHP_INCLUDE_DIR
@@ -81,6 +80,7 @@ set(PHPOTIC_SRC_FILES
 #endif()
 
 add_php_executable(demo/pack/simple_pack.php)
+add_php_executable(demo/unpack/simple_unpack.php)
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
     add_definitions(-DHAVE_CONFIG_H)

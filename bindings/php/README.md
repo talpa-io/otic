@@ -14,7 +14,6 @@ class OticPack
     public function defineChannel(int $channelId, int $channelType): OticPackChannel;
     public function closeChannel(int $channelId): bool;
     public function flush();
-    public function close();
     public function __destruct();
 }
 
@@ -25,7 +24,6 @@ class OticPackChannel
     public function __debugInfo(): array;
     public function inject(float $timestamp, string $sensorName, string $sensorUnit, $value): bool;
     public function flush();
-    public function close();
     public function __destruct();
 }
 
@@ -37,7 +35,15 @@ class OticPackStream
     public function defineChannel(int $channelId, int $channelType): OticPackChannel;
     public function closeChannel(int $channelId): bool;
     public function flush();
-    public function close();
+    public function __destruct();
+}  
+
+class OticUnpack
+{
+    public function __construct(callable $fetcher, callable $seeker = null);
+    public function defineChannel(int $channelId, callable $flusher): bool;
+    public function closeChannel(int $channelId): bool;
+    public parse(): bool;
     public function __destruct();
 }
 
