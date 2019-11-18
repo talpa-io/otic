@@ -48,6 +48,27 @@ ZEND_BEGIN_ARG_INFO_EX(FUNCTION_INJECT, 0, 0, 4)
                 ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
+typedef struct
+{
+    zval* data;
+    zend_fcall_info func;
+} otic_data_t;
+
+static uint8_t php_otic_flusher(uint8_t* ptr, size_t size, void* data)
+{
+    otic_data_t* oticData = (otic_data_t*)data;
+    zval ret;
+    zval params[3];
+    oticData->func.param_count = 3;
+    oticData->func.retval = &ret;
+    oticData->func.params = params;
+    ZVAL_STRING(&params[0], ptr);
+    ZVAL_LONG(&params[1], size)
+    ZVAL_ZVAL(&params[2], oticData->data, 1, 1);
+    if (zend_call_function(&oticData->func, 0) != SUCCESS)
+        return 0;
+    return Z_TYPE_P(&ret) == IS_TRUE;
+}
 
 zend_object_handlers oticPack_handlers;
 zend_object_handlers oticPackChannel_handlers;
@@ -71,17 +92,6 @@ typedef struct
     zend_object std;
 } oticUnpack_object;
 
-typedef struct
-{
-    struct
-    {
-        otic_pack_t* oticPack;
-        FILE* file;
-        uint8_t(*flusher)(uint8_t*, size_t);
-    } content;
-    zend_object std;
-} oticPackStream_object;
-
 static inline oticPack_object* php_oticPack_obj_from_obj(zend_object* obj)
 {
     return (oticPack_object*)((char*)(obj) - XtOffsetOf(oticPack_object, std));
@@ -92,10 +102,10 @@ static inline oticPackChannel_object* php_oticPackChannel_obj_from_obj(zend_obje
     return (oticPackChannel_object*)((char*)(obj) - XtOffsetOf(oticPackChannel_object, std));
 }
 
-static inline oticPackStream_object* php_oticPackStream_obj_from_obj(zend_object* obj)
-{
-    return (oticPackStream_object *) ((char *) (obj) - XtOffsetOf(oticPackStream_object, std));
-}
+//static inline oticPackStream_object* php_oticPackStream_obj_from_obj(zend_object* obj)
+//{
+//    return (oticPackStream_object *) ((char *) (obj) - XtOffsetOf(oticPackStream_object, std));
+//}
 
 static inline oticUnpack_object* php_oticUnpack_obj_from_obj(zend_object* obj)
 {
@@ -111,25 +121,6 @@ zend_class_entry* oticPack_ce;
 zend_class_entry* oticPackChannel_ce;
 zend_class_entry* oticPackStream_ce;
 zend_class_entry* oticUnpack_ce;
-
-// Quick and dirty
-static zend_fcall_info sfci;
-static zend_fcall_info_cache sfcc;
-static zval sargs[2];
-static zval sret;
-
-// TODO: DESTROY zvals and zstrings
-static uint8_t php_otic_flusher(uint8_t* ptr, size_t size)
-{
-    ZVAL_STRING(&sargs[0], (const char*)ptr);
-    ZVAL_LONG(&sargs[1], size)
-    sfci.param_count = 2;
-    sfci.params = sargs;
-    sfci.retval = &sret;
-    if (zend_call_function(&sfci, &sfcc) != SUCCESS)
-        return 0;
-    return 1;
-}
 
 PHP_METHOD(OticPackChannel, __construct)
 {
@@ -159,16 +150,18 @@ PHP_METHOD(OticPackChannel, inject)
     oticPackChannel_object* intern = Z_OTICPACKCHANNELOBJ_P(id);
     if (!intern)
         return;
-    if (Z_TYPE_P(value) == IS_DOUBLE)
-        RETURN_BOOL(otic_pack_channel_inject_d(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr, Z_DVAL_P(value)))
-    else if (Z_TYPE_P(value) == IS_LONG)
-        RETURN_BOOL(otic_pack_channel_inject_i(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr, Z_LVAL_P(value)))
-    else if (Z_TYPE_P(value) == IS_STRING)
-        RETURN_BOOL(otic_pack_channel_inject_s(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr, Z_STRVAL_P(value)))
-    else if (Z_TYPE_P(value) == IS_NULL)
-        RETURN_BOOL(otic_pack_channel_inject_n(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr))
-    else {
-        zend_throw_error(zend_ce_exception, "Invalid Type", 0);
+    switch(Z_TYPE_P(value))
+    {
+        case IS_LONG:
+            RETURN_BOOL(otic_pack_channel_inject_i(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr, Z_LVAL_P(value)))
+        case IS_DOUBLE:
+            RETURN_BOOL(otic_pack_channel_inject_d(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr, Z_DVAL_P(value)))
+        case IS_STRING:
+            RETURN_BOOL(otic_pack_channel_inject_s(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr, Z_STRVAL_P(value)))
+        case IS_NULL:
+            RETURN_BOOL(otic_pack_channel_inject_n(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr))
+        default:
+            zend_throw_error(zend_ce_exception, "Invalid Type", 0);
     }
 }
 
@@ -229,17 +222,19 @@ static void oticPackChannel_object_free(zend_object* object)
 PHP_METHOD(OticPack, __construct)
 {
     zval* id = getThis();
-    oticPack_object* intern = Z_TSTOBJ_P(id);
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f", &sfci, &sfcc) == FAILURE)
+    zend_fcall_info_cache fcc;
+    otic_data_t* data_o = malloc(sizeof(otic_data_t));
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "fr", &data_o->func, &fcc, &data_o->data) == FAILURE)
         RETURN_FALSE
-    if (intern)
-        intern->oticPack = emalloc(sizeof(otic_pack_t));
-    sfci.param_count = 2;
-    sfci.params = sargs;
-    sfci.retval = &sret;
-    if (!otic_pack_init(intern->oticPack, php_otic_flusher))
+    oticPack_object* intern;
+    if (!(intern = Z_TSTOBJ_P(id)))
         RETURN_FALSE
-    RETURN_TRUE
+    intern->oticPack = emalloc(sizeof(otic_pack_t));
+    zval* newFooValue = 0;
+
+//    zend_update_property(Z_OBJCE_P(id), id, "fooValue", strlen("fooValue"), newFooValue TSRMLS_CC);
+//    zend_update_property(Z_OBJCE_P(id), id, prop_name, prop_size, newFooValue TSRMLS_CC);
+    RETURN_BOOL(otic_pack_init(intern->oticPack, php_otic_flusher, data_o))
 }
 
 PHP_METHOD(OticPack, __toString)
@@ -250,13 +245,14 @@ PHP_METHOD(OticPack, __toString)
         RETURN_NULL()
     intern = Z_TSTOBJ_P(id);
     if (intern)
-        RETURN_STRING("Class: OticPack\n")
+        RETURN_STRING(ZEND_NS_NAME("Otic", "OticPack"))
 }
 
 PHP_METHOD(OticPack, close) {
     zval *id = getThis();
     oticPack_object *intern;
-    if (zend_parse_parameters_none() == FAILURE) RETURN_NULL()
+    if (zend_parse_parameters_none() == FAILURE)
+        RETURN_NULL()
     intern = Z_TSTOBJ_P(id);
     if (intern)
         otic_pack_close(intern->oticPack);
@@ -319,6 +315,11 @@ PHP_METHOD(OticPack, closeChannel)
 
 PHP_METHOD(OticPack, __destruct)
 {
+    zval* id = getThis();
+    oticPack_object* intern = Z_TSTOBJ_P(id);
+    if (!intern)
+        return;
+    otic_pack_close(intern->oticPack);
 }
 
 zend_object* oticPack_object_new(zend_class_entry* ce TSRMLS_DC)
@@ -358,7 +359,7 @@ zend_fcall_info pfci;
 zend_fcall_info_cache pfcc;
 
 // TODO: Can be improved ... pointless overhead!
-uint8_t otic_fetcher(uint8_t* content, size_t size)
+uint8_t otic_fetcher(uint8_t* content, size_t size, void* file)
 {
     zval ret, params;
     pfci.retval = &ret;
@@ -380,8 +381,8 @@ PHP_METHOD(OticUnpack, __construct) {
 //    zend_update_property(oticPackChannel_ce, id, "fetcher", strlen("fetcher"),)
     if (intern) {
         intern->oticUnpack = emalloc(sizeof(otic_unpack_t));
-        if (otic_unpack_init(intern->oticUnpack, otic_fetcher, 0))
-            RETURN_TRUE
+//        if (otic_unpack_init(intern->oticUnpack, otic_fetcher, 0))
+//            RETURN_TRUE
     }
     zend_throw_exception(zend_ce_exception, "Init failed", 0);
 }

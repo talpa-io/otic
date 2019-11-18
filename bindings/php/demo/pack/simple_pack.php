@@ -3,19 +3,27 @@
     use Otic\OticPackChannel;
 
     $outputFile = fopen('dump.otic', 'wb');
-    function test($content, $size)
+
+    function test($content, $size, $data)
     {
-        global $outputFile;
-        fwrite($outputFile, $content, $size) != false;
+        //return fwrite($data, $content, $size) != false;
     }
 
-    $x = new OticPack('test');
-    $channel = $x->defineChannel(0x01, "sensor", 0x00);
-    $channel->inject(123456789, "sensorName1", "sensorUnit1", 1.2);
-    $channel->inject(123456789, "sensorName1", "sensorUnit1", 1.2);
-    $channel->close();
+    $x = new OticPack('test', $outputFile);
+    $channel = $x->defineChannel(0x01, "sensor", 0);
 
-    fclose($outputFile);
+    //function test($content, $size)
+    //{
+    //    global $outputFile;
+    //    fwrite($outputFile, $content, $size) != false;
+    //}
+    //$x = new OticPack('test');
+    //$channel = $x->defineChannel(0x01, "sensor", 0x00);
+    //$channel->inject(123456789, "sensorName1", "sensorUnit1", 1.2);
+    //$channel->inject(123456789, "sensorName1", "sensorUnit1", 1.2);
+    //$channel->close();
+
+    //fclose($outputFile);
 
     //$channel->inject(123456789, "sensorName1", "sensorUnit1", 1.2);
     //$channel->inject(123456789, "sensorName1", "sensorUnit1", 1.2);

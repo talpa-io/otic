@@ -7,8 +7,8 @@ The whole project is built using Cmake.
 <? namespace Otic;
 class OticPack
 {
-    private $dumpFunction = null;
-    public function __construct(callable $dump);
+    private $flusher = null;
+    public function __construct(callable $flusher);
     public function __toString(): string;
     public function __debugInfo(): array;
     public function defineChannel(int $channelId, int $channelType): OticPackChannel;
