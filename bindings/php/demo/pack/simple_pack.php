@@ -1,16 +1,31 @@
 <?php
     use Otic\OticPack;
     use Otic\OticPackChannel;
+    use Otic\OticPackStream;
 
-    $outputFile = fopen('dump.otic', 'wb');
+//    $outputFile = fopen('dump.otic', 'wb');
 
-    function test($content, $size, $data)
-    {
+//    function test($content, $size, $data)
+//    {
         //return fwrite($data, $content, $size) != false;
-    }
+//    }
 
-    $x = new OticPack('test', $outputFile);
-    $channel = $x->defineChannel(0x01, "sensor", 0);
+
+    //$x = new OticPack('test', $outputFile);
+    //$channel = $x->defineChannel(0x01, "sensor", 0);
+
+
+    $outFile = fopen('dump2.otic', 'wb');
+    $y = new OticPackStream($outFile);
+    $otherChannel = $y->defineChannel(0x01, "sensor", 0x00);
+
+    $otherChannel->inject(1243, "sensor1", "sensorUnit1", 123);             // Long
+    $otherChannel->inject(1243, "sensor2", "sensorUnit2", null);            // null
+    $otherChannel->inject(1243, "sensor2", "sensorUnit2", 1.2);             // Double
+    $otherChannel->inject(1243, "sensor2", "sensorUnit2", "Testing");       // String
+
+    $y = null;
+    fclose($outFile);
 
     //function test($content, $size)
     //{

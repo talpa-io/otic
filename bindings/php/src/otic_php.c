@@ -5,8 +5,8 @@
 #include <php.h>
 #include <otic.h>
 #include <Zend/zend.h>
-#include <Zend/zend_exceptions.h>
 #include <Zend/zend_types.h>
+#include <Zend/zend_exceptions.h>
 
 // Useful Links concerning Zend (I mean, there are so few pages about zend-engine that
 // you are bound to stumble on them on your first google search.):
@@ -14,6 +14,8 @@
 // https://www.php.net/manual/de/internals2.ze1.zendapi.php
 // http://www.phpinternalsbook.com/php5/classes_objects/simple_classes.html
 // http://www.phpinternalsbook.com/php7/internal_types/zvals/basic_structure.html
+// https://www.php.net/manual/de/internals2.ze1.streams.php for streams
+// https://www.maplenerds.com/blog/2018/6/14/writing-php-72-extensions-with-c for an example
 
 #define PHP_OTIC_EXTVER "1.0"
 #define PHP_OTIC_EXTNAME "otic"
@@ -48,6 +50,9 @@ ZEND_BEGIN_ARG_INFO_EX(FUNCTION_INJECT, 0, 0, 4)
                 ZEND_ARG_INFO(0, value)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(OTIC_STREAM_SINGLE_ARG, 0, 0, 1)
+                ZEND_ARG_INFO(0, fileOut)
+ZEND_END_ARG_INFO()
 typedef struct
 {
     zval* data;
@@ -71,8 +76,10 @@ static uint8_t php_otic_flusher(uint8_t* ptr, size_t size, void* data)
 }
 
 zend_object_handlers oticPack_handlers;
+zend_object_handlers oticPackStream_handlers;
 zend_object_handlers oticPackChannel_handlers;
 zend_object_handlers oticUnpack_handlers;
+zend_object_handlers oticUnpackStream_handlers;
 
 typedef struct
 {
@@ -102,11 +109,6 @@ static inline oticPackChannel_object* php_oticPackChannel_obj_from_obj(zend_obje
     return (oticPackChannel_object*)((char*)(obj) - XtOffsetOf(oticPackChannel_object, std));
 }
 
-//static inline oticPackStream_object* php_oticPackStream_obj_from_obj(zend_object* obj)
-//{
-//    return (oticPackStream_object *) ((char *) (obj) - XtOffsetOf(oticPackStream_object, std));
-//}
-
 static inline oticUnpack_object* php_oticUnpack_obj_from_obj(zend_object* obj)
 {
     return (oticUnpack_object*)((char*)(obj) - XtOffsetOf(oticUnpack_object, std));
@@ -121,6 +123,7 @@ zend_class_entry* oticPack_ce;
 zend_class_entry* oticPackChannel_ce;
 zend_class_entry* oticPackStream_ce;
 zend_class_entry* oticUnpack_ce;
+zend_class_entry* oticUnpackStream_ce;
 
 PHP_METHOD(OticPackChannel, __construct)
 {
@@ -130,21 +133,13 @@ PHP_METHOD(OticPackChannel, __construct)
         intern->oticPackChannel = emalloc(sizeof(otic_pack_channel_t));
 }
 
-PHP_METHOD(OticPackChannel, __destruct)
-{
-    zval* id = getThis();
-    oticPackChannel_object *intern = Z_OTICPACKCHANNELOBJ_P(id);
-//    if (intern)
-//        otic_pack_channel_flush(intern->oticPackChannel);
-}
-
 PHP_METHOD(OticPackChannel, inject)
 {
     zval* id = getThis();
     otic_str_t sensorName;
     otic_str_t sensorUnit;
     double timestamp = 0;
-    zval* value;
+    zval* value = 0;
     if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "dssz", &timestamp, &sensorName.ptr, &sensorName.size, &sensorUnit.ptr, &sensorUnit.size, &value) == FAILURE)
         return;
     oticPackChannel_object* intern = Z_OTICPACKCHANNELOBJ_P(id);
@@ -176,15 +171,8 @@ PHP_METHOD(OticPackChannel, flush)
     RETURN_BOOL(otic_pack_channel_flush(intern->oticPackChannel))
 }
 
-PHP_METHOD(OticPackChannel, close)
+PHP_METHOD(OticPackChannel, __destruct)
 {
-    zval* id = getThis();
-    oticPackChannel_object* intern;
-    if (zend_parse_parameters_none() == FAILURE)
-        RETURN_FALSE
-    if (!(intern = Z_OTICPACKCHANNELOBJ_P(id)))
-        return;
-    otic_pack_channel_close(intern->oticPackChannel);
 }
 
 const zend_function_entry oticPackChannel_methods[] = {
@@ -192,7 +180,6 @@ const zend_function_entry oticPackChannel_methods[] = {
     PHP_ME(OticPackChannel, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
     PHP_ME(OticPackChannel, inject, FUNCTION_INJECT, ZEND_ACC_PUBLIC)
     PHP_ME(OticPackChannel, flush, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(OticPackChannel, close, NULL, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
@@ -354,6 +341,98 @@ const zend_function_entry oticPack_methods[] = {
         PHP_FE_END
 };
 
+
+uint8_t oticPackStream_flusher(uint8_t* content, size_t size, void* data)
+{
+    php_stream_write((php_stream*)data, (const char*)content, size);
+    return 1;
+}
+
+PHP_METHOD(OticPackStream, __construct)
+{
+    zval* id = getThis();
+    zval* fileOut;
+    php_stream* stream;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &fileOut) == FAILURE)
+        RETURN_FALSE
+    oticPack_object* intern = Z_TSTOBJ_P(id);
+    if (intern) {
+        php_stream_from_zval(stream, fileOut);                  // Error on PHP's website
+        intern->oticPack = emalloc(sizeof(otic_pack_t));
+        if (!otic_pack_init(intern->oticPack, oticPackStream_flusher, stream))
+            RETURN_FALSE
+    }
+}
+
+PHP_METHOD(OticPackStream, __toString)
+{
+    RETURN_STRING(ZEND_NS_NAME("Otic", "OticPackStream"))
+}
+
+PHP_METHOD(OticPackStream, defineChannel)
+{
+    zval* id = getThis();
+    long channelId;
+    zend_string* channelType;
+    long channelFeatures;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lSl", &channelId, &channelType, &channelFeatures) == FAILURE)
+        RETURN_FALSE
+    oticPack_object* intern = Z_TSTOBJ_P(id);
+    if (!intern)
+        RETURN_FALSE
+    channel_type_e type;
+    if (zend_string_equals_literal(channelType, "sensor"))
+        type = OTIC_CHANNEL_TYPE_SENSOR;
+    else if (zend_string_equals_literal(channelType, "binary"))
+        type = OTIC_CHANNEL_TYPE_BINARY;
+    else
+        RETURN_FALSE
+    zend_string_release(channelType);
+    oticPackChannel_object* channel = (oticPackChannel_object*)ecalloc(1, sizeof(oticPackChannel_object) + zend_object_properties_size(oticPackChannel_ce));
+    zend_object_std_init(&channel->std, oticPackChannel_ce TSRMLS_CC);
+    channel->std.handlers = &oticPackChannel_handlers;
+    channel->oticPackChannel = otic_pack_defineChannel(intern->oticPack, type, channelId, 0x00);
+    RETURN_OBJ(&channel->std)
+}
+
+PHP_METHOD(OticPackStream, __destruct)
+{
+    zval* id = getThis();
+    oticPack_object* intern = Z_TSTOBJ_P(id);
+    if (intern)
+        otic_pack_close(intern->oticPack);
+}
+
+const zend_function_entry oticPackStream_methods[] = {
+        PHP_ME(OticPackStream, __construct, OTIC_STREAM_SINGLE_ARG, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+        PHP_ME(OticPackStream, __toString, NULL, ZEND_ACC_PUBLIC)
+        PHP_ME(OticPackStream, defineChannel, argInfo_defineChannel, ZEND_ACC_PUBLIC)
+        PHP_ME(OticPackStream, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
+        PHP_FE_END
+};
+
+zend_object* oticPackStream_object_new(zend_class_entry* ce TSRMLS_DC)
+{
+    oticPack_object* intern = (oticPack_object*)ecalloc(1, sizeof(oticPack_object) + zend_object_properties_size(ce));
+    zend_object_std_init(&intern->std, ce TSRMLS_CC);
+    object_properties_init(&intern->std, ce);
+    intern->std.handlers = &oticPackStream_handlers;
+    return &intern->std;
+}
+
+static void oticPackStream_object_destroy(zend_object* object)
+{
+    oticPack_object* my_obj = (oticPack_object*)((char*)object - XtOffsetOf(oticPack_object, std));
+    zend_objects_destroy_object(object);
+}
+
+static void oticPackStream_object_free(zend_object* object)
+{
+    oticPack_object* my_obj = (oticPack_object*)((char*)object - XtOffsetOf(oticPack_object, std));
+    efree(my_obj->oticPack);
+    zend_object_std_dtor(object);
+}
+
 // TODO: Change
 zend_fcall_info pfci;
 zend_fcall_info_cache pfcc;
@@ -491,6 +570,33 @@ static void oticUnpack_object_free(zend_object* object)
     zend_object_std_dtor(object);
 }
 
+uint8_t php_oticUnpackStream_fetcher(uint8_t* content, size_t size, void* data)
+{
+    php_stream_read((php_stream*)data, (char*)content, size);
+    return 1;
+}
+PHP_METHOD(OticUnpackStream, __construct)
+{
+    zval* id = getThis();
+    zval* fileIn;
+    php_stream* stream;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &fileIn) == FAILURE)
+        RETURN_FALSE
+    oticUnpack_object* intern = Z_OUPOBJ_P(id);
+    if (intern) {
+        php_stream_from_zval(stream, fileIn);
+        intern->oticUnpack = emalloc(sizeof(otic_unpack_t));
+        if (!otic_unpack_init(intern->oticUnpack, php_oticUnpackStream_fetcher, 0))
+            RETURN_FALSE
+    }
+}
+
+PHP_METHOD(OticUnpackStream, __toString)
+{
+
+}
+
+
 PHP_MINIT_FUNCTION(otic)
 {
     zend_class_entry oticPackChannel_zce;
@@ -510,6 +616,14 @@ PHP_MINIT_FUNCTION(otic)
     oticPack_handlers.free_obj = oticPack_object_free;
     oticPack_handlers.dtor_obj = oticPack_object_destroy;
     oticPack_handlers.offset = XtOffsetOf(oticPack_object, std);
+
+    zend_class_entry oticPackStream_dce;
+    INIT_CLASS_ENTRY(oticPackStream_dce, "Otic\\OticPackStream", oticPackStream_methods)
+    oticPackStream_ce = zend_register_internal_class(&oticPackStream_dce TSRMLS_CC);
+    oticPackStream_ce->create_object = oticPackStream_object_new;
+    memcpy(&oticPackStream_handlers, zend_get_std_object_handlers(), sizeof(oticPackStream_handlers));
+    oticPackStream_handlers.dtor_obj = oticPackStream_object_destroy;
+    oticPackStream_handlers.offset = XtOffsetOf(oticPack_object, std);
 
     // Out of Intellectual Curiousity, let:
     zend_class_entry oticUnpack_zce;

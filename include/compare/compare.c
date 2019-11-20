@@ -84,7 +84,7 @@ uint8_t compare_compareLineValues(FILE* file1, FILE* file2)
     while(fpeek(file1) != EOF)
     {
         fscanf(file1, "%[^\n]\n", buffer1);
-        fscanf(file2, "%[^\n]\n", buffer2);
+:        fscanf(file2, "%[^\n]\n", buffer2);
         format_parse(&format1, buffer1);
         format_parse(&format2, buffer2);
 

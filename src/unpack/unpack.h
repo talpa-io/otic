@@ -53,9 +53,10 @@ typedef struct
         char* limit;
     } result;
     uint8_t out[OTIC_UNPACK_OUT_SIZE];
-    uint8_t(*flusher)(uint8_t*, size_t);
+    uint8_t(*flusher)(uint8_t*, size_t, void*);
     size_t blockSize;
     double doubleTs;
+    void* data;
     struct
     {
         otic_unpack_t *parent;
@@ -73,12 +74,13 @@ struct otic_unpack_t
     uint8_t totalChannels;
     otic_errors_e error;
     otic_state_e state;
-    uint8_t(*fetcher)(uint8_t*, size_t);
-    uint8_t(*seeker)(uint32_t);
+    void* fetcherData, *seekerData;
+    uint8_t(*fetcher)(uint8_t*, size_t, void*);
+    uint8_t(*seeker)(uint32_t, void*);
 };
 
-uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t), uint8_t(*seeker)(uint32_t)) __attribute__((nonnull(1,2)));
-uint8_t otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(uint8_t*, size_t)) __attribute__((nonnull(1, 3)));
+uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t, void*), void* fetcherData, uint8_t(*seeker)(uint32_t, void*), void* seekerData) __attribute__((nonnull(1,2)));
+uint8_t otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(uint8_t*, size_t, void* data), void* data) __attribute__((nonnull(1, 3)));
 uint8_t otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8_t id);
 uint8_t otic_unpack_parse(otic_unpack_t* oticUnpackBase);
 uint8_t otic_unpack_close(otic_unpack_t* oticUnpackBase);

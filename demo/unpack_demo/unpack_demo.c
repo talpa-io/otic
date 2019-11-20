@@ -6,25 +6,19 @@
 #include "unpack/unpack.h"
 #include "errHand/errHand.h"
 
-static FILE* srcFile = 0;
-static FILE* destFile = 0;
-
-static uint8_t fetcher(uint8_t* dest, size_t size)
+static uint8_t fetcher(uint8_t* dest, size_t size, void* data)
 {
-    fread(dest, 1, size, srcFile);
-    return 1;
+    return fread(dest, 1, size, (FILE*)data) != 0;
 }
 
-static uint8_t flusher(uint8_t* src, size_t size)
+static uint8_t flusher(uint8_t* src, size_t size, void* data)
 {
-    fwrite(src, 1, size, destFile);
-    return 1;
+    return fwrite(src, 1, size, (FILE*)data) != 0;
 }
 
-static uint8_t flusher2(uint8_t* src, size_t size)
+static uint8_t flusher2(uint8_t* src, size_t size, void* data)
 {
-    printf("%s", src);
-    return 1;
+    return printf("%s", src) > 0;
 }
 
 /**
@@ -32,9 +26,9 @@ static uint8_t flusher2(uint8_t* src, size_t size)
  * @param pos The Position to skip to
  * @return 1/True on success, else 0/False on failure
  */
-static uint8_t seeker(uint32_t pos)
+static uint8_t seeker(uint32_t pos, void* data)
 {
-    return !fseek(srcFile, pos, SEEK_CUR);
+    return !fseek((FILE*)data, pos, SEEK_CUR);
 }
 
 static int fpeek(FILE* stream)
@@ -47,16 +41,14 @@ static int fpeek(FILE* stream)
 
 int main()
 {
-    srcFile = fopen("pack_demo.otic", "rb");
-    destFile = fopen("dump.tsv", "w");
+    FILE* srcFile = fopen("pack_demo.otic", "rb");
+    FILE* destFile = fopen("dump.tsv", "w");
 
-
-    // TODO: CHECK SEGFAULT
     otic_unpack_t oticUnpack;
-    if (!otic_unpack_init(&oticUnpack, fetcher, seeker))
+    if (!otic_unpack_init(&oticUnpack, fetcher, srcFile, seeker, srcFile))
         goto fail;
-    otic_unpack_defineChannel(&oticUnpack, 1, flusher);
-    otic_unpack_defineChannel(&oticUnpack, 2, flusher2);
+    otic_unpack_defineChannel(&oticUnpack, 1, flusher, srcFile);
+    otic_unpack_defineChannel(&oticUnpack, 2, flusher2, srcFile);
     while (!fpeek(srcFile))
     {
         otic_unpack_parse(&oticUnpack);

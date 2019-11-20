@@ -63,12 +63,13 @@ struct otic_pack_t
 {
     otic_pack_channel_t** channels;
     uint8_t totalChannels;
-    uint8_t (*flusher)(uint8_t *, size_t);
+    uint8_t (*flusher)(uint8_t *, size_t, void*);
+    void* data;
     otic_errors_e error;
     otic_state_e state;
 };
 
-uint8_t otic_pack_init(otic_pack_t* oticPack, uint8_t(*flusher)(uint8_t*, size_t));
+uint8_t otic_pack_init(otic_pack_t* oticPack, uint8_t(*flusher)(uint8_t*, size_t, void*), void* data);
 
 otic_pack_channel_t*    otic_pack_defineChannel(otic_pack_t* oticPack, channel_type_e channelType, uint8_t id,
                                                 otic_features_e features) __attribute__((warn_unused_result));

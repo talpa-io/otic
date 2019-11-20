@@ -48,7 +48,7 @@ static inline const char* tsv_parser_getError(tsv_parser_error_e error)
         case TSV_PARSER_ERROR_FORMATTER:
             return "Formatter Error";
         case TSV_PARSER_ERROR_OTIC:
-            return otic_getError(otic_error);
+            return otic_strError(otic_error);
         default:
             return "Unknown Error";
     }
@@ -83,9 +83,8 @@ inline static uint8_t isNumericChar(char value)
     static const char* numeric = "0123456789.-";
     const char* fCharacter = numeric;
     do {
-        if (*fCharacter == value)
+        if (*fCharacter++ == value)
             return 1;
-        ++fCharacter;
     } while (*fCharacter);
     return 0;
 }
@@ -98,26 +97,25 @@ inline static uint8_t isNumeric(const char* value)
     return 1;
 }
 
-static FILE* inputFile = 0;
-static FILE* outputFile = 0;
+static FILE* inputFile2 = 0;
+static FILE* outputFile2 = 0;
 
 // TODO: CHANGE STREAM BUFFER
-static inline uint8_t flusher(uint8_t* value, size_t size)
+static inline uint8_t flusher(uint8_t* value, size_t size, void* file)
 {
-    fwrite(value, 1, size, outputFile);
-    fflush(outputFile);
+    fwrite(value, 1, size, (FILE*)file);
+    fflush((FILE*)file);
     return 1;
 }
 
-static inline uint8_t fetcher(uint8_t* value, size_t size)
+static inline uint8_t fetcher(uint8_t* value, size_t size, void* data)
 {
-    return fread(value, 1, size, inputFile) != 0;
+    return fread(value, 1, size, (FILE*)data) != 0;
 }
 
-static inline uint8_t seeker(uint32_t pos)
+static inline uint8_t seeker(uint32_t pos, void* data)
 {
-    fseek(inputFile, pos, SEEK_CUR);
-    return 1;
+    return fseek((FILE*)data, pos, SEEK_CUR) != -1;
 }
 
 static inline uint8_t decPos(char* value, size_t length)
@@ -146,10 +144,10 @@ static inline int fpeek(FILE* stream)
     return c;
 }
 
-static inline uint8_t flusher2(uint8_t* buffer, size_t size)
+static inline uint8_t flusher2(uint8_t* buffer, size_t size, void* data)
 {
-    fwrite(buffer, 1, size, outputFile);
-    fflush(outputFile);
+    fwrite(buffer, 1, size, (void*)data);
+    fflush((FILE*)data);
     return 1;
 }
 
@@ -176,19 +174,17 @@ inline static size_t getLinesNumber(const char* fileName)
  */
 static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
 {
-    inputFile = fopen(fileNameIn, "r");
-    outputFile = fopen(fileNameOut, "wb");
+    FILE* inputFile = fopen(fileNameIn, "r");
+    FILE* outputFile = fopen(fileNameOut, "wb");
     if (!inputFile || !outputFile)
         return 0;
 
     otic_pack_t oticPack;
-    if (!otic_pack_init(&oticPack, flusher))
+    if (!otic_pack_init(&oticPack, flusher, outputFile))
         return 0;
-
     otic_pack_channel_t* channel = otic_pack_defineChannel(&oticPack, OTIC_CHANNEL_TYPE_SENSOR, 0x1, 0x0);
     if (!channel)
         return 0;
-
     format_chunker_t formatChunker;
     if (!format_init(&formatChunker.format, '\t', 5))
         return 0;
@@ -266,23 +262,23 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
 
 inline static uint8_t decompress(const char* fileNameIn, const char* fileNameOut)
 {
-    inputFile = fopen(fileNameIn, "rb");
-    outputFile = fopen(fileNameOut, "w");
-    if (!inputFile || !outputFile)
+    inputFile2 = fopen(fileNameIn, "rb");
+    outputFile2 = fopen(fileNameOut, "w");
+    if (!inputFile2 || !outputFile2)
         return 0;
     otic_unpack_t oticUnpack;
-    if (!otic_unpack_init(&oticUnpack, fetcher, seeker))
+    if (!otic_unpack_init(&oticUnpack, fetcher, inputFile2, seeker, inputFile2))
         return 0;
-    if (!otic_unpack_defineChannel(&oticUnpack, 0x01, flusher2))
+    if (!otic_unpack_defineChannel(&oticUnpack, 0x01, flusher2, outputFile2))
         return 0;
-    while(fpeek(inputFile) != EOF)
+    while(fpeek(inputFile2) != EOF)
     {
         otic_unpack_parse(&oticUnpack);
     }
     uint8_t error = oticUnpack.channels[0]->base.error;
     otic_unpack_close(&oticUnpack);
-    fclose(inputFile);
-    fclose(outputFile);
+    fclose(inputFile2);
+    fclose(outputFile2);
     return error;
 }
 
@@ -300,16 +296,16 @@ static uint8_t compare(const char* origFileName, const char* decompFileName)
 
 static uint8_t getLines(const char* fileInName, const char* fileOutName, size_t size)
 {
-    inputFile = fopen(fileInName, "r");
-    outputFile = fopen(fileOutName, "w");
+    inputFile2 = fopen(fileInName, "r");
+    outputFile2 = fopen(fileOutName, "w");
     char buffer[254];
     size_t counter;
     int ret;
     for (counter = 0; counter < size; counter++)
     {
-        ret = fscanf(inputFile, "%[^\n]\n", buffer);
-        fwrite(buffer, 1, strlen(buffer), outputFile);
-        fwrite("\n", 1, 1, outputFile);
+        ret = fscanf(inputFile2, "%[^\n]\n", buffer);
+        fwrite(buffer, 1, strlen(buffer), outputFile2);
+        fwrite("\n", 1, 1, outputFile2);
     }
     return counter;
 }

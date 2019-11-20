@@ -81,6 +81,8 @@ set(PHPOTIC_SRC_FILES
 
 add_php_executable(demo/pack/simple_pack.php)
 add_php_executable(demo/unpack/simple_unpack.php)
+add_php_executable(demo/tsvParser/tsvParser.php)
+add_php_executable(demo/pack/test.php)
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
     add_definitions(-DHAVE_CONFIG_H)

@@ -29,7 +29,7 @@ class OticPackChannel
 
 class OticPackStream
 {
-    public function __construct(string filePath);
+    public function __construct(resource fileOut);
     public function __toString(): string;
     public function __debugInfo(): array;
     public function defineChannel(int $channelId, int $channelType): OticPackChannel;
@@ -41,10 +41,22 @@ class OticPackStream
 class OticUnpack
 {
     public function __construct(callable $fetcher, callable $seeker = null);
+    public function __toString(): string;
+    public function __debugInfo(): array;
     public function defineChannel(int $channelId, callable $flusher): bool;
     public function closeChannel(int $channelId): bool;
     public parse(): bool;
     public function __destruct();
 }
 
+class OticUnpackStream
+{
+    public function __construct(resource fileIn);
+    public function __toString(): string;
+    public function __debugInfo(): array;
+    public function defineChannel(int $channelId, callable $flusher): bool;
+    public function closeChannel(int $channelId): bool;
+    public function parse(): bool;
+    public function __destruct();
+}
 ```

@@ -6,7 +6,7 @@
 #include "errHand.h"
 
 
-const char* otic_getError(otic_errors_e e)
+const char* otic_strError(otic_errors_e e)
 {
     switch (e)
     {
@@ -47,5 +47,5 @@ const char* otic_getError(otic_errors_e e)
 
 void printOticError(otic_errors_e e)
 {
-    fprintf(stderr, "Error: %s\n", otic_getError(e));
+    fprintf(stderr, "Error: %s\n", otic_strError(e));
 }
