@@ -39,12 +39,19 @@ static void test_leb128_signed(void)
         assert(counter == temp);
         counter++;
     }
+    // Jeez! C needs lambda functions
     leb128_encode_signed(INT32_MAX, buffer);
     leb128_decode_signed(buffer, &temp);
     assert(INT32_MAX == temp);
     leb128_encode_signed(INT32_MIN, buffer);
     leb128_decode_signed(buffer, &temp);
     assert(INT32_MIN == temp);
+    leb128_encode_signed(INT64_MAX, buffer);
+    leb128_decode_signed(buffer, &temp);
+    assert(temp == INT64_MAX);
+    leb128_encode_signed(INT64_MIN, buffer);
+    leb128_decode_signed(buffer, &temp);
+    assert(temp == INT64_MIN);
 }
 
 static void test_base_init(void)
@@ -83,16 +90,6 @@ int main()
     test_error_handling();
     test_state_handling();
     test_leb128_unsigned();
-//    test_leb128_signed();
-
-//    int64_t value = -123456;
-    /*int64_t value = INT16_MIN;
-    unsigned char buffer[10] = {};
-    int64_t decoded = 0;
-    uint8_t ret = leb128_encode_signed(value, buffer);
-    leb128_decode_signed(buffer, &decoded);
-    printf("Decoded: %ld\n", decoded);
-    assert(value == decoded);*/
-
+    test_leb128_signed();
     return 0;
 }

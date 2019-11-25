@@ -100,15 +100,15 @@ uint8_t leb128_encode_signed(int64_t value, uint8_t* restrict dest)
     uint8_t counter = 0;
     while (more)
     {
-        byte = value & ~0x80u;
-        signBit = ((uint8_t)value &~0xBFu) >> 6u;
-        value >>= 7u;
+        byte = value & ~0x80uL;
+        signBit = ((uint8_t)value &~0xBFuL) >> 6u;
+        value >>= 7uL;
         if (negative)
-            value |= (~0u << (size - 7u));
+            value |= (~0uL << (size - 7uL));
         if ((value == 0 && !signBit) || (value == -1 && signBit))
             more = 0;
         else
-            byte |= 0x80u;
+            byte |= 0x80uL;
         dest[counter++] = byte;
     }
     return counter;
@@ -123,11 +123,11 @@ uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* re
     int8_t counter = 0;
     do {
         byte = encoded_values[counter++];
-        *result |= (byte & ~0x80) << shift;
+        *result |= (byte & ~0x80L) << shift;
         shift += 7;
     } while ((byte >> 7));
-    if ((shift < size) && (byte & ~0xBF) >> 6)
-        *result |= (~0 << shift);
+    if ((shift < size) && (byte & ~0xBFL) >> 6)
+        *result |= (~0L << shift);
     return counter;
 }
 
