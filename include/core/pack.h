@@ -6,8 +6,8 @@ extern "C" {
 #endif
 
 #include <zstd.h>
-#include "core/config.h"
-#include "core/core.h"
+#include "config.h"
+#include "base.h"
 
 
 #define ZSTD_OUT_SIZE 12000

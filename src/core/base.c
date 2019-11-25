@@ -5,7 +5,7 @@
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
-#include "core/core.h"
+#include "core/base.h"
 
 uint8_t otic_base_init(otic_base_t* base)
 {
@@ -127,7 +127,7 @@ uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* re
         shift += 7;
     } while ((byte >> 7));
     if ((shift < size) && (byte & ~0xBFL) >> 6)
-        *result |= (~0L << shift);
+        *result |= (~0u << shift);
     return counter;
 }
 

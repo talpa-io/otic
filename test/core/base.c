@@ -6,7 +6,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "core/core.h"
+#include "core/base.h"
 #include "../test_asserts.h"
 
 

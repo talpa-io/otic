@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include <zstd.h>
-#include "core/core.h"
+#include "base.h"
 
 #define OTIC_UNPACK_OUT_SIZE 12000
 #define OTIC_UNPACK_OUTPUT_LIMIT 512

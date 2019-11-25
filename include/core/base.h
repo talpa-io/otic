@@ -1,5 +1,5 @@
-#ifndef OTIC_CORE_H
-#define OTIC_CORE_H
+#ifndef OTIC_BASE_H
+#define OTIC_BASE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -160,4 +160,4 @@ void            otic_updateStr(otic_str_t* oticStr, const char* ptr);
 }
 #endif
 
-#endif //OTIC_CORE_H
+#endif //OTIC_BASE_H

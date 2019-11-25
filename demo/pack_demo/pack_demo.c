@@ -47,10 +47,11 @@ int main()
     otic_pack_channel_inject_n(channel2, 12456, "sensor1", "sensorUnit1");
     otic_pack_channel_inject_n(channel2, 12456, "sensor1", "");
 
-    // Not needed. This feature was added to allow early file closes, as otic_pack_close destroys every created channels
+    // Not needed. This feature was added to allow early file closes, as otic_pack_close destroys every created channels,
+    // that isn't closed
     otic_pack_channel_close(channel1);
     otic_pack_channel_close(channel2);
-//
+
     otic_pack_close(&oticPack);
     return 0;
 

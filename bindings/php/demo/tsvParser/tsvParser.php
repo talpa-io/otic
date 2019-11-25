@@ -29,14 +29,15 @@ class TSVParser
                     {
                          $lineContent = explode("\t", stream_get_line($inputFile, 512, "\n"));
                          if (count($lineContent) != 5) {
+                            echo "Skipping line: $counter\n";
                             continue;
                          } else if (is_numeric($lineContent[4])) {
                             if (strstr($lineContent[4], '.') === false)
-                                $channel->inject(floatval($lineContent[0]), $lineContent[3], $lineContent[3], intval($lineContent[4]));
+                                $channel->inject(floatval($lineContent[0]), $lineContent[1], $lineContent[3], intval($lineContent[4]));
                             else
-                                $channel->inject(floatval($lineContent[0]), $lineContent[3], $lineContent[3], floatval($lineContent[4]));
+                                $channel->inject(floatval($lineContent[0]), $lineContent[1], $lineContent[3], floatval($lineContent[4]));
                          } else if ($lineContent[4] == "") {
-                            $channel->inject(floatval($lineContent[0]), $lineContent[3], $lineContent[3], null);
+                            $channel->inject(floatval($lineContent[0]), $lineContent[1], $lineContent[3], null);
                          } else {
                             $channel->inject(floatval($lineContent[0]), $lineContent[1], $lineContent[3], $lineContent[4]);
                          }
@@ -48,7 +49,9 @@ class TSVParser
                     return 0;
                 }
             } else if ($argv[1] === '-u') {
-                echo "Unpack\n";
+
+
+
                 return 0;
             }
         }

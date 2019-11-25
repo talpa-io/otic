@@ -1,9 +1,9 @@
 set(OTIC_CORE_FILES
-        ${PROJECT_SOURCE_DIR}/include/core/core.h
+        ${PROJECT_SOURCE_DIR}/include/core/base.h
         ${PROJECT_SOURCE_DIR}/include/core/config.h
         ${PROJECT_SOURCE_DIR}/include/core/pack.h
         ${PROJECT_SOURCE_DIR}/include/core/unpack.h
-        ${PROJECT_SOURCE_DIR}/src/core/core.c
+        ${PROJECT_SOURCE_DIR}/src/core/base.c
         ${PROJECT_SOURCE_DIR}/src/core/pack.c
         ${PROJECT_SOURCE_DIR}/src/core/unpack.c
         )

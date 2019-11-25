@@ -5,7 +5,7 @@
 #ifndef OTIC_ERRORHAND_H
 #define OTIC_ERRORHAND_H
 
-#include "core/core.h"
+#include "core/base.h"
 
 const char* otic_strError(otic_errors_e e);
 void printOticError(otic_errors_e e);

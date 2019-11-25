@@ -4,8 +4,8 @@ function(OTIC_ADDTEST testName)
             ${testName}
             ${ARGN}
             test_asserts.h
-            ../include/core/core.h
-            ../src/core/core.c
+            ../include/core/base.h
+            ../src/core/base.c
     )
     target_link_libraries(${testName} zstd m pthread)
     add_test(NAME ${testName} COMMAND ${testName})
