@@ -17,5 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Test
+    - needs: [build]
+    - name: test
       run: /usr/bin/env ./kickstart.sh :test

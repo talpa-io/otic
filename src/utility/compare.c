@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
-#include <format/format.h>
-#include "compare.h"
-#include "../format/format.h"
+#include <utility/format.h>
+#include "utility/compare.h"
+#include "utility/format.h"
 
 
 // TODO: QUICK AND DIRTY COMPARISION FUNCTIONS. NEED TO BE CLEANED

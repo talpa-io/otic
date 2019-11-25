@@ -8,8 +8,8 @@
 #include <string.h>
 #include <zstd.h>
 #include <limits.h>
-#include "pack/pack.h"
-#include "unpack/unpack.h"
+#include "core/pack.h"
+#include "core/unpack.h"
 
 static char buffer[UINT8_MAX * 2];
 

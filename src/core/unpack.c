@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <zstd.h>
-#include "unpack.h"
-#include "config/config.h"
+#include "core/unpack.h"
+#include "core/config.h"
 
 #define OTIC_UNPACK_INLINE_ALL_STATIC 1
 

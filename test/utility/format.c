@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include "format/format.h"
+#include "utility/format.h"
 
 
 static void test_format_init(void)

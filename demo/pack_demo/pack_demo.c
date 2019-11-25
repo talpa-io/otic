@@ -9,8 +9,8 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pack/pack.h"
-#include "errHand/errHand.h"
+#include "core/pack.h"
+#include "utility/errHand.h"
 
 static uint8_t flusher(uint8_t* src, size_t size, void* file)
 {

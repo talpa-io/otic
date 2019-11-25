@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "format.h"
+#include "utility/format.h"
 
 
 uint8_t format_init(format_t *restrict format, char delimiter, size_t numb_columns)

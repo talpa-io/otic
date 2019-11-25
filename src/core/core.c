@@ -5,7 +5,7 @@
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
-#include "core.h"
+#include "core/core.h"
 
 uint8_t otic_base_init(otic_base_t* base)
 {

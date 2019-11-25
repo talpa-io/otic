@@ -6,17 +6,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <format/format.h>
+#include <utility/format.h>
 #include <assert.h>
 #include <sys/stat.h>
 #include <fenv.h>
 
-#include "pack/pack.h"
-#include "unpack/unpack.h"
-#include "errHand/errHand.h"
-#include "format/format.h"
-#include "compare/compare.h"
-#include "utilities/utilities.h"
+#include "core/pack.h"
+#include "core/unpack.h"
+#include "utility/errHand.h"
+#include "utility/format.h"
+#include "utility/compare.h"
 
 // Almost 1 MB ... memory friendly 1 MB. Did you know that 1 byte is actually 9 bits and not 8 bits?
 #define READ_BUFFERSIZE 1048576

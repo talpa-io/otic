@@ -16,7 +16,10 @@ command:
     - "sudo ldconfig"
 
   test:
-    - "cd kbuild && ctest"
+#    - "cd kbuild && ctest"
+    - "ls"
+
+
   run:
   dev:
     - "echo 'I am executed in dev mode'"

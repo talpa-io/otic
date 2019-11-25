@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include <unpack/unpack.h>
-#include "pack/pack.h"
-#include "unpack/unpack.h"
-#include "errHand/errHand.h"
+#include <core/unpack.h>
+#include "core/pack.h"
+#include "core/unpack.h"
+#include "utility/errHand.h"
 
 
 static FILE* file;

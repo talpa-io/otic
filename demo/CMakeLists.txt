@@ -1,32 +1,30 @@
 include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/include)
 
 function(add_demo DEMO_NAME)
-    add_executable(${DEMO_NAME} ${ARGN})
-    target_link_libraries(${DEMO_NAME} otic zstd m pthread)
+    add_executable(${DEMO_NAME} ${ARGN} ${PROJECT_SOURCE_DIR}/include/otic.h ${OTIC_CORE_FILES})
+    target_link_libraries(${DEMO_NAME} zstd m pthread)
 endfunction()
 
 add_demo(pack_demo
         pack_demo/pack_demo.c
-        ../include/errHand/errHand.h
-        ../include/errHand/errHand.c
+        ../include/utility/errHand.h
+        ../src/utility/errHand.c
         )
 
 add_demo(unpack_demo
         unpack_demo/unpack_demo.c
-        ../include/errHand/errHand.h
-        ../include/errHand/errHand.c
+        ../include/utility/errHand.h
+        ../src/utility/errHand.c
         )
 
 add_demo(tsvParser
         tsvParser/tsvParser.c
-        ../include/errHand/errHand.c
-        ../include/errHand/errHand.h
-        ../include/format/format.h
-        ../include/format/format.c
-        ../include/compare/compare.c
-        ../include/compare/compare.h
-        ../include/utilities/utilities.c
-        ../include/utilities/utilities.h
+        ../src/utility/errHand.c
+        ../include/utility/errHand.h
+        ../include/utility/format.h
+        ../src/utility/format.c
+        ../src/utility/compare.c
+        ../include/utility/compare.h
         )
 
 set_target_properties(

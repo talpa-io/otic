@@ -3,7 +3,7 @@
 //
 
 #include <stdio.h>
-#include "errHand.h"
+#include "utility/errHand.h"
 
 
 const char* otic_strError(otic_errors_e e)

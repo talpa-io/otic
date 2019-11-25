@@ -34,8 +34,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
 configure_file(
-        ${PROJECT_SOURCE_DIR}/include/config/config.h.in
-        ${PROJECT_SOURCE_DIR}/include/config/config.h
+        include/core/config.h.in
+        include/core/config.h
 )
 
 include(cmake/tools.cmake)
@@ -65,26 +65,25 @@ add_subdirectory(src)
 
 if (ENABLE_OPTIC_TESTS)
     include(CTest)
-    add_subdirectory(tests)
+    add_subdirectory(test)
 endif()
 
 if (BUILD_DEMOS)
     add_subdirectory(demo)
 endif()
 
-include(cmake/single_header_gen.cmake)
-
-generate_single_file(otic.h
-        include/config/config.h
-        src/core/core.h
-        src/pack/pack.h
-        src/unpack/unpack.h
-        )
+FILE(WRITE "${PROJECT_BINARY_DIR}/otic.h"
+        "#ifndef OTIC_H\n#define OTIC_H\n#include <otic/otic.h>\n#endif // OTIC_H")
 
 install(FILES "${PROJECT_BINARY_DIR}/otic.h"
         CONFIGURATIONS Release | Debug
         DESTINATION include
         COMPONENT Devel
+        )
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+        DESTINATION include/otic
+        FILES_MATCHING PATTERN "*.h"
         )
 
 #install(TARGETS libotic
@@ -109,8 +108,6 @@ install(FILES "${PROJECT_BINARY_DIR}/otic.h"
 #        DESTINATION include/otic
 #        FILES_MATCHING PATTERN "*.[h]"
 #        )
-
-
 
 #include(CMakePackageConfigHelpers)
 #write_basic_package_version_file(

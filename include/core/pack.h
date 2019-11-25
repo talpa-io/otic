@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include <zstd.h>
-#include "config/config.h"
+#include "core/config.h"
 #include "core/core.h"
 
 

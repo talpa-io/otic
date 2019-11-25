@@ -1,41 +1,17 @@
 set(OTIC_CORE_FILES
-        core/core.h
-        core/core.c
+        ${PROJECT_SOURCE_DIR}/include/core/core.h
+        ${PROJECT_SOURCE_DIR}/include/core/config.h
+        ${PROJECT_SOURCE_DIR}/include/core/pack.h
+        ${PROJECT_SOURCE_DIR}/include/core/unpack.h
+        ${PROJECT_SOURCE_DIR}/src/core/core.c
+        ${PROJECT_SOURCE_DIR}/src/core/pack.c
+        ${PROJECT_SOURCE_DIR}/src/core/unpack.c
         )
 
-set(OTIC_PACK_FILES
-        pack/pack.c
-        pack/pack.h
-        )
-
-set(OTIC_UNPACK_FILES
-        unpack/unpack.c
-        unpack/unpack.h
-        )
-
-add_library(otic_shared SHARED
-        ${OTIC_PACK_FILES}
-        ${OTIC_UNPACK_FILES}
-        ${OTIC_CORE_FILES}
-        )
-
-add_library(otic_static STATIC
-        ${OTIC_PACK_FILES}
-        ${OTIC_UNPACK_FILES}
-        ${OTIC_CORE_FILES}
-        )
-
-target_include_directories(otic_shared
-        PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
-        )
-
-target_include_directories(otic_static
-        PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
-        )
+add_library(otic_shared SHARED ${OTIC_CORE_FILES})
+add_library(otic_static STATIC ${OTIC_CORE_FILES})
+target_include_directories(otic_shared PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
+target_include_directories(otic_static PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
 
 set_target_properties(
         otic_shared
@@ -61,3 +37,5 @@ install(TARGETS otic_static
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         )
+
+set(OTIC_CORE_FILES ${OTIC_CORE_FILES} PARENT_SCOPE)
