@@ -19,9 +19,9 @@ command:
     - "cp /opt/bin/otic /opt/dist/otic"
 
   test:
+    - "echo hallo"
 #    - "cd kbuild && ctest"
-    - "ls"
-
+#    - "ls"
 
   run:
   dev:

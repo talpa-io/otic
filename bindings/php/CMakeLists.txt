@@ -59,10 +59,10 @@ endforeach ()
 
 include_directories(
         ${PHP_INCLUDES}
-        ${OTIC_PACK_FILES}
-        ${OTIC_UNPACK_FILES}
         ${OTIC_CORE_FILES}
 )
+
+message(STATUS "${OTIC_CORE_FILES}")
 
 #  php -dextension=`pwd`/libotic_php.so -f test.php
 #FILE(GLOB KernelHeaders ./kernel/*.h)
@@ -79,6 +79,16 @@ set(PHPOTIC_SRC_FILES
 #    add_definitions(-DPHP_ATOM_INC -fvisibility=hidden)
 #endif()
 
+set(CORE_FILES
+        ${PROJECT_SOURCE_DIR}/../../include/core/base.h
+        ${PROJECT_SOURCE_DIR}/../../include/core/config.h
+        ${PROJECT_SOURCE_DIR}/../../include/core/pack.h
+        ${PROJECT_SOURCE_DIR}/../../include/core/unpack.h
+        ${PROJECT_SOURCE_DIR}/../../src/core/base.c
+        ${PROJECT_SOURCE_DIR}/../../src/core/pack.c
+        ${PROJECT_SOURCE_DIR}/../../src/core/unpack.c
+        )
+
 add_php_executable(demo/pack/simple_pack.php)
 add_php_executable(demo/unpack/simple_unpack.php)
 add_php_executable(demo/tsvParser/tsvParser.php)
@@ -88,9 +98,12 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
     add_definitions(-DHAVE_CONFIG_H)
     set(SOURCE_FILES "${SOURCE_FILES};config.h")
 endif()
+
 include_directories(${PROJECT_SOURCE_DIR}/../../include)
 #add_library(php_test SHARED ${PHPOTIC_SRC_FILES})
-add_library(otic_php SHARED src/otic_php.h src/otic_php.c)
+
+
+add_library(otic_php SHARED src/otic_php.h src/otic_php.c ${CORE_FILES})
 #target_include_directories(otic_php PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(otic_php zstd m pthread)
 
@@ -100,6 +113,7 @@ install(
         LIBRARY DESTINATION ${PHP_EXTENSION_DIR}
         ARCHIVE DESTINATION ${PHP_EXTENSION_DIR}
         )
+
 install(
         SCRIPT "${PROJECT_SOURCE_DIR}/cmake/installExt.cmake"
         )
