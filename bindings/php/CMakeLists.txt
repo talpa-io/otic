@@ -88,11 +88,11 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
     add_definitions(-DHAVE_CONFIG_H)
     set(SOURCE_FILES "${SOURCE_FILES};config.h")
 endif()
-include_directories(${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../include ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../src)
+include_directories(${PROJECT_SOURCE_DIR}/../../include)
 #add_library(php_test SHARED ${PHPOTIC_SRC_FILES})
 add_library(otic_php SHARED src/otic_php.h src/otic_php.c)
 #target_include_directories(otic_php PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(otic_php otic zstd m pthread)
+target_link_libraries(otic_php zstd m pthread)
 
 install(
         TARGETS otic_php
