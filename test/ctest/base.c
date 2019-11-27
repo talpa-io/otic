@@ -1,10 +1,4 @@
-//
-// Created by hp on 9/19/19.
-//
-
-#include <stdio.h>
 #include <limits.h>
-#include <stdlib.h>
 #include <assert.h>
 #include "core/base.h"
 #include "../test_asserts.h"
@@ -39,7 +33,8 @@ static void test_leb128_signed(void)
         assert(counter == temp);
         counter++;
     }
-    // Jeez! C needs lambda functions
+//  Jeez! C needs lambda functions
+//  GNU C supports embedded Functions, but this should be made standard IMO
     leb128_encode_signed(INT32_MAX, buffer);
     leb128_decode_signed(buffer, &temp);
     assert(INT32_MAX == temp);
@@ -88,7 +83,7 @@ int main()
 {
     test_base_init();
     test_error_handling();
-    test_state_handling();
+    test_state_handling() ;
     test_leb128_unsigned();
     test_leb128_signed();
     return 0;

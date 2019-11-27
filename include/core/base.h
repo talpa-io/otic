@@ -15,12 +15,12 @@ extern "C" {
 #ifndef __STDC_IEC_559__
 #error OTIC requires IEEE 754 support for handling float values
 #endif
+#define OTIC_ZSTD_COMPRESSION_LEVEL 7
+#define OTIC_TS_MULTIPLICATOR 10000
 #define OTIC_ENTRY_STRING_SIZE 32
 #define OTIC_PACK_CACHE_SIZE 255
-#define PTR_M 31
-#define OTIC_TS_MULTIPLICATOR 10000
 #define OTIC_MAGIC_SIZE 4
-#define OTIC_ZSTD_COMPRESSION_LEVEL 7
+#define PTR_M 31
 
 
 // TODO: HANDLE Memory allocation failure
@@ -140,21 +140,21 @@ typedef struct
     size_t size;
 } otic_str_t;
 
-uint8_t         otic_base_init(otic_base_t* base);
-void            otic_base_setError(otic_base_t *base, otic_errors_e error);
-otic_errors_e   otic_base_getError(otic_base_t *base);
-void            otic_base_setState(otic_base_t* base, otic_state_e state);
-otic_state_e    otic_base_getState(otic_base_t* base);
-void            otic_base_close(otic_base_t* base);
+uint8_t         otic_base_init(otic_base_t* base) __attribute__((nonnull(1)));
+void            otic_base_setError(otic_base_t *base, otic_errors_e error) __attribute__((nonnull(1)));
+otic_errors_e   otic_base_getError(otic_base_t *base) __attribute__((nonnull(1)));
+void            otic_base_setState(otic_base_t* base, otic_state_e state) __attribute__((nonnull(1)));
+otic_state_e    otic_base_getState(otic_base_t* base) __attribute__((nonnull(1)));
+void            otic_base_close(otic_base_t* base) __attribute__((nonnull(1)));
 
-uint8_t         leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest);
-uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value) ;
-uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest);
-uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value);
+uint8_t         leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
+uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value) __attribute__((nonnull(1, 2)));
+uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
+uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value) __attribute__((nonnull(1, 2)));
 
 otic_str_t*     otic_setStr(const char* ptr);
-void            otic_freeStr(otic_str_t* oticStr);
-void            otic_updateStr(otic_str_t* oticStr, const char* ptr);
+void            otic_freeStr(otic_str_t* oticStr) __attribute__((nonnull(1)));
+void            otic_updateStr(otic_str_t* oticStr, const char* ptr) __attribute__((nonnull(1)));
 
 #ifdef __cplusplus
 }

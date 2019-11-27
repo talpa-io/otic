@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <printf.h>
 #include <stdio.h>
+#include <otic.h>
 #include "core/pack.h"
 
 /**
@@ -553,11 +554,11 @@ uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel)
 {
 #if OTIC_PACK_NO_COMPRESSION
     otic_payload_t payload = {.dataLen = channel->base.top - channel->base.cache, .startTimestamp = channel->base.timestamp_start, .channelId = channel->info.channelId};
-    if (!channel->info.parent->flusher((uint8_t*)&payload, sizeof(payload))){
+    if (!channel->info.parent->flusher((uint8_t*)&payload, sizeof(payload), channel->info.parent->data)){
         otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
         goto fail;
     }
-    if (!channel->info.parent->flusher(channel->base.cache, channel->base.top - channel->base.cache)){
+    if (!channel->info.parent->flusher(channel->base.cache, channel->base.top - channel->base.cache, channel->info.parent->data)){
         otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
         goto fail;
     }
@@ -698,11 +699,11 @@ uint8_t otic_pack_flush(otic_pack_t* oticPack)
         payload.channelId = oticPack->channels[counter]->info.channelId;
         payload.dataLen = oticPack->channels[counter]->base.top - oticPack->channels[counter]->base.cache;
         payload.startTimestamp = oticPack->channels[counter]->base.timestamp_current;
-        if (!oticPack->flusher((uint8_t*)&payload, sizeof(otic_payload_t))){
+        if (!oticPack->flusher((uint8_t*)&payload, sizeof(otic_payload_t), oticPack->data)){
             otic_base_setError(&oticPack->channels[counter]->base, OTIC_ERROR_FLUSH_FAILED);
             goto fail;
         }
-        if (!oticPack->flusher(oticPack->channels[counter]->base.cache, oticPack->channels[counter]->base.top - oticPack->channels[counter]->base.cache)){
+        if (!oticPack->flusher(oticPack->channels[counter]->base.cache, oticPack->channels[counter]->base.top - oticPack->channels[counter]->base.cache, oticPack->data)){
             otic_base_setError(&oticPack->channels[counter]->base, OTIC_ERROR_FLUSH_FAILED);
             goto fail;
         }

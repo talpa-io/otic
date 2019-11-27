@@ -13,21 +13,21 @@ function(OTIC_ADDTEST testName)
     target_include_directories(${testName} PUBLIC ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/include)
 endfunction()
 
-OTIC_ADDTEST(core_test core/base.c)
-OTIC_ADDTEST(pack_test core/pack.c)
+OTIC_ADDTEST(core_test ctest/base.c)
+OTIC_ADDTEST(pack_test ctest/pack.c)
 OTIC_ADDTEST(pack_unpack_test
-        core/pack_unpack.c
+        ctest/pack_unpack.c
         ../src/utility/errHand.c
         ../include/utility/errHand.h
         )
 OTIC_ADDTEST(format_test
-        utility/format.c
+        ctest/format.c
         ../include/utility/format.h
         ../src/utility/format.c
         )
 
 OTIC_ADDTEST(packChannel_test
-        core/packChannel.c
+        ctest/packChannel.c
         ../src/utility/errHand.c
         ../include/utility/errHand.h
         )

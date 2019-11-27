@@ -13,6 +13,7 @@ endif()
 option(ALLOW_CMAKE_LIB_FETCH "Allow CMake to Fetch the missing libs from the Web" ON)
 option(ENABLE_OPTIC_TESTS "Enable tests of the core otic" ON)
 option(BUILD_DEMOS "Build demos and examples" ON)
+option(OTIC_PACK_NO_COMPRESSION "Disable Otic Pack Second Compression: ZSTD, ZLIB, GZIP" OFF)
 
 #if (NOT ${CMAKE_BUILD_TYPE})
 #    message(STATUS "Setting the build type to: Release")
@@ -34,8 +35,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
 configure_file(
-        include/core/config.h.in
-        include/core/config.h
+        ${PROJECT_SOURCE_DIR}/include/core/config.h.in
+        ${PROJECT_SOURCE_DIR}/include/core/config.h
 )
 
 include(cmake/tools.cmake)
@@ -72,8 +73,10 @@ if (BUILD_DEMOS)
     add_subdirectory(demo)
 endif()
 
-FILE(WRITE "${PROJECT_BINARY_DIR}/otic.h"
-        "#ifndef OTIC_H\n#define OTIC_H\n#include <otic/otic.h>\n#endif // OTIC_H")
+FILE(WRITE
+    "${PROJECT_BINARY_DIR}/otic.h"
+    "#ifndef OTIC_H\n#define OTIC_H\n\n#include <otic/otic.h>\n\n#endif // OTIC_H"
+    )
 
 install(FILES "${PROJECT_BINARY_DIR}/otic.h"
         CONFIGURATIONS Release | Debug
@@ -85,6 +88,8 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
         DESTINATION include/otic
         FILES_MATCHING PATTERN "*.h"
         )
+
+#message(STATUS "No_compression: ${OTIC_PACK_NO_COMPRESSION}")
 
 #install(TARGETS libotic
 #        CONFIGURATIONS Release | Debug

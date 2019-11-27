@@ -9,12 +9,22 @@ Quickly run:
 sudo apt-get install cmake
 ```
 on linus to install it. On other platforms, Google is your friend.  
-  
-Run:
+To show the list of available options, do:  
 ```bash
-mkdir build
-cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release
-make -C build
+mkdir build && cd build
+cmake .. -LH
+```  
+The following lines for example will build otic without the second compression feature:  
+```bash
+mkdir build && cd build
+cmake .. -DOTIC_PACK_NO_COMPRESSION=ON -DCMAKE_BUILD_TYPE=Release    
+``` 
+ 
+For basic installation, do:
+```bash
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make
 ```
 This would create an appropriate MakeFile, run it, and create a executable
 inside the `bin` folder.  

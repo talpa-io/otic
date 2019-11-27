@@ -9,11 +9,8 @@ extern "C" {
 #include "config.h"
 #include "base.h"
 
-
 #define ZSTD_OUT_SIZE 12000
 #define OTIC_PACK_CACHE_TOP_LIMIT 255
-#define OTIC_PACK_NO_COMPRESSION 0
-
 
 typedef struct otic_entry_t otic_entry_t;
 struct otic_entry_t
@@ -47,15 +44,56 @@ typedef struct
     } info;
 } otic_pack_channel_t;
 
-uint8_t otic_pack_channel_init(otic_pack_channel_t* channel, uint8_t id, channel_type_e channelType, const char* metaData,
-                                otic_pack_t* parent);
+uint8_t otic_pack_channel_init(
+        otic_pack_channel_t* channel,
+        uint8_t id,
+        channel_type_e channelType,
+        const char* metaData,
+        otic_pack_t* parent
+        );
 uint8_t otic_pack_channel_close(otic_pack_channel_t* channel);
-uint8_t otic_pack_channel_inject_i(otic_pack_channel_t* channel, double timestamp, const char* sensorName, const char* sensorUnit, uint32_t value);
-uint8_t otic_pack_channel_inject_i_neg(otic_pack_channel_t* channel, double timestamp, const char* sensorName, const char* sensorUnit, uint32_t value);
-uint8_t otic_pack_channel_inject_d(otic_pack_channel_t* channel, double timestamp, const char* sensorName, const char* unit, double value);
-uint8_t otic_pack_channel_inject_s(otic_pack_channel_t* channel, double timestamp, const char* sensorName, const char* unit, const char* value);
-uint8_t otic_pack_channel_inject_n(otic_pack_channel_t* channel, double timestamp, const char* sensorName, const char* unit);
-uint8_t otic_pack_channel_inject_b(otic_pack_channel_t* channel, double timestamp, const char* sensorName, const char* unit, uint8_t* buffer, size_t size);
+uint8_t otic_pack_channel_inject_i(
+        otic_pack_channel_t* channel,
+        double timestamp,
+        const char* sensorName,
+        const char* sensorUnit,
+        uint32_t value
+        );
+uint8_t otic_pack_channel_inject_i_neg(
+        otic_pack_channel_t* channel,
+        double timestamp,
+        const char* sensorName,
+        const char* sensorUnit,
+        uint32_t value
+        );
+uint8_t otic_pack_channel_inject_d(
+        otic_pack_channel_t* channel,
+        double timestamp,
+        const char* sensorName,
+        const char* unit,
+        double value
+        );
+uint8_t otic_pack_channel_inject_s(
+        otic_pack_channel_t* channel,
+        double timestamp,
+        const char* sensorName,
+        const char* unit,
+        const char* value
+        );
+uint8_t otic_pack_channel_inject_n(
+        otic_pack_channel_t* channel,
+        double timestamp,
+        const char* sensorName,
+        const char* unit
+        );
+uint8_t otic_pack_channel_inject_b(
+        otic_pack_channel_t* channel,
+        double timestamp,
+        const char* sensorName,
+        const char* unit,
+        uint8_t* buffer,
+        size_t size
+        );
 uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel);
 
 

@@ -9,10 +9,8 @@
 
 uint8_t otic_base_init(otic_base_t* base)
 {
-    if (!base)
-        return 0;
     base->top = base->cache;
-    base->timestamp_current = base->timestamp_current = base->rowCounter = 0;
+    base->timestamp_current = base->rowCounter = 0;
     base->error = OTIC_ERROR_NONE;
     base->state = OTIC_STATE_OPENED;
     return 1;
@@ -61,6 +59,8 @@ inline void otic_base_close(otic_base_t* base)
  *      } while (value != 0);
  * \endcode
  * Factoring the \a if s results in the following algorithm
+ * @attention Notice that \a restrict is used despite the fact that the ptr is aliased (dest and p). We can force the compiler to
+ * optimize the algorithm as one of the ptr doesn't change the values it is pointing to.
  * @return The number of bytes written into \a dest
  */
 uint8_t leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest)
@@ -127,7 +127,7 @@ uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* re
         shift += 7;
     } while ((byte >> 7));
     if ((shift < size) && (byte & ~0xBFL) >> 6)
-        *result |= (~0u << shift);
+        *result |= (~0L << shift);
     return counter;
 }
 
