@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <zstd.h>
+#include <otic.h>
 #include "core/unpack.h"
 #include "core/config.h"
 
@@ -25,7 +26,10 @@ parser_printer parsers[];
 OTIC_UNPACK_INLINE
 static otic_unpack_entry_t* otic_unpack_insert_entry(otic_unpack_channel_t* channel, char* value, const char* end) {
     if (channel->cache_t.allocationLeft == 0) {
-        channel->cache_t.cache = realloc(channel->cache_t.cache, sizeof(*channel->cache_t.cache) * (OTIC_UNPACK_CACHE_ALLOCATION_RESERVE_SIZE + channel->cache_t.cache_allocated));
+        otic_unpack_entry_t** temp = realloc(channel->cache_t.cache, sizeof(*channel->cache_t.cache) * (OTIC_UNPACK_CACHE_ALLOCATION_RESERVE_SIZE + channel->cache_t.cache_allocated));
+        if (!temp)
+            return 0;
+        channel->cache_t.cache = temp;
         channel->cache_t.allocationLeft = OTIC_UNPACK_CACHE_ALLOCATION_RESERVE_SIZE;
         channel->cache_t.cache_allocated += OTIC_UNPACK_CACHE_ALLOCATION_RESERVE_SIZE;
     }

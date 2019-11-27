@@ -62,8 +62,6 @@ include_directories(
         ${OTIC_CORE_FILES}
 )
 
-message(STATUS "${OTIC_CORE_FILES}")
-
 #  php -dextension=`pwd`/libotic_php.so -f test.php
 #FILE(GLOB KernelHeaders ./kernel/*.h)
 #FILE(GLOB KernelSources ./kernel/*.c)
@@ -79,7 +77,7 @@ set(PHPOTIC_SRC_FILES
 #    add_definitions(-DPHP_ATOM_INC -fvisibility=hidden)
 #endif()
 
-set(CORE_FILES
+#[[set(CORE_FILES
         ${PROJECT_SOURCE_DIR}/../../include/core/base.h
         ${PROJECT_SOURCE_DIR}/../../include/core/config.h
         ${PROJECT_SOURCE_DIR}/../../include/core/pack.h
@@ -87,7 +85,7 @@ set(CORE_FILES
         ${PROJECT_SOURCE_DIR}/../../src/core/base.c
         ${PROJECT_SOURCE_DIR}/../../src/core/pack.c
         ${PROJECT_SOURCE_DIR}/../../src/core/unpack.c
-        )
+        )]]
 
 add_php_executable(demo/pack/simple_pack.php)
 add_php_executable(demo/unpack/simple_unpack.php)
@@ -99,13 +97,11 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
     set(SOURCE_FILES "${SOURCE_FILES};config.h")
 endif()
 
-include_directories(${PROJECT_SOURCE_DIR}/../../include)
-#add_library(php_test SHARED ${PHPOTIC_SRC_FILES})
-
 
 add_library(otic_php SHARED src/otic_php.h src/otic_php.c ${CORE_FILES})
 #target_include_directories(otic_php PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(otic_php zstd m pthread)
+target_include_directories(otic_php PRIVATE ${PROJECT_SOURCE_DIR}/../../include)
+target_link_libraries(otic_php otic zstd m pthread)
 
 install(
         TARGETS otic_php

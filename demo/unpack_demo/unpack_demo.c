@@ -47,8 +47,8 @@ int main()
     otic_unpack_t oticUnpack;
     if (!otic_unpack_init(&oticUnpack, fetcher, srcFile, seeker, srcFile))
         goto fail;
-    otic_unpack_defineChannel(&oticUnpack, 1, flusher, srcFile);
-    otic_unpack_defineChannel(&oticUnpack, 2, flusher2, srcFile);
+    otic_unpack_defineChannel(&oticUnpack, 1, flusher, destFile);
+//    otic_unpack_defineChannel(&oticUnpack, 2, flusher2, srcFile);
     while (!fpeek(srcFile))
     {
         otic_unpack_parse(&oticUnpack);
