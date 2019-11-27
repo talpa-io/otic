@@ -12,8 +12,11 @@ command:
     - "if [ -d `pwd`/kbuild ]; then rm -rf `pwd`/kbuild/*; else mkdir kbuild; fi"
     - "cmake . -Bkbuild -DCMAKE_BUILD_TYPE=Release"
     - "make -C kbuild"
-    - "sudo make install -C kbuild"
+    #- "sudo make install -C kbuild"
     - "sudo ldconfig"
+    - "cp /opt/bindings/php/dist/libotic_php.so /opt/dist/"
+    - "cp /opt/lib/libotic.so /opt/dist"
+    - "cp /opt/bin/otic /opt/dist/otic"
 
   test:
 #    - "cd kbuild && ctest"

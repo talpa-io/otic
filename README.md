@@ -2,6 +2,15 @@
 
 [![Actions Status](https://github.com/talpa-io/otic/workflows/build/badge.svg)](https://github.com/talpa-io/otic/actions)  
 
+
+
+## Binaries
+
+All libraries are stored in `/dist` directory.
+
+
+
+
 ## Install:  
 The installation requires CMake.  
 Quickly run:  

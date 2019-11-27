@@ -9,6 +9,7 @@ bindings/php/src/*
 !bindings/php/src/otic_php.h
 !bindings/php/src/config.m4
 
+/bindings/php/dist
 
 CMakeCache.txt
 CMakeFiles/
