@@ -1,11 +1,18 @@
 <?php
     use Otic\OticUnpack;
+    use Otic\OticUnpackStream;
 
-    $inputFile = fopen('dump.otic', "rb");
+    $inputFile = fopen('dump.otic', 'rb');
+    $outputFile = fopen('dump2.txt', 'w');
 
+    $unpacker = new OticUnpackStream($inputFile);
+    $unpacker->defineChannel(0x01, $outputFile);
 
+    while (!feof($inputFile))
+        $unpacker->parse();
 
-
+    $unpacker = null;
+    fclose($outputFile);
 
 
     //function fetcher($size)

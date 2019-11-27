@@ -17,8 +17,6 @@
 // https://www.php.net/manual/de/internals2.ze1.streams.php for streams
 // https://www.maplenerds.com/blog/2018/6/14/writing-php-72-extensions-with-c for an example
 
-
-// TODO: ADD OticUnpackStream class entry.
 // TODO: Update the OticUnpackStream method parameters
 // TODO: Port C error Handling to PHP
 
@@ -58,6 +56,12 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(OTIC_STREAM_SINGLE_ARG, 0, 0, 1)
                 ZEND_ARG_INFO(0, fileOut)
 ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(OTIC_STREAM_INPUT_FILE_ARG, 0, 0, 1)
+                ZEND_ARG_INFO(0, fileIn)
+ZEND_END_ARG_INFO()
+
+
 typedef struct
 {
     zval* data;
@@ -678,11 +682,11 @@ static void oticUnpackStream_object_free(zend_object* object)
 }
 
 const zend_function_entry oticUnpackStream_methods[] = {
-        PHP_ME(OticUnpackStream, __construct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+        PHP_ME(OticUnpackStream, __construct, OTIC_STREAM_INPUT_FILE_ARG, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
         PHP_ME(OticUnpackStream, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
         PHP_ME(OticUnpackStream, __toString, NULL, ZEND_ACC_PUBLIC)
-        PHP_ME(OticUnpackStream, defineChannel, NULL, ZEND_ACC_PUBLIC)
-        PHP_ME(OticUnpackStream, closeChannel, NULL, ZEND_ACC_PUBLIC)
+        PHP_ME(OticUnpackStream, defineChannel, argInfo_closeChannel, ZEND_ACC_PUBLIC)
+        PHP_ME(OticUnpackStream, closeChannel, argInfo_closeChannel, ZEND_ACC_PUBLIC)
         PHP_ME(OticUnpackStream, parse, NULL, ZEND_ACC_PUBLIC)
         PHP_FE_END
 };
@@ -725,6 +729,14 @@ PHP_MINIT_FUNCTION(otic)
     oticUnpack_handlers.free_obj = oticUnpack_object_free;
     oticUnpack_handlers.dtor_obj = oticUnpack_object_destroy;
     oticUnpack_handlers.offset = XtOffsetOf(oticUnpack_object, std);
+
+    zend_class_entry oticUnpackStream_dce;
+    INIT_CLASS_ENTRY(oticUnpackStream_dce, "Otic\\OticUnpackStream", oticUnpackStream_methods)
+    oticUnpackStream_ce = zend_register_internal_class(&oticUnpackStream_dce TSRMLS_CC);
+    oticUnpackStream_ce->create_object = oticUnpackStream_object_new;
+    memcpy(&oticUnpackStream_handlers, zend_get_std_object_handlers(), sizeof(oticUnpackStream_handlers));
+    oticUnpackStream_handlers.dtor_obj = oticUnpackStream_object_destroy;
+    oticUnpackStream_handlers.offset = XtOffsetOf(oticUnpack_object, std);
 
     return SUCCESS;
 }
