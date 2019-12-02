@@ -7,6 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #define OTIC_BASE_CACHE_SIZE 12000
 #if OTIC_BASE_CACHE_SIZE < (255 * 2)
@@ -140,7 +141,7 @@ typedef struct
     size_t size;
 } otic_str_t;
 
-uint8_t         otic_base_init(otic_base_t* base) __attribute__((nonnull(1)));
+void            otic_base_init(otic_base_t* base) __attribute__((nonnull(1)));
 void            otic_base_setError(otic_base_t *base, otic_errors_e error) __attribute__((nonnull(1)));
 otic_errors_e   otic_base_getError(otic_base_t *base) __attribute__((nonnull(1)));
 void            otic_base_setState(otic_base_t* base, otic_state_e state) __attribute__((nonnull(1)));
@@ -155,6 +156,7 @@ uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int
 otic_str_t*     otic_setStr(const char* ptr);
 void            otic_freeStr(otic_str_t* oticStr) __attribute__((nonnull(1)));
 void            otic_updateStr(otic_str_t* oticStr, const char* ptr) __attribute__((nonnull(1)));
+
 
 #ifdef __cplusplus
 }

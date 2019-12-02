@@ -7,13 +7,12 @@
 #include <stdlib.h>
 #include "core/base.h"
 
-uint8_t otic_base_init(otic_base_t* base)
+void otic_base_init(otic_base_t* base)
 {
     base->top = base->cache;
     base->timestamp_current = base->rowCounter = 0;
     base->error = OTIC_ERROR_NONE;
     base->state = OTIC_STATE_OPENED;
-    return 1;
 }
 
 inline void otic_base_setError(otic_base_t * base, otic_errors_e error)

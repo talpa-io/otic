@@ -12,6 +12,8 @@ add_library(otic_shared SHARED ${OTIC_CORE_FILES})
 add_library(otic_static STATIC ${OTIC_CORE_FILES})
 target_include_directories(otic_shared PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
 target_include_directories(otic_static PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
+target_link_libraries(otic_shared zstd)
+target_link_libraries(otic_static zstd)
 
 set_target_properties(
         otic_shared
