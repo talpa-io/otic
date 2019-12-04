@@ -15,6 +15,7 @@ option(ENABLE_OPTIC_TESTS "Enable tests of the core otic" ON)
 option(BUILD_DEMOS "Build demos and examples" ON)
 option(PHP_BIND "Build PHP Bindings" OFF)
 option(OTIC_PACK_NO_COMPRESSION "Disable Otic Pack Second Compression: ZSTD, ZLIB, GZIP" OFF)
+option(OTIC_PACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Pack src file" ON)
 
 #if (NOT ${CMAKE_BUILD_TYPE})
 #    message(STATUS "Setting the build type to: Release")
@@ -44,7 +45,7 @@ include(cmake/tools.cmake)
 
 CHECK_INCLUDE_FILE(zstd.h ZSTD_EXISTS)
 
-#if (NOT ZSTD_EXISTS)
+if (NOT ZSTD_EXISTS)
     if (ALLOW_CMAKE_LIB_FETCH)
         set(ZSTD_BUILD_PROGRAMS OFF CACHE BOOL "Disable Zstd programs build")
         include(FetchContent)
@@ -61,7 +62,7 @@ CHECK_INCLUDE_FILE(zstd.h ZSTD_EXISTS)
         endif()
         include_directories(${zstd_SOURCE_DIR}/lib)
     endif(ALLOW_CMAKE_LIB_FETCH)
-#endif()
+endif()
 
 add_subdirectory(src)
 

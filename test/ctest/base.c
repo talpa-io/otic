@@ -52,8 +52,6 @@ static void test_leb128_signed(void)
 static void test_base_init(void)
 {
     otic_base_t oticBase;
-    assert(!otic_base_init(0));
-    assert(otic_base_init(&oticBase));
     assert(oticBase.top == oticBase.cache);
     assert(oticBase.timestamp_start == oticBase.timestamp_current == 0);
     assert(oticBase.error == 0);

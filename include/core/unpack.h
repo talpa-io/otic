@@ -21,7 +21,7 @@ typedef struct
     uint32_t index;
     char* name;
     char* unit;
-    union{
+    struct {
         uint32_t int_value;
         double double_value;
         struct

@@ -4,18 +4,6 @@
 #include <otic.h>
 #include "core/pack.h"
 
-/**
- * The purpose of the following 6-7 lines, is to inline each static functions defines in this file.
- * This allows the use of the concerned functions without calling them, as their body gets replaced
- * in each call, resulting in a performance improvement.
- * So if this improves performance, why is \a inline an option?
- * The cost to pay for aligning each static function, is that the executable/library file considerably
- * increases for each \a inline.
- *
- * It is therefore recommended to disable \a inline if the user intends to use this library on a device
- * with little program storage and for which the wholesome performance is of little value.
- */
-#define OTIC_PACK_INLINE_ALL_STATIC 1
 
 #if OTIC_PACK_INLINE_ALL_STATIC
 #define OTIC_PACK_INLINE inline
@@ -23,19 +11,6 @@
 #define OTIC_PACK_INLINE
 #endif
 
-
-/*OTIC_PACK_INLINE
-static uint32_t otic_hashFunction(const char* string)
-{
-    uint32_t hash_address = 0;
-    uint8_t* ptr = (uint8_t*)string;
-    while(*ptr)
-    {
-        hash_address = PTR_M * hash_address + *ptr;
-        ptr++;
-    }
-    return hash_address % OTIC_PACK_CACHE_SIZE;
-}*/
 
 OTIC_PACK_INLINE
 __attribute_pure__ static uint32_t otic_hashFunction(const char* ptr)
@@ -129,7 +104,7 @@ static otic_entry_t* otic_pack_entry_insert_s(otic_pack_channel_t* channel, cons
         return 0;
     ptr->type = OTIC_TYPE_STRING;
     ptr->last_value.string_value.size = value->size;
-    ptr->last_value.string_value.ptr = malloc(ptr->last_value.string_value.size + 1);
+    ptr->last_value.string_value.ptr = malloc(ptr->last_value.string_value.size);
     memcpy((char*)ptr->last_value.string_value.ptr, value->ptr, value->size);
     return ptr;
 }
@@ -415,15 +390,14 @@ uint8_t otic_pack_channel_inject_s(otic_pack_channel_t* channel, double timestam
         write_string(channel, &v);
         channel->totalEntries++;
     } else {
-        if (entry->type == OTIC_TYPE_STRING && strncmp(entry->last_value.string_value.ptr, value, v.size) == 0){
+        if (entry->type == OTIC_TYPE_STRING && strncmp(entry->last_value.string_value.ptr, value, v.size) == 0) {
             otic_pack_write_byte(channel, OTIC_TYPE_UNMODIFIED);
             write_long(channel, entry->index);
         } else {
-            // TODO: Only reallocate, no allocation needed, and reallocate only if the size is bigger than the old size
-            if (entry->last_value.string_value.size == 0)
-                entry->last_value.string_value.ptr = malloc(v.size);
-            else
+            if (entry->last_value.string_value.size < v.size) {
                 entry->last_value.string_value.ptr = realloc((char*)entry->last_value.string_value.ptr, v.size);
+                entry->last_value.string_value.size = v.size;
+            }
             memcpy((char*)entry->last_value.string_value.ptr, value, v.size);
             otic_pack_write_byte(channel, OTIC_TYPE_STRING);
             write_long(channel, entry->index);
