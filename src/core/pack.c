@@ -531,10 +531,10 @@ uint8_t otic_pack_channel_close(otic_pack_channel_t* channel)
         {
             channel->info.parent->channels[sCounter] = channel->info.parent->channels[--channel->info.parent->totalChannels];
             channel->info.parent->channels[channel->info.parent->totalChannels] = channel;
-            break;
-    }
-    free(channel->info.parent->channels[channel->info.parent->totalChannels]);
-    return 1;
+            free(channel->info.parent->channels[channel->info.parent->totalChannels]);
+            return 1;
+        }
+    return 0;
 }
 
 uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel)
@@ -632,6 +632,7 @@ otic_pack_channel_t* otic_pack_defineChannel(otic_pack_t* oticPack, channel_type
         goto fail;
     }
     oticPack->channels = ptr;
+    // TODO: Try to use malloc instead!
     oticPack->channels[oticPack->totalChannels] = calloc(1, sizeof(otic_pack_channel_t));
 //    oticPack->channels[oticPack->totalChannels] = malloc(sizeof(otic_pack_channel_t));
     if (!oticPack->channels[oticPack->totalChannels]){

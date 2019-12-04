@@ -89,6 +89,7 @@ zend_object_handlers oticPackStream_handlers;
 zend_object_handlers oticPackChannel_handlers;
 zend_object_handlers oticUnpack_handlers;
 zend_object_handlers oticUnpackStream_handlers;
+zend_object_handlers oticUnpackChannel_handlers;
 
 typedef struct
 {
@@ -107,6 +108,10 @@ typedef struct
     otic_unpack_t* oticUnpack;
     zend_object std;
 } oticUnpack_object;
+
+typedef struct
+{
+} oticUnpackChannel_object;
 
 static inline oticPack_object* php_oticPack_obj_from_obj(zend_object* obj)
 {
@@ -445,6 +450,12 @@ static void oticPackStream_object_free(zend_object* object)
     zend_object_std_dtor(object);
 }
 
+
+
+
+
+
+
 // TODO: Change
 zend_fcall_info pfci;
 zend_fcall_info_cache pfcc;
@@ -587,6 +598,7 @@ uint8_t php_oticUnpackStream_fetcher(uint8_t* content, size_t size, void* data)
     php_stream_read((php_stream*)data, (char*)content, size);
     return 1;
 }
+
 PHP_METHOD(OticUnpackStream, __construct)
 {
     zval* id = getThis();

@@ -16,6 +16,7 @@ option(BUILD_DEMOS "Build demos and examples" ON)
 option(PHP_BIND "Build PHP Bindings" OFF)
 option(OTIC_PACK_NO_COMPRESSION "Disable Otic Pack Second Compression: ZSTD, ZLIB, GZIP" OFF)
 option(OTIC_PACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Pack src file" ON)
+option(OTIC_UNPACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Unpack src file" ON)
 
 #if (NOT ${CMAKE_BUILD_TYPE})
 #    message(STATUS "Setting the build type to: Release")

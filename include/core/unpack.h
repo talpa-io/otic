@@ -12,7 +12,7 @@ extern "C" {
 #define OTIC_UNPACK_OUTPUT_LIMIT 512
 #define OTIC_UNPACK_RESULT_OUTSIZE 1048576
 #if OTIC_UNPACK_RESULT_OUTSIZE < (OTIC_UNPACK_OUTPUT_LIMIT * 2)
-#error OTIC unpack requires the Output buffer to be twice as big as the threshold limit
+#error OTIC unpack requires the Output buffer to be at least twice as big as the threshold limit
 #endif
 #define OTIC_UNPACK_CACHE_ALLOCATION_RESERVE_SIZE 8
 
@@ -32,7 +32,6 @@ typedef struct
     } last_value;
     otic_types_e type;
 } otic_unpack_entry_t;
-
 
 typedef struct otic_unpack_t otic_unpack_t;
 
@@ -65,7 +64,18 @@ typedef struct
         otic_meta_data_t* metaData;
     } info;
     uint32_t entryIndex;
+    struct
+    {
+        size_t* ptr;
+        size_t size;
+    } toFetch;
 } otic_unpack_channel_t;
+
+uint8_t otic_unpack_channel_init(otic_unpack_channel_t* channel, uint8_t id, uint8_t(*flusher)(uint8_t* content, size_t, void* data),void* data, otic_unpack_t* parent);
+void otic_unpack_channel_toFetch(otic_unpack_channel_t* channel, const char** values, size_t size);
+void otic_unpack_channel_flush(otic_unpack_channel_t* channel);
+void otic_unpack_channel_close(otic_unpack_channel_t* channel);
+
 
 // TODO: ADD A GETINFO() FUNCTIONALITY IN EACH BINDING
 struct otic_unpack_t
@@ -80,10 +90,10 @@ struct otic_unpack_t
 };
 
 uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t, void*), void* fetcherData, uint8_t(*seeker)(uint32_t, void*), void* seekerData) __attribute__((nonnull(1,2)));
-uint8_t otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(uint8_t*, size_t, void* data), void* data) __attribute__((nonnull(1, 3)));
-uint8_t otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8_t id);
-uint8_t otic_unpack_parse(otic_unpack_t* oticUnpackBase);
-uint8_t otic_unpack_close(otic_unpack_t* oticUnpackBase);
+otic_unpack_channel_t* otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(uint8_t*, size_t, void* data), void* data) __attribute__((nonnull(1, 3)));
+uint8_t otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8_t id) __attribute__((nonnull(1)));
+uint8_t otic_unpack_parse(otic_unpack_t* oticUnpackBase) __attribute__((nonnull(1)));
+uint8_t otic_unpack_close(otic_unpack_t* oticUnpackBase) __attribute__((nonnull(1)));
 
 #ifdef __cplusplus
 }

@@ -34,6 +34,7 @@ int main()
     if (!channel2)
         goto fail;
 
+    otic_pack_channel_inject_i(channel1, 1223, "sensor1", "unit1", 12);
     otic_pack_channel_inject_i(channel1, 1234.4, "sensor1", "sensorUnit1", 1232434);
     otic_pack_channel_inject_d(channel1, 1234.5, "sensor2", "sensorUnit2", 3.1417);
     otic_pack_channel_inject_i_neg(channel1, 1234.5, "sensor1", "sensorUnit1", 54);
@@ -50,11 +51,13 @@ int main()
     otic_pack_channel_inject_n(channel2, 12456, "sensor1", "sensorUnit1");
     otic_pack_channel_inject_n(channel2, 12456, "sensor1", "");
 
-    // Not needed. This feature was added to allow early file closes, as otic_pack_close destroys every created channels,
-    // that isn't closed
+
+    // Not needed. This feature was added to allow early file closes,
+    // as otic_pack_close destroys every created channels, that isn't closed!
     otic_pack_channel_close(channel1);
 
     otic_pack_close(&oticPack);
+    fclose(fileOut);
     return 0;
 
 fail:

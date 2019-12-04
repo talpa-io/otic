@@ -6,6 +6,8 @@
  * Time: 11:54
  */
 
+include 'OticExceptions.php';
+
 $ffi = FFI::cdef(
     "
         // config.h
@@ -14,7 +16,6 @@ $ffi = FFI::cdef(
         #define OTIC_VERSION_PATCH 0
 
         #define OTIC_PACK_NO_COMPRESSION 0
-        #include \<stdio.h\>
         // base.h
         
         #define OTIC_BASE_CACHE_SIZE 12000
@@ -92,13 +93,16 @@ $ffi = FFI::cdef(
             otic_state_e state;
             size_t rowCounter;
         };
-        
-        
+    
         typedef enum {
             OTIC_CHANNEL_TYPE_SENSOR,
             OTIC_CHANNEL_TYPE_BINARY
         } channel_type_e;
-        typedef struct otic_str_t otic_str_t;
+        typedef struct 
+        {
+            char* ptr;
+            size_t size;
+        } otic_str_t;
         
         void            otic_base_init(otic_base_t* base) __attribute__((nonnull(1)));
         void            otic_base_setError(otic_base_t *base, otic_errors_e error) __attribute__((nonnull(1)));
@@ -116,13 +120,24 @@ $ffi = FFI::cdef(
         void            otic_freeStr(otic_str_t* oticStr) __attribute__((nonnull(1)));
         void            otic_updateStr(otic_str_t* oticStr, const char* ptr) __attribute__((nonnull(1)));
         
-        
         // pack.h
         
         #define ZSTD_OUT_SIZE 12000
         #define OTIC_PACK_CACHE_TOP_LIMIT 255
-
         typedef struct otic_entry_t otic_entry_t;
+        struct otic_entry_t
+        {
+            uint32_t index;
+            char* name;
+            struct
+            {
+                uint32_t int_value;
+                double double_value;
+                otic_str_t string_value;
+            } last_value;
+            otic_types_e type;
+            otic_entry_t* next;
+        };
         typedef struct otic_pack_t otic_pack_t;
         typedef struct ZSTD_CCtx ZSTD_CCtx; 
         typedef struct
@@ -209,40 +224,46 @@ $ffi = FFI::cdef(
         uint8_t                 otic_pack_flush(otic_pack_t* oticPack) __attribute__((nonnull(1)));
         void                    otic_pack_close(otic_pack_t* oticPack) __attribute__((nonnull(1)));        
     ",
-    "../../ext/libotic.so.1.0.0"
+    "../../ext2/libotic.so.1.0.0"
 );
 
 class OticPackChannel
 {
+    const CHANNEL_TYPE_SENSOR = 0;
+    const CHANNEL_TYPE_BINARY = 1;
+
     private $channel;
     private $packer;
+
     public function __construct(&$packer, $channelId, $channelType, $channelFeatures)
     {
         if ($channelId > 255 || $channelId < 0)
-            throw new Error("Invalid Id");
+            throw new OticException(OticException::OTIC_ERROR_INVALID_ARGUMENT, "Invalid ChannelID!");
         if ($channelType != 1 && $channelType != 0)
-            throw new Error("Invalid Channel Type!");
+            throw new OticException(OticException::OTIC_ERROR_INVALID_ARGUMENT, "Invalid ChannelType!");
         $this->packer = $packer;
         global $ffi;
         $this->channel = $ffi->otic_pack_defineChannel(FFI::addr($this->packer), $channelType, $channelId, $channelFeatures);
+        if ($this->packer->error != 0)
+            throw new OticException($this->packer->error);
     }
 
-    public function inject($timestamp, $sensorName, $sensorUnit, $value)
+    public function inject($timestamp, $sensorName, $sensorUnit, $value = null)
     {
         global $ffi;
         if ($value === null)
-            $ffi->otic_pack_channel_inject_n(FFI::addr($this->channel), $timestamp, $sensorName, $sensorUnit);
+            $ffi->otic_pack_channel_inject_n($this->channel, $timestamp, $sensorName, $sensorUnit);
         elseif (is_numeric($value)) {
             if (strstr($value, '.') === false) {
                 if ($value >= 0)
-                    $ffi->otic_pack_channel_inject_i($this->channel, $timestamp, $sensorName, $sensorUnit, (int)$value);
+                    $ffi->otic_pack_channel_inject_i($this->channel, $timestamp, $sensorName, $sensorUnit, $value);
                 else
-                    $ffi->otic_pack_channel_inject_ineg($this->channel, $timestamp, $sensorName, $sensorUnit, -(int)$value);
+                    $ffi->otic_pack_channel_inject_ineg($this->channel, (double)$timestamp, $sensorName, $sensorUnit, -$value);
             } else {
-                $ffi->otic_pack_channel_inject_d($this->channel, $timestamp, $sensorName, $sensorUnit, $value);
+                $ffi->otic_pack_channel_inject_d($this->channel, (double)$timestamp, $sensorName, $sensorUnit, $value);
             }
         } else {
-            $ffi->otic_pack_channel_inject_s($this->channel, $timestamp, $sensorUnit, $sensorUnit, $value);
+            $ffi->otic_pack_channel_inject_s($this->channel, (double)$timestamp, $sensorUnit, $sensorUnit, $value);
         }
         if ($this->packer->error != 0)
             throw new Error("Inject Error. Error Code: $this->packer->error\n");
@@ -257,7 +278,12 @@ class OticPackChannel
     }
 }
 
-$ffi3 = FFI::cdef("typedef struct FILE FILE; FILE* fopen(const char* fileName, const char* mode); size_t fwrite(const void*, size_t, size_t nmemb, FILE*);", "libc.so.6");
+$ffi3 = FFI::cdef("
+    typedef struct FILE FILE; 
+    FILE* fopen(const char* fileName, const char* mode); 
+    size_t fwrite(const void*, size_t, size_t nmemb, FILE*);
+    int fflush(FILE* stream);
+    ", "libc.so.6");
 
 class OticPack
 {
@@ -268,24 +294,26 @@ class OticPack
     {
         global $ffi;
         $this->packer = $ffi->new("otic_pack_t");
-        $this->data = fopen($fileName, "w");
-
-        $this->ffi2 = FFI::cdef("typedef struct FILE FILE; FILE* fopen(const char* fileName, const char* mode); size_t fwrite(const void*, size_t, FILE*);", "libc.so.6");
+        $this->ffi2 = FFI::cdef("typedef struct FILE FILE;int fflush(FILE* stream); FILE* fopen(const char* fileName, const char* mode); size_t fwrite(const void*, size_t, size_t, FILE*);", "libc.so.6");
         $this->data = $this->ffi2->fopen($fileName, "wb");
         $ffi->otic_pack_init(FFI::addr($this->packer), 'OticPack::flusher', $this->data);
-        echo $this->packer->error;
+        $channel = $ffi->otic_pack_defineChannel(FFI::addr($this->packer), 0, 1, 0);
+        $ffi->otic_pack_channel_inject_s($channel, 12323, "sensor1", "sensorUnit1", "Some string");
+        $ffi->otic_pack_channel_flush($channel);
+        var_dump($channel->base);
     }
 
     public function defineChannel($channelId, $channelType, $channelFeatures)
     {
         if (!is_numeric($channelId) || !is_numeric($channelType) || !is_numeric($channelFeatures))
-            throw new Error("Only Scalar values allowed!");
+            throw new OticException(OticException::OTIC_ERROR_INVALID_ARGUMENT);
         return new OticPackChannel($this->packer, $channelType, $channelId, $channelFeatures);
     }
 
     protected function flusher($content, $size, $data)
     {
         global $ffi3;
+        echo "Size: $size\n";
         $ffi3->fwrite($content, 1, $size, $data);
     }
 
@@ -315,5 +343,10 @@ class OticPack
 }
 
 $packer = new OticPack("test.otic");
-$channel = $packer->defineChannel(1, 0, 1);
-$channel->inject(132434, "sensor1", "sensorUnit1",232);
+//$channel = $packer->defineChannel(1, OticPackChannel::CHANNEL_TYPE_SENSOR, 0);
+//$channel->inject(1223, "sensor1", "unit1", "Some String");
+//$channel->inject(1223, "sensor2", "unit3", "Some Other String");
+//for ($i = 0; $i < 5; ++$i)
+//{
+//    $channel->inject($i, "sensor1", "unit1", 1234);
+//}
