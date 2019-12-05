@@ -276,6 +276,11 @@ uint8_t otic_pack_channel_inject_i_neg(otic_pack_channel_t* channel, double time
             otic_pack_write_byte(channel, OTIC_TYPE_UNMODIFIED);
             write_long(channel, entry->index);
         } else {
+            if (entry->last_value.string_value.size != 0) {
+                free((void *)entry->last_value.string_value.ptr);
+                entry->last_value.string_value.ptr = 0;
+                entry->last_value.string_value.size = 0;
+            }
             entry->last_value.int_value = value;
             entry->type = OTIC_TYPE_INT32_NEG;
             otic_pack_write_byte(channel, OTIC_TYPE_INT32_NEG);
@@ -315,6 +320,11 @@ uint8_t otic_pack_channel_inject_i(otic_pack_channel_t* channel, double timestam
             otic_pack_write_byte(channel, OTIC_TYPE_UNMODIFIED);
             write_long(channel, entry->index);
         } else {
+            if (entry->last_value.string_value.size != 0) {
+                free((void *)entry->last_value.string_value.ptr);
+                entry->last_value.string_value.ptr = 0;
+                entry->last_value.string_value.size = 0;
+            }
             entry->last_value.int_value = value;
             entry->type = OTIC_TYPE_INT32_POS;
             otic_pack_write_byte(channel, OTIC_TYPE_INT32_POS);
@@ -352,6 +362,11 @@ uint8_t otic_pack_channel_inject_d(otic_pack_channel_t* channel, double timestam
             otic_pack_write_byte(channel, OTIC_TYPE_UNMODIFIED);
             write_long(channel, entry->index);
         } else {
+            if (entry->last_value.string_value.size != 0) {
+                free((void *)entry->last_value.string_value.ptr);
+                entry->last_value.string_value.ptr = 0;
+                entry->last_value.string_value.size = 0;
+            }
             entry->last_value.double_value = value;
             entry->type = OTIC_TYPE_DOUBLE;
             otic_pack_write_byte(channel, OTIC_TYPE_DOUBLE);
@@ -394,6 +409,8 @@ uint8_t otic_pack_channel_inject_s(otic_pack_channel_t* channel, double timestam
             otic_pack_write_byte(channel, OTIC_TYPE_UNMODIFIED);
             write_long(channel, entry->index);
         } else {
+            if (entry->type != OTIC_TYPE_STRING)
+                entry->last_value.string_value.ptr = 0;
             if (entry->last_value.string_value.size < v.size) {
                 entry->last_value.string_value.ptr = realloc((char*)entry->last_value.string_value.ptr, v.size);
                 entry->last_value.string_value.size = v.size;
@@ -437,6 +454,11 @@ uint8_t otic_pack_channel_inject_n(otic_pack_channel_t* channel, double timestam
             otic_pack_write_byte(channel, OTIC_TYPE_UNMODIFIED);
             write_long(channel, entry->index);
         } else {
+            if (entry->last_value.string_value.size != 0) {
+                free((void *)entry->last_value.string_value.ptr);
+                entry->last_value.string_value.ptr = 0;
+                entry->last_value.string_value.size = 0;
+            }
             entry->type = OTIC_TYPE_NULL;
             otic_pack_write_byte(channel, OTIC_TYPE_NULL);
             write_long(channel, entry->index);
@@ -470,6 +492,11 @@ uint8_t otic_pack_channel_inject_b(otic_pack_channel_t* channel, double timestam
         write_long(channel, channel->totalEntries);
         channel->totalEntries++;
     } else {
+        if (entry->last_value.string_value.size != 0) {
+            free((void *)entry->last_value.string_value.ptr);
+            entry->last_value.string_value.ptr = 0;
+            entry->last_value.string_value.size = 0;
+        }
         entry->type = OTIC_TYPE_RAWBUFFER;
         otic_pack_write_byte(channel, OTIC_TYPE_RAWBUFFER);
         write_long(channel, entry->index);

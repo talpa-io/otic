@@ -17,7 +17,7 @@ struct otic_entry_t
 {
     uint32_t index;
     char* name;
-    struct
+    union
     {
         uint32_t int_value;
         double double_value;

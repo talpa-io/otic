@@ -135,11 +135,6 @@ typedef enum {
     OTIC_CHANNEL_TYPE_BINARY
 } channel_type_e;
 
-typedef struct
-{
-    const char* ptr;
-    size_t size;
-} otic_str_t;
 
 void            otic_base_init(otic_base_t* base) __attribute__((nonnull(1)));
 void            otic_base_setError(otic_base_t *base, otic_errors_e error) __attribute__((nonnull(1)));
@@ -148,15 +143,44 @@ void            otic_base_setState(otic_base_t* base, otic_state_e state) __attr
 otic_state_e    otic_base_getState(otic_base_t* base) __attribute__((nonnull(1)));
 void            otic_base_close(otic_base_t* base) __attribute__((nonnull(1)));
 
-uint8_t         leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
-uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value) __attribute__((nonnull(1, 2)));
-uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
-uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value) __attribute__((nonnull(1, 2)));
+
+typedef struct
+{
+    char* ptr;
+    size_t size;
+} otic_str_t;
 
 otic_str_t*     otic_setStr(const char* ptr);
 void            otic_freeStr(otic_str_t* oticStr) __attribute__((nonnull(1)));
 void            otic_updateStr(otic_str_t* oticStr, const char* ptr) __attribute__((nonnull(1)));
 
+
+typedef struct
+{
+    union {
+        struct {
+            uint8_t neg;
+            uint32_t value;
+        } lval;
+        double dval;
+        otic_str_t sval;
+    };
+    uint8_t type;                   // Active Type == OTIC_TYPE
+} oval_t;
+
+otic_types_e    otic_oval_getType(const oval_t* oval);
+void            otic_oval_setd(oval_t* oval, uint32_t value, uint8_t neg);
+void            otic_oval_setdp(oval_t* oval, uint32_t value);
+void            otic_oval_setdn(oval_t* oval, uint32_t value);
+void            otic_oval_setlf(oval_t* oval, double value);
+void            otic_oval_sets(oval_t* oval, const char* value, size_t size);
+void            otic_oval_setn(oval_t* oval);
+
+
+uint8_t         leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
+uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value) __attribute__((nonnull(1, 2)));
+uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
+uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value) __attribute__((nonnull(1, 2)));
 
 #ifdef __cplusplus
 }

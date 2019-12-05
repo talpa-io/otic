@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "core/base.h"
 
+
 void otic_base_init(otic_base_t* base)
 {
     base->top = base->cache;
@@ -39,6 +40,51 @@ inline void otic_base_close(otic_base_t* base)
 {
     base->state = OTIC_STATE_CLOSED;
 }
+
+otic_types_e otic_oval_getType(const oval_t* oval)
+{
+    return oval->type;
+}
+
+void otic_oval_setd(oval_t* oval, uint32_t value, uint8_t neg)
+{
+    oval->lval.neg = neg;
+    oval->lval.value = value;
+    oval->type = neg ? OTIC_TYPE_INT32_NEG: OTIC_TYPE_INT32_POS;
+}
+
+void otic_oval_setdp(oval_t* oval, uint32_t value)
+{
+    oval->type = OTIC_TYPE_INT32_POS;
+    oval->lval.neg = 0;
+    oval->lval.value = value;
+}
+
+void otic_oval_setdn(oval_t* oval, uint32_t value)
+{
+    oval->type = OTIC_TYPE_INT32_NEG;
+    oval->lval.neg = 1;
+    oval->lval.value = value;
+}
+
+void otic_oval_setlf(oval_t* oval, double value)
+{
+    oval->type = OTIC_TYPE_DOUBLE;
+    oval->dval = value;
+}
+
+void otic_oval_sets(oval_t* oval, const char* value, size_t size)
+{
+    oval->type = OTIC_TYPE_STRING;
+    oval->sval.ptr = (char*)value;
+    oval->sval.size = size;
+}
+
+void otic_oval_setn(oval_t* oval)
+{
+    oval->type = OTIC_TYPE_NULL;
+}
+
 
 /**
  * Encode Integral values or more precisely uint32_t values to leb128.
@@ -134,7 +180,7 @@ otic_str_t* otic_setStr(const char* ptr)
 {
     otic_str_t* oticStr = malloc(sizeof(otic_str_t));
     oticStr->size = ptr ? strlen(ptr) : 0;
-    oticStr->ptr = ptr;
+    oticStr->ptr = (char*)ptr;
     return oticStr;
 }
 
@@ -146,5 +192,5 @@ void otic_freeStr(otic_str_t* oticStr)
 void otic_updateStr(otic_str_t* oticStr, const char* ptr)
 {
     oticStr->size = ptr ? strlen(ptr) : 0;
-    oticStr->ptr = ptr;
+    oticStr->ptr = (char*)ptr;
 }

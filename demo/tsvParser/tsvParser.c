@@ -6,9 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <utility/format.h>
 #include <assert.h>
-#include <sys/stat.h>
 #include <fenv.h>
 
 #include "core/pack.h"
@@ -32,7 +30,7 @@ typedef enum
     TSV_PARSER_ERROR_OTIC
 } tsv_parser_error_e;
 
-static inline const char* tsv_parser_getError(tsv_parser_error_e error)
+static inline const char* tsv_parser_strError(tsv_parser_error_e error)
 {
     switch (error)
     {
@@ -96,9 +94,6 @@ inline static uint8_t isNumeric(const char* value)
     return 1;
 }
 
-static FILE* inputFile2 = 0;
-static FILE* outputFile2 = 0;
-
 // TODO: CHANGE STREAM BUFFER
 static inline uint8_t flusher(uint8_t* value, size_t size, void* file)
 {
@@ -143,11 +138,28 @@ static inline int fpeek(FILE* stream)
     return c;
 }
 
-static inline uint8_t flusher2(uint8_t* buffer, size_t size, void* data)
+static inline uint8_t flusher2(double timestamp, const char* sensorName, const char* sensorUnit, const oval_t* val, void* data)
 {
-    fwrite(buffer, 1, size, (void*)data);
-    fflush((FILE*)data);
-    return 1;
+    switch (otic_oval_getType(val))
+    {
+        case OTIC_TYPE_INT32_POS:
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%u\n", timestamp, sensorName, sensorUnit, val->lval.value);
+            return 1;
+        case OTIC_TYPE_INT32_NEG:
+            fprintf((FILE*)data, "%lf\t%s\t%s\t-%u\n", timestamp, sensorName, sensorUnit, val->lval.value);
+            return 1;
+        case OTIC_TYPE_DOUBLE:
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%lf\n", timestamp, sensorName, sensorUnit, val->dval);
+            return 1;
+        case OTIC_TYPE_STRING:
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%s\n", timestamp, sensorName, sensorUnit, val->sval.ptr);
+            return 1;
+        case OTIC_TYPE_NULL:
+            fprintf((FILE*)data, "%lf\t%s\t%s\n", timestamp, sensorName, sensorUnit);
+            return 1;
+        default:
+            return 0;
+    }
 }
 
 inline static size_t getLinesNumber(const char* fileName)
@@ -168,30 +180,39 @@ inline static size_t getLinesNumber(const char* fileName)
 /**
  * @param fileNameIn
  * @param fileNameOut
- * @return Otic_error number. 0 for success, everything else represents a failure.
+ * @return Otic_error number. 0 for success, 1 in case of failure.
  * Use \a otic_getError to print the error.
  */
-static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
-{
-    FILE* inputFile = fopen(fileNameIn, "r");
-    FILE* outputFile = fopen(fileNameOut, "wb");
-    if (!inputFile || !outputFile)
-        return 0;
+static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut) {
+    tsv_parser_error_e tsvParserError = TSV_PARSER_ERROR_NONE;
+    FILE *inputFile = fopen(fileNameIn, "r");
+    FILE *outputFile = fopen(fileNameOut, "wb");
+    if (!inputFile || !outputFile) {
+        tsvParserError = TSV_PARSER_ERROR_FILE;
+        goto fail;
+    }
 
     otic_pack_t oticPack;
-    if (!otic_pack_init(&oticPack, flusher, outputFile))
-        return 0;
+    if (!otic_pack_init(&oticPack, flusher, outputFile)) {
+        tsvParserError = TSV_PARSER_ERROR_OTIC;
+        goto fail;
+    }
+
     otic_pack_channel_t* channel = otic_pack_defineChannel(&oticPack, OTIC_CHANNEL_TYPE_SENSOR, 0x1, 0x0);
-    if (!channel)
-        return 0;
+    if (!channel) {
+        tsvParserError = TSV_PARSER_ERROR_OTIC;
+        goto fail;
+    }
     format_chunker_t formatChunker;
     if (!format_init(&formatChunker.format, '\t', 5))
-        return 0;
+    {
+        tsvParserError = TSV_PARSER_ERROR_FORMATTER;
+        goto fail;
+    }
     char buffer[READ_BUFFERSIZE];
     size_t read = 0;
     char* end = 0;
     int scanned = 0;
-    int sCounter = 0;
     while (fpeek(inputFile) != EOF) {
         read = fread(buffer, 1, READ_BUFFERSIZE - 1024, inputFile);
         buffer[read] = 0;
@@ -250,34 +271,42 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut)
                                            formatChunker.format.columns.content[4]
                 );
             }
+
+            if (oticPack.state == OTIC_STATE_ON_ERROR)
+                goto fail;
         }
     }
     otic_pack_close(&oticPack);
     format_chunker_close(&formatChunker);
     fclose(inputFile);
     fclose(outputFile);
-    return oticPack.error;
+    return 1;
+fail:
+    if (tsvParserError == TSV_PARSER_ERROR_OTIC)
+        otic_error = oticPack.error;
+    fprintf(stderr, "%s\n", tsv_parser_strError(tsvParserError));
+    return 0;
 }
 
 inline static uint8_t decompress(const char* fileNameIn, const char* fileNameOut)
 {
-    inputFile2 = fopen(fileNameIn, "rb");
-    outputFile2 = fopen(fileNameOut, "w");
-    if (!inputFile2 || !outputFile2)
+    FILE* inputFile = fopen(fileNameIn, "rb");
+    FILE* outputFile = fopen(fileNameOut, "w");
+    if (!inputFile || !outputFile)
         return 0;
     otic_unpack_t oticUnpack;
-    if (!otic_unpack_init(&oticUnpack, fetcher, inputFile2, seeker, inputFile2))
+    if (!otic_unpack_init(&oticUnpack, fetcher, inputFile, seeker, inputFile))
         return 0;
-    if (!otic_unpack_defineChannel(&oticUnpack, 0x01, flusher2, outputFile2))
+    if (!otic_unpack_defineChannel(&oticUnpack, 0x01, flusher2, outputFile))
         return 0;
-    while(fpeek(inputFile2) != EOF)
+    while(fpeek(inputFile) != EOF)
     {
         otic_unpack_parse(&oticUnpack);
     }
     uint8_t error = oticUnpack.channels[0]->base.error;
     otic_unpack_close(&oticUnpack);
-    fclose(inputFile2);
-    fclose(outputFile2);
+    fclose(inputFile);
+    fclose(outputFile);
     return error;
 }
 
@@ -295,16 +324,16 @@ static uint8_t compare(const char* origFileName, const char* decompFileName)
 
 static uint8_t getLines(const char* fileInName, const char* fileOutName, size_t size)
 {
-    inputFile2 = fopen(fileInName, "r");
-    outputFile2 = fopen(fileOutName, "w");
+    FILE* inputFile = fopen(fileInName, "r");
+    FILE* outputFile = fopen(fileOutName, "w");
     char buffer[254];
     size_t counter;
     int ret;
     for (counter = 0; counter < size; counter++)
     {
-        ret = fscanf(inputFile2, "%[^\n]\n", buffer);
-        fwrite(buffer, 1, strlen(buffer), outputFile2);
-        fwrite("\n", 1, 1, outputFile2);
+        ret = fscanf(inputFile, "%[^\n]\n", buffer);
+        fwrite(buffer, 1, strlen(buffer), outputFile);
+        fwrite("\n", 1, 1, outputFile);
     }
     return counter;
 }
