@@ -3,7 +3,7 @@
 #endif
 
 #include <php.h>
-#include <otic.h>
+#include <otic_php.h>
 #include <Zend/zend.h>
 #include <Zend/zend_types.h>
 #include <Zend/zend_exceptions.h>
@@ -624,6 +624,11 @@ uint8_t php_oticUnpackStream_flusher(uint8_t* content, size_t size, void* data)
 {
     php_stream_write((php_stream*)data, (const char*)content, size);
     return 1;
+}
+
+uint8_t channelFlushWrapper(double ts, const char* sensorName, const char* sensorUnit, const oval_t* value, void* data)
+{
+
 }
 
 PHP_METHOD(OticUnpackStream, defineChannel)

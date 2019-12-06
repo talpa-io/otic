@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(
-        php_otic
+        otic_php
         VERSION 1.0.0
         DESCRIPTION "OTIC PHP binding"
         LANGUAGES C
@@ -9,24 +9,18 @@ project(
 
 if (${PROJECT_SOURCE_DIR} STREQUAL ${CMAKE_HOME_DIRECTORY})
     message(STATUS "Building PHP_OTIC independantly")
+#        TODO: ADD FIND_PACKAGE AND FETCH INCLUDE_DIR
+    set(OTIC_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/../../include)
 else()
+    set(OTIC_INCLUDE_DIR ${CMAKE_HOME_DIRECTORY}/include)
 endif()
 
-set(CMAKE_MODUlE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_C_STANDARD 99)
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -O0 -Wall -std=gnu99 -fvisibility=hidden")
+set(CMAKE_MODUlE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_C_FLAGS "-g -O2 -DHAVE_CONFIG_H")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib")
-
-include(cmake/php.cmake)
-include(CheckIncludeFile)
-
-CHECK_INCLUDE_FILE(otic.h HAS_OTIC_H CMAKE_REQUIRED_INCLUDES)
-#if (NOT HAS_OTIC_H)
-#    message(FATAL_ERROR "otic.h was not found on the system! Make sure to build and/or install libotic first")
-#endif()
 
 execute_process(
         COMMAND php-config --include-dir
@@ -45,6 +39,7 @@ execute_process(
         OUTPUT_VARIABLE PHP_EXTENSION_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+
 if (PHP_EXTENSION_DIR)
     message(STATUS "PHP Extension DIR found at: ${PHP_EXTENSION_DIR}")
 else(PHP_EXTENSION_DIR)
@@ -63,27 +58,12 @@ foreach (X ${PHP_INCLUDES})
     message(STATUS "\t${X}")
 endforeach ()
 
-include_directories(
-        ${PHP_INCLUDES}
-        ${OTIC_CORE_FILES}
-)
+include(cmake/php.cmake)
 
-#  php -dextension=`pwd`/libotic_php.so -f test.php
-#FILE(GLOB KernelHeaders ./kernel/*.h)
-#FILE(GLOB KernelSources ./kernel/*.c)
+file(GLOB OTIC_PHP_INCLUDE include/*h)
+file(GLOB OTIC_PHP_SRC src/*.c)
 
-set(PHPOTIC_SRC_FILES
-        ${PROJECT_SOURCE_DIR}/ext/hello/hello.c
-        ${PROJECT_SOURCE_DIR}/ext/hello/php_hello.h
-        ${KernelHeaders}
-        ${KernelSources}
-        )
-
-#if (UNIX)
-#    add_definitions(-DPHP_ATOM_INC -fvisibility=hidden)
-#endif()
-
-#[[set(CORE_FILES
+set(OTIC_CORE_FILES
         ${PROJECT_SOURCE_DIR}/../../include/core/base.h
         ${PROJECT_SOURCE_DIR}/../../include/core/config.h
         ${PROJECT_SOURCE_DIR}/../../include/core/pack.h
@@ -91,31 +71,23 @@ set(PHPOTIC_SRC_FILES
         ${PROJECT_SOURCE_DIR}/../../src/core/base.c
         ${PROJECT_SOURCE_DIR}/../../src/core/pack.c
         ${PROJECT_SOURCE_DIR}/../../src/core/unpack.c
-        )]]
-
-add_php_executable(demo/pack/simple_pack.php)
-add_php_executable(demo/unpack/simple_unpack.php)
-add_php_executable(demo/tsvParser/tsvParser.php)
-add_php_executable(demo/pack/test.php)
-
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/config.h")
-    add_definitions(-DHAVE_CONFIG_H)
-    set(SOURCE_FILES "${SOURCE_FILES};config.h")
-endif()
-
-
-add_library(otic_php SHARED src/otic_php.h src/otic_php.c ${CORE_FILES})
-#target_include_directories(otic_php PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_include_directories(otic_php PRIVATE ${PROJECT_SOURCE_DIR}/../../include)
-target_link_libraries(otic_php otic zstd m pthread)
-
-install(
-        TARGETS otic_php
-        RUNTIME DESTINATION ${PHP_EXTENSION_DIR}
-        LIBRARY DESTINATION ${PHP_EXTENSION_DIR}
-        ARCHIVE DESTINATION ${PHP_EXTENSION_DIR}
+        ${PROJECT_SOURCE_DIR}/../../src/utility/errHand.c
+        ${PROJECT_SOURCE_DIR}/../../include/utility/errHand.h
         )
 
-install(
-        SCRIPT "${PROJECT_SOURCE_DIR}/cmake/installExt.cmake"
-        )
+add_library(
+        otic_php SHARED
+        ${OTIC_PHP_INCLUDE}
+        ${OTIC_PHP_SRC}
+        ${OTIC_CORE_FILES}
+)
+target_include_directories(
+        otic_php PRIVATE
+        ${PHP_INCLUDES}
+        ${PROJECT_SOURCE_DIR}/include
+        ${OTIC_INCLUDE_DIR}
+)
+target_link_libraries(otic_php zstd)
+
+add_php_executable(test/pack.php)
+add_php_executable(test/unpack.php)
