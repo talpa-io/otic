@@ -23,6 +23,7 @@ typedef struct
     char* name;
     char* unit;
     oval_t value;
+    uint8_t ignore;
 } oticUnpackEntry_t;
 
 typedef struct otic_unpack_t otic_unpack_t;

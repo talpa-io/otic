@@ -155,7 +155,7 @@ static inline uint8_t flusher2(double timestamp, const char* sensorName, const c
             fprintf((FILE*)data, "%lf\t%s\t%s\t%s\n", timestamp, sensorName, sensorUnit, val->sval.ptr);
             return 1;
         case OTIC_TYPE_NULL:
-            fprintf((FILE*)data, "%lf\t%s\t%s\n", timestamp, sensorName, sensorUnit);
+            fprintf((FILE*)data, "%lf\t%s\t%s\t\n", timestamp, sensorName, sensorUnit);
             return 1;
         default:
             return 0;
