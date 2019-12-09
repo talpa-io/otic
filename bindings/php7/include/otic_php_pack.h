@@ -6,7 +6,7 @@
 #define OTIC_PHP_OTIC_PHP_PACK_H
 
 #include <php.h>
-#include "otic/core/pack.h"
+#include "core/pack.h"
 
 
 typedef struct oticPackChannel_object_t

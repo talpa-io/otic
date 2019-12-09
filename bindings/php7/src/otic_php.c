@@ -50,6 +50,14 @@ PHP_MINIT_FUNCTION(otic)
     oticUnpack_object_handlers.dtor_obj = oticUnpack_object_destroy;
     oticUnpack_object_handlers.offset   = XtOffsetOf(oticUnpack_object, std);
 
+    zend_class_entry temp6_ce;
+    INIT_CLASS_ENTRY(temp6_ce, "OticUnpackChannel", oticUnpackChannel_methods)
+    oticUnpackChannel_ce = zend_register_internal_class(&temp6_ce TSRMLS_CC);
+    oticUnpackChannel_ce->create_object = oticUnpackChannel_object_new;
+    memcpy(&oticUnpackChannel_object_handlers, zend_get_std_object_handlers(), sizeof(oticUnpackChannel_object_handlers));
+    oticUnpackChannel_object_handlers.free_obj = oticUnpackChannel_object_free;
+    oticUnpackChannel_object_handlers.dtor_obj = oticUnpackChannel_object_destroy;
+    oticUnpackChannel_object_handlers.offset = XtOffsetOf(oticUnpackChannel_object, std);
 
     return SUCCESS;
 }

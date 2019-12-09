@@ -533,7 +533,8 @@ fail:
 uint8_t otic_unpack_parse(otic_unpack_t* oticUnpack)
 {
     uint8_t value;
-    oticUnpack->fetcher(&value, 1, oticUnpack->fetcherData);
+    if (oticUnpack->fetcher(&value, 1, oticUnpack->fetcherData) == 0)
+        return 0;
     if (value == OTIC_TYPE_METADATA)
         return otic_unpack_readMetadata(oticUnpack);
     else if (value == OTIC_TYPE_DATA)
