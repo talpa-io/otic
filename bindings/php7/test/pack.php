@@ -14,6 +14,6 @@
     $y->inject(1000000, "sensor2", "unit2", null);
     $y->inject(1000000, "sensor2", "unit2", "some other string");
 
-    $x = null;
+    $x->clo = null;
     fclose($fileOut);
 
