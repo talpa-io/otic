@@ -26,3 +26,16 @@ class LibOticException extends Exceptions
 }
 
 ```
+
+
+## Changes
+
+- Use `\Otic` - Namespace 
+- Provide / Maintain Class Reference in otic-php.php
+- Provide Statistics for Reader and Writer
+    - Which datatypes were written / read
+
+- Provide `\Otic\Otic` Class with Constants `CHANNEL_TYPE_SENSOR`, `CHANNEL_TYPE_BINARY`
+- Investigate Reader Segfault
+- Support Callable as callback (Speed comparison / Lambda / Function call)
+
