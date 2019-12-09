@@ -91,3 +91,4 @@ target_link_libraries(otic_php zstd)
 
 add_php_executable(test/pack.php)
 add_php_executable(test/unpack.php)
+add_php_executable(test/test.php)

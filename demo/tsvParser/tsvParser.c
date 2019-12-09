@@ -297,12 +297,16 @@ inline static uint8_t decompress(const char* fileNameIn, const char* fileNameOut
     otic_unpack_t oticUnpack;
     if (!otic_unpack_init(&oticUnpack, fetcher, inputFile, seeker, inputFile))
         return 0;
-    if (!otic_unpack_defineChannel(&oticUnpack, 0x01, flusher2, outputFile))
+    oticUnpackChannel_t* channel;
+    if (!(channel = otic_unpack_defineChannel(&oticUnpack, 0x01, flusher2, outputFile)))
         return 0;
-    while(fpeek(inputFile) != EOF)
-    {
-        otic_unpack_parse(&oticUnpack);
-    }
+    otic_unpack_channel_toFetch(channel, 0, 0);
+//    while(fpeek(inputFile) != EOF)
+//    {
+//        otic_unpack_parse(&oticUnpack);
+//    }
+
+    while (otic_unpack_parse(&oticUnpack));
     uint8_t error = oticUnpack.channels[0]->base.error;
     otic_unpack_close(&oticUnpack);
     fclose(inputFile);

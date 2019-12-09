@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <zstd.h>
-#include <otic.h>
 #include "core/unpack.h"
 #include "core/config.h"
 
@@ -62,6 +61,7 @@ static oticUnpackEntry_t* otic_unpack_insert_entry(oticUnpackChannel_t* channel,
     entry->index = channel->cache.totalEntries;
     entry->name = malloc((lengthValue + 1) * sizeof(char));
     memcpy(entry->name, value, lengthValue);
+    entry->ignore = 0;
     entry->name[lengthValue] = 0;
     entry->unit = malloc((end - ptr + 1u) * sizeof(char));
     entry->unit[end - ptr] = 0;
@@ -298,11 +298,13 @@ uint8_t otic_unpack_channel_init(oticUnpackChannel_t* channel, uint8_t id, uint8
     }
     otic_base_init(&channel->base);
     channel->info.channelId = id;
+    channel->info.metaData = 0;
     channel->info.parent = parent;
     channel->blockSize = 0;
     channel->cache.currentEntry = 0;
     channel->cache.cache = 0;
     channel->toFetch.ptr = 0;
+    channel->toFetch.size = 0;
     channel->cache.cache_allocated = channel->cache.totalEntries = channel->cache.allocationLeft = 0;
     return 1;
 fail:
@@ -314,7 +316,7 @@ void otic_unpack_channel_toFetch(oticUnpackChannel_t* channel, const char** valu
 {
     channel->toFetch.ptr = malloc(sizeof(size_t) * size);
     channel->toFetch.size = size;
-    for (size_t counter = 0; counter < size; counter++)
+    for (size_t counter = 0; counter < size; ++counter)
         channel->toFetch.ptr[counter] = otic_hashFunction(values[counter]);
 }
 

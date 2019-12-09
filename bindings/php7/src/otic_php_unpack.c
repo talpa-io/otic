@@ -72,7 +72,7 @@ PHP_METHOD(OticUnpackChannel, setFetchList)
     oticUnpackChannel_object* intern = Z_OUNPACKCHAN(id);
     if (!intern)
         return;
-    otic_unpack_channel_toFetch(intern->oticUnpackChannel, buffer, 2);
+    otic_unpack_channel_toFetch(intern->oticUnpackChannel, buffer, argn);
 }
 
 PHP_METHOD(OticUnpackChannel, close)
@@ -146,7 +146,7 @@ PHP_METHOD(OticUnpack, __construct)
     intern->oticUnpack = emalloc(sizeof(otic_unpack_t));
     if (!otic_unpack_init(intern->oticUnpack, otic_php_unpack_fetcher, stream, otic_php_unpack_seeker, stream))
         zend_throw_exception(libOticExceptions_ce, "", intern->oticUnpack->error);
-    zend_declare_property_null(oticUnpack_ce, "flusher", strlen("flusher"), ZEND_ACC_PROTECTED);
+    //zend_declare_property_null(oticUnpack_ce, "flusher", strlen("flusher"), ZEND_ACC_PROTECTED);
     // TODO:
 //    zend_declare_class_constant()
 }
