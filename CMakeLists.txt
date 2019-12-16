@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
 if (POLICY CMP0048)
     message(STATUS "To newer CMP0048 Policy")
@@ -13,7 +13,7 @@ endif()
 option(ALLOW_CMAKE_LIB_FETCH "Allow CMake to Fetch the missing libs from the Web" ON)
 option(ENABLE_OPTIC_TESTS "Enable tests of the core otic" ON)
 option(BUILD_DEMOS "Build demos and examples" ON)
-option(PHP_BIND "Build PHP Bindings" ON)
+option(PHP_BIND "Build PHP Bindings" OFF)
 option(OTIC_PACK_NO_COMPRESSION "Disable Otic Pack Second Compression: ZSTD, ZLIB, GZIP" OFF)
 option(OTIC_PACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Pack src file" ON)
 option(OTIC_UNPACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Unpack src file" ON)
@@ -43,19 +43,22 @@ configure_file(
 )
 
 include(cmake/tools.cmake)
+include(cmake/dependencies.cmake)
 
 CHECK_INCLUDE_FILE(zstd.h ZSTD_EXISTS)
+
+find_package(zstd QUIET)
+if (zstd_FOUND)
+    message(STATUS "Zstd found")
+else()
+    message(STATUS "ZSTD not found")
+endif()
+
 
 if (NOT ZSTD_EXISTS)
     if (ALLOW_CMAKE_LIB_FETCH)
         set(ZSTD_BUILD_PROGRAMS OFF CACHE BOOL "Disable Zstd programs build")
         include(FetchContent)
-    #    set(FETCHCONTENT_BASE_DIR ${PROJECT_SOURCE_DIR}/deps)
-        FetchContent_Declare(
-                zstd
-                GIT_REPOSITORY https://github.com/facebook/zstd.git
-                GIT_TAG        v1.4.3
-        )
         FetchContent_GetProperties(zstd)
         if (NOT zstd_POPULATED)
             FetchContent_Populate(zstd)
@@ -67,8 +70,22 @@ endif()
 
 add_subdirectory(src)
 
+
 if (ENABLE_OPTIC_TESTS)
     include(CTest)
+    find_package(unity QUIET)
+    if (${unity_FOUND})
+        set(unity_SOURCE_DIR ${CMAKE_INSTALL_PREFIX})
+        message(STATUS "Unity found!")
+    else()
+        message(STATUS "Fetching Unity")
+        FetchContent_GetProperties(unity)
+        if (NOT unity_POPULATED)
+            FetchContent_Populate(unity)
+            add_subdirectory(${unity_SOURCE_DIR} ${unity_BINARY_DIR})
+            include_directories(${unity_SOURCE_DIR}/src)
+        endif()
+    endif()
     add_subdirectory(test)
 endif()
 
@@ -92,73 +109,7 @@ install(FILES "${PROJECT_BINARY_DIR}/otic.h"
         )
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
+        EXPORT oticTargets
         DESTINATION include/otic
         FILES_MATCHING PATTERN "*.h"
         )
-
-#message(STATUS "No_compression: ${OTIC_PACK_NO_COMPRESSION}")
-
-#install(TARGETS libotic
-#        CONFIGURATIONS Release | Debug
-#        LIBRARY DESTINATION lib
-#        ARCHIVE DESTINATION lib
-#        RUNTIME DESTINATION bin
-#        INCLUDES DESTINATION include
-#        COMPONENT Libraries
-#        NAMELINK_COMPONENT Developement
-#        PUBLIC_HEADER
-#        DESTINATION include
-#        COMPONENT Development
-#        )
-
-#install(DIRECTORY src/
-#        DESTINATION include/otic
-#        FILES_MATCHING PATTERN "*.[h,c]"
-#        )
-#
-#install(DIRECTORY include/config/
-#        DESTINATION include/otic
-#        FILES_MATCHING PATTERN "*.[h]"
-#        )
-
-#include(CMakePackageConfigHelpers)
-#write_basic_package_version_file(
-#        ${CMAKE_CURRENT_BINARY_DIR}/otic/OticConfigVersion.cmake
-#        VERSION ${PROJECT_VERSION_MAJOR}
-#        COMPATIBILITY AnyNewerVersion
-#)
-#
-#export(EXPORT lib_otic
-#        FILE "${CMAKE_CURRENT_BINARY_DIR}/otic/OticTargets.cmake"
-#        NAMESPACE otic::)
-#
-#configure_file(cmake/OticConfig.cmake
-#        "${CMAKE_CURRENT_BINARY_DIR}/otic/OticConfig.cmake"
-#        COPYONLY
-#        )
-#
-#set(ConfigPackageLocation lib/cmake/Otic)
-#install(EXPORT lib_otic
-#        FILE OticTargets.cmake
-#        NAMESPACE Otic::
-#        DESTINATION ${ConfigPackageLocation}
-#        )
-#
-#install(FILES
-#        cmake/OticConfig.cmake
-#        "${CMAKE_CURRENT_BINARY_DIR}/otic/OticConfigVersion.cmake"
-#        DESTINATION ${ConfigPackageLocation}
-#        COMPONENT Devel
-#        )
-
-#export(TARGETS otic
-#        FILE "${PROJECT_BINARY_DIR}/otic.cmake")
-#
-#export(PACKAGE otic)
-
-#file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
-#set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
-#configure_file("${PROJECT_SOURCE_DIR}/cmake/OticConfig.cmake.in" "${PROJECT_BINARY_DIR}/OticConfig.cmake" @ONLY)
-
-#set(CONF_INCLUDE_DIRS "\${}")
-#message(STATUS ${REL_INCLUDE_DIR})
