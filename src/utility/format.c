@@ -1,10 +1,7 @@
-//
-// Created by talpaadmin on 02.10.19.
-//
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <utility/format.h>
 #include "utility/format.h"
 
 
@@ -14,6 +11,7 @@ uint8_t format_init(format_t *restrict format, char delimiter, size_t numb_colum
         return 0;
     format->delimiter = delimiter;
     format->columns.size = numb_columns;
+    format->columns.parsed = 0;
     return 1;
 }
 

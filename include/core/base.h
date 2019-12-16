@@ -6,8 +6,6 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include <stddef.h>
-#include <stdio.h>
 
 #define OTIC_BASE_CACHE_SIZE 12000
 #if OTIC_BASE_CACHE_SIZE < (255 * 2)
