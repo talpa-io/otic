@@ -85,13 +85,38 @@ Channel id `0x00` is reserved for `END_OF_FILE` flag.
 
 
 ```
+class FileOutputDriver implements OticStream {
+
+    private $fd;
+
+    public function __construct($filename) 
+    {
+        $this->fd = fopen($filename, "r");
+    } 
+
+
+    /**
+     * Returns binary data or null if end of file is reached
+     */
+    public function read(int $lenght) : string 
+    {
+        if (feof ($this->fd))
+            return null;
+        return fread($this->$fd, $length)
+    }
+
+
+}
+
+
+$outputDriver = new FileOutputDriver()
+
 $writer = new OticWriter();
 $writer->setOutput(file1.otic);
 
 $ch1 = $writer->defineRawChannel(1, COMPRESSION_NONE);
 $ch2 = $writer->defineBasicSensorChannel(2, COMPRESSION_ZSTD);
 
-$ch2->setMaxBuffer(64k)
 
 $ch1->inject(time(), file_get_contents("/dev/webcam1");
 $ch2->inject(time(), "sensor1", 20ihjfs, "km/h");
