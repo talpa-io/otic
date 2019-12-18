@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <utility/format.h>
 #include "utility/format.h"
 
 
@@ -22,7 +21,7 @@ char* format_parse(format_t *restrict format, char* line)
     *ptr = line;
     while (*line)
     {
-        if (*line == '\n'){
+        if (*line == '\n') {
             *line = 0;
             break;
         }
@@ -31,7 +30,7 @@ char* format_parse(format_t *restrict format, char* line)
             *++ptr = (*(line + 1) == format->delimiter || *(line + 1) == '\n') ? 0 : line + 1;
             ++format->columns.parsed;
         }
-        line++;
+        ++line;
     }
     return line + 1;
 }

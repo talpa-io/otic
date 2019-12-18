@@ -11,12 +11,20 @@ if (POLICY CMP0054)
 endif()
 
 option(ALLOW_CMAKE_LIB_FETCH "Allow CMake to Fetch the missing libs from the Web" ON)
-option(ENABLE_OPTIC_TESTS "Enable tests of the core otic" ON)
+option(ENABLE_TESTS "Enable tests of the core OTIC library" ON)
+option(ENABLE_FUZZ "Enable Build of the Fuzzing of the OTIC library" ON)
 option(BUILD_DEMOS "Build demos and examples" ON)
 option(PHP_BIND "Build PHP Bindings" OFF)
 option(OTIC_PACK_NO_COMPRESSION "Disable Otic Pack Second Compression: ZSTD, ZLIB, GZIP" OFF)
 option(OTIC_PACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Pack src file" ON)
 option(OTIC_UNPACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Unpack src file" ON)
+set(PACK_BUCKET_SIZE 16384 CACHE STRING "Cache size in bytes of the pack bucket")
+
+if (ENABLE_FUZZ)
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang)
+endif()
+
 
 #if (NOT ${CMAKE_BUILD_TYPE})
 #    message(STATUS "Setting the build type to: Release")
@@ -70,8 +78,7 @@ endif()
 
 add_subdirectory(src)
 
-
-if (ENABLE_OPTIC_TESTS)
+if (ENABLE_TESTS)
     include(CTest)
     find_package(unity QUIET)
     if (${unity_FOUND})
@@ -86,7 +93,11 @@ if (ENABLE_OPTIC_TESTS)
             include_directories(${unity_SOURCE_DIR}/src)
         endif()
     endif()
-    add_subdirectory(test)
+    add_subdirectory(test/ctest)
+endif()
+
+if (ENABLE_FUZZ)
+    add_subdirectory(test/fuzz)
 endif()
 
 if (BUILD_DEMOS)

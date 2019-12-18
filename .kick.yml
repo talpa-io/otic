@@ -13,9 +13,9 @@ command:
     - "cmake . -Bkbuild -DCMAKE_BUILD_TYPE=Release"
     - "make -C kbuild"
     #- "sudo make install -C kbuild"
-    - "sudo ldconfig"
-    - "cp /opt/bindings/php7/lib/libotic_php.so /opt/dist/"
-    - "cp /opt/bin/otic /opt/dist/otic"
+#    - "sudo ldconfig"
+#    - "cp /opt/bindings/php7/lib/libotic_php.so /opt/dist/"
+#    - "cp /opt/bin/otic /opt/dist/otic"
 
   test:
     - "echo hallo"

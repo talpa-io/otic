@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "utility/format.h"
 
+
 void setUp(void)
 {
 }
@@ -41,6 +42,7 @@ static void test_format_parse_simple(void)
     format_close(&format);
 }
 
+// TODO: nullptr at start if nothing is given
 static void test_format_parse(void)
 {
     format_t format;
@@ -58,9 +60,28 @@ static void test_format_parse(void)
     TEST_ASSERT_EQUAL_STRING(".", format.columns.content[5]);
     TEST_ASSERT_EQUAL_STRING(0, format.columns.content[6]);
     TEST_ASSERT_EQUAL_STRING(".", format.columns.content[7]);
-    TEST_ASSERT(*format.columns.content[8] == '\0')
+//    TEST_ASSERT(*format.columns.content[8] == '\0')
     format_close(&format);
 }
+
+static void test_format_complex(void)
+{
+    format_t format;
+    format_init(&format, '|', 8);
+    char buffer[64] = {};
+    strcpy(buffer, "||||||hallo world|");
+    format_parse(&format, buffer);
+    TEST_ASSERT(*format.columns.content[0] == '\0')
+    TEST_ASSERT(format.columns.content[1] == 0)
+    TEST_ASSERT(format.columns.content[2] == 0)
+    TEST_ASSERT(format.columns.content[3] == 0)
+    TEST_ASSERT(format.columns.content[4] == 0)
+    TEST_ASSERT(format.columns.content[5] == 0)
+    TEST_ASSERT_EQUAL_STRING("hallo world", format.columns.content[6]);
+
+    format_close(&format);
+}
+
 
 int main(int argc, char** argv)
 {
@@ -69,83 +90,7 @@ int main(int argc, char** argv)
     RUN_TEST(test_format_init_close);
     RUN_TEST(test_format_parse_simple);
     RUN_TEST(test_format_parse);
+    RUN_TEST(test_format_complex);
+
     UNITY_END();
 }
-
-
-/*
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include "utility/format.h"
-
-
-static void test_format_init(void)
-{
-    format_t format;
-    assert(!format_init(0, '\t', 5));
-    assert(format_init(&format, '\t', 5));
-    format_close(&format);
-}
-
-static void test_format_parseSimple(void)
-{
-    format_t format;
-    format_init(&format, ':', 5);
-    char buffer[24] = {}, line[24], result[24] = {};
-    strcpy(buffer, "This:is:a:simple:test");
-    strcpy(line, "This:is:a:simple:test");
-    format_parse(&format, buffer);
-//    assert(strcmp(format.columns.content[0], "This") == 0);
-//    assert(strcmp(format.columns.content[1], "is") == 0);
-//    assert(strcmp(format.columns.content[2], "a") == 0);
-//    assert(strcmp(format.columns.content[3], "simple") == 0);
-//    assert(strcmp(format.columns.content[4], "test") == 0);
-//    format_write(&format, result);
-    format_close(&format);
-}
-
-static void test_format_parseComplex(void)
-{
-    format_t format;
-    format_init(&format, '\t', 4);
-    char buffer[24] = {}, line[24], result[24] = {};
-    strcpy(buffer, "This\t\tTest");
-    strcpy(line, "This\t\tTest");
-    format_parse(&format, buffer);
-    assert(strcmp(format.columns.content[0], "This") == 0);
-    assert(format.columns.content[1] == 0);
-    assert(strcmp(format.columns.content[2], "Test") == 0);
-    format_write(&format, result);
-    assert(strcmp(line, result) == 0);
-    format_close(&format);
-}
-
-static void test_format_parseComplexer(void)
-{
-    format_t format;
-    format_init(&format, ',', 5);
-    char buffer[24] = {}, line[24], result[24] = {};
-    strcpy(buffer, "This,,,,value");
-    strcpy(line, "This,,,,value");
-    format_parse(&format, buffer);
-    assert(strcmp(format.columns.content[0], "This") == 0);
-    assert(format.columns.content[1] == 0);
-    assert(format.columns.content[2] == 0);
-    assert(format.columns.content[3] == 0);
-    assert(strcmp(format.columns.content[4], "value") == 0);
-    format_write(&format, result);
-    assert(strcmp(line, result) == 0);
-    format_close(&format);
-}
-
-
-int main()
-{
-    test_format_init();
-    test_format_parseSimple();
-//    test_format_parseComplex();
-//    test_format_parseComplexer();
-//
-    return 0;
-}*/
