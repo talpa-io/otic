@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
 
 if (POLICY CMP0048)
     message(STATUS "To newer CMP0048 Policy")
@@ -12,7 +12,7 @@ endif()
 
 option(ALLOW_CMAKE_LIB_FETCH "Allow CMake to Fetch the missing libs from the Web" ON)
 option(ENABLE_TESTS "Enable tests of the core OTIC library" ON)
-option(ENABLE_FUZZ "Enable Build of the Fuzzing of the OTIC library" ON)
+option(ENABLE_FUZZ "Enable Build of the Fuzzing of the OTIC library" OFF)
 option(BUILD_DEMOS "Build demos and examples" ON)
 option(PHP_BIND "Build PHP Bindings" OFF)
 option(OTIC_PACK_NO_COMPRESSION "Disable Otic Pack Second Compression: ZSTD, ZLIB, GZIP" OFF)

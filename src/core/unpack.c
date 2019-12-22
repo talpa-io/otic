@@ -402,11 +402,11 @@ static void otic_unpack_parseBlock(oticUnpackChannel_t* channel)
             case OTIC_TYPE_UNMODIFIED:
                 otic_unpack_read_unmodified(channel);
                 break;
-            case OTIC_TYPE_INT32_NEG:
-                otic_unpack_read_int32neg(channel);
-                break;
             case OTIC_TYPE_INT32_POS:
                 otic_unpack_read_int32pos(channel);
+                break;
+            case OTIC_TYPE_INT32_NEG:
+                otic_unpack_read_int32neg(channel);
                 break;
             case OTIC_TYPE_DOUBLE:
                 otic_unpack_read_double(channel);
@@ -493,7 +493,7 @@ uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, 
         otic_unpack_setError(oticUnpack, OTIC_ERROR_DATA_CORRUPTED);
         goto fail;
     }
-    if (header.version < OTIC_VERSION_MAJOR) {
+    if (header.version > OTIC_VERSION_MAJOR) {
         otic_unpack_setError(oticUnpack, OTIC_ERROR_VERSION_UNSUPPORTED);
         goto fail;
     }

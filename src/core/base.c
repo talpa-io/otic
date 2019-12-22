@@ -1,7 +1,3 @@
-//
-// Created by hp on 9/18/19.
-//
-
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
@@ -85,6 +81,10 @@ void otic_oval_setn(oval_t* oval)
     oval->type = OTIC_TYPE_NULL;
 }
 
+uint8_t otic_oval_isNumeric(oval_t* oval)
+{
+    return oval->type == OTIC_TYPE_DOUBLE || oval->type == OTIC_TYPE_INT32_POS || oval->type == OTIC_TYPE_INT32_NEG;
+}
 
 /**
  * Encode Integral values or more precisely uint32_t values to leb128.
