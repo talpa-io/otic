@@ -45,15 +45,19 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
+include(cmake/tools.cmake)
+include(cmake/dependencies.cmake)
+include(TestBigEndian)
+
+TEST_BIG_ENDIAN(BIG_ENDIAN_SYS)
+CHECK_INCLUDE_FILE(endian.h HAS_ENDIAN_H)
+
 configure_file(
         ${PROJECT_SOURCE_DIR}/include/core/config.h.in
         ${PROJECT_SOURCE_DIR}/include/core/config.h
 )
 
-include(cmake/tools.cmake)
-include(cmake/dependencies.cmake)
-
-CHECK_INCLUDE_FILE(zstd.h ZSTD_EXISTS)
+CHECK_INCLUDE_FILE(zstd.h HAS_ZSTD_H)
 
 find_package(zstd QUIET)
 if (zstd_FOUND)
@@ -63,7 +67,7 @@ else()
 endif()
 
 
-if (NOT ZSTD_EXISTS)
+if (NOT HAS_ZSTD_H)
     if (ALLOW_CMAKE_LIB_FETCH)
         set(ZSTD_BUILD_PROGRAMS OFF CACHE BOOL "Disable Zstd programs build")
         include(FetchContent)

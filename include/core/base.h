@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 
-#define OTIC_BASE_CACHE_SIZE 12000
+#define OTIC_BASE_CACHE_SIZE 16384
 #if OTIC_BASE_CACHE_SIZE < (255 * 2)
 #error OTIC Pack requires a buffer cache bigger than twice the size of permitted string value length (255)
 #endif
@@ -23,15 +23,13 @@ extern "C" {
 
 
 // TODO: HANDLE Memory allocation failure
-// TODO: signal.h for error handling?
 // TODO: Portablity: LSB? MSB?
 
 typedef enum
 {
     OTIC_TYPE_NULL,
-    OTIC_TYPE_EMPTY_STRING,
-    OTIC_TYPE_INT32_NEG,
-    OTIC_TYPE_INT32_POS,
+    OTIC_TYPE_INT_NEG,
+    OTIC_TYPE_INT_POS,
     OTIC_TYPE_DOUBLE,
     OTIC_TYPE_MIN1_FLOAT,
     OTIC_TYPE_MIN2_FLOAT,
@@ -88,6 +86,7 @@ typedef enum
     OTIC_META_TYPE_CHANNEL_DEFINE,
     OTIC_META_TYPE_CHANNEL_TYPE,
     OTIC_META_TYPE_COMPRESSION_METHOD,
+    OTIC_META_TYPE_CHUNK_SIZE,
 } otic_meta_type_e;
 
 typedef struct
@@ -111,9 +110,9 @@ typedef struct
 
 typedef struct
 {
-    uint8_t channelId;
-    uint32_t dataLen;
     uint64_t startTimestamp;
+    uint32_t dataLen;
+    uint8_t channelId;
 } __attribute__((packed)) otic_payload_t;
 
 typedef struct otic_base_t otic_base_t;
@@ -156,10 +155,7 @@ void            otic_updateStr(otic_str_t* oticStr, const char* ptr) __attribute
 typedef struct
 {
     union {
-        struct {
-            uint8_t neg;
-            uint32_t value;
-        } lval;
+        uint64_t value;
         double dval;
         otic_str_t sval;
     };

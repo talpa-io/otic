@@ -11,7 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build
-        run: /usr/bin/env ./kickstart.sh :make
+        run: echo "Tiny Tim: God bless us ... everybody.\n";
+#        run: /usr/bin/env ./kickstart.sh :make
 
   test:
     runs-on: ubuntu-latest
