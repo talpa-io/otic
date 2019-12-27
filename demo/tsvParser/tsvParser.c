@@ -1,7 +1,3 @@
-//
-// Created by talpaadmin on 23.10.19.
-//
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -142,11 +138,11 @@ static inline uint8_t flusher2(double timestamp, const char* sensorName, const c
 {
     switch (otic_oval_getType(val))
     {
-        case OTIC_TYPE_INT32_POS:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t%u\n", timestamp, sensorName, sensorUnit, val->lval.value);
+        case OTIC_TYPE_INT_POS:
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%u\n", timestamp, sensorName, sensorUnit, val->lval);
             return 1;
-        case OTIC_TYPE_INT32_NEG:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t-%u\n", timestamp, sensorName, sensorUnit, val->lval.value);
+        case OTIC_TYPE_INT_NEG:
+            fprintf((FILE*)data, "%lf\t%s\t%s\t-%u\n", timestamp, sensorName, sensorUnit, val->lval);
             return 1;
         case OTIC_TYPE_DOUBLE:
             fprintf((FILE*)data, "%lf\t%s\t%s\t%lf\n", timestamp, sensorName, sensorUnit, val->dval);

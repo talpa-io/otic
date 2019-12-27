@@ -1,19 +1,10 @@
 #include <string.h>
-#include <unity.h>
 #include <utility/format.h>
 #include <assert.h>
 #include "utility/format.h"
+#include "otic_test.h"
 
-
-void setUp(void)
-{
-}
-
-void tearDown(void)
-{
-}
-
-static void test_format_init_close(void)
+OTIC_TEST_CASE(format_test, init_close)
 {
     format_t format;
     format_init(&format, '\t', 4);
@@ -25,7 +16,7 @@ static void test_format_init_close(void)
     format_close(&format);
 }
 
-static void test_format_parse_simple(void)
+OTIC_TEST_CASE(format_test, parse_simple)
 {
     format_t format;
     format_init(&format, '\t', 5);
@@ -43,7 +34,7 @@ static void test_format_parse_simple(void)
 }
 
 // TODO: nullptr at start if nothing is given
-static void test_format_parse(void)
+OTIC_TEST_CASE(format_test, parse)
 {
     format_t format;
     format_init(&format, ',', 10);
@@ -64,7 +55,7 @@ static void test_format_parse(void)
     format_close(&format);
 }
 
-static void test_format_complex(void)
+OTIC_TEST_CASE(format_test, parse_complex)
 {
     format_t format;
     format_init(&format, '|', 8);
@@ -82,15 +73,3 @@ static void test_format_complex(void)
     format_close(&format);
 }
 
-
-int main(int argc, char** argv)
-{
-    UNITY_BEGIN();
-
-    RUN_TEST(test_format_init_close);
-    RUN_TEST(test_format_parse_simple);
-    RUN_TEST(test_format_parse);
-    RUN_TEST(test_format_complex);
-
-    UNITY_END();
-}

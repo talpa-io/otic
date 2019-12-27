@@ -108,9 +108,8 @@ static void otic_unpack_read_int32neg(oticUnpackChannel_t* channel)
         channel->cache.currentEntry->value.sval.ptr = 0;
         channel->cache.currentEntry->value.sval.size = 0;
     }
-    channel->base.top += leb128_decode_unsigned(channel->base.top, &channel->cache.currentEntry->value.lval.value);
-    channel->cache.currentEntry->value.lval.neg = 1;
-    channel->cache.currentEntry->value.type = OTIC_TYPE_INT32_NEG;
+    channel->base.top += leb128_decode_unsigned(channel->base.top, &channel->cache.currentEntry->value.lval);
+    channel->cache.currentEntry->value.type = OTIC_TYPE_INT_NEG;
     flush_if_flushable(channel);
     channel->base.rowCounter++;
 }
@@ -125,9 +124,8 @@ static void otic_unpack_read_int32pos(oticUnpackChannel_t* channel)
         channel->cache.currentEntry->value.sval.ptr = 0;
         channel->cache.currentEntry->value.sval.size = 0;
     }
-    channel->base.top += leb128_decode_unsigned(channel->base.top, &channel->cache.currentEntry->value.lval.value);
-    channel->cache.currentEntry->value.lval.neg = 0;
-    channel->cache.currentEntry->value.type = OTIC_TYPE_INT32_POS;
+    channel->base.top += leb128_decode_unsigned(channel->base.top, &channel->cache.currentEntry->value.lval);
+    channel->cache.currentEntry->value.type = OTIC_TYPE_INT_POS;
     flush_if_flushable(channel);
     channel->base.rowCounter++;
 }
@@ -402,10 +400,10 @@ static void otic_unpack_parseBlock(oticUnpackChannel_t* channel)
             case OTIC_TYPE_UNMODIFIED:
                 otic_unpack_read_unmodified(channel);
                 break;
-            case OTIC_TYPE_INT32_POS:
+            case OTIC_TYPE_INT_POS:
                 otic_unpack_read_int32pos(channel);
                 break;
-            case OTIC_TYPE_INT32_NEG:
+            case OTIC_TYPE_INT_NEG:
                 otic_unpack_read_int32neg(channel);
                 break;
             case OTIC_TYPE_DOUBLE:

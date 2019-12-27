@@ -23,7 +23,6 @@ extern "C" {
 
 
 // TODO: HANDLE Memory allocation failure
-// TODO: Portablity: LSB? MSB?
 
 typedef enum
 {
@@ -154,8 +153,9 @@ void            otic_updateStr(otic_str_t* oticStr, const char* ptr) __attribute
 
 typedef struct
 {
+    // TODO:: ASSERT SIZE
     union {
-        uint64_t value;
+        uint32_t lval;
         double dval;
         otic_str_t sval;
     };

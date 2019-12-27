@@ -18,11 +18,11 @@ static uint8_t flusher1(double ts, const char* sensorName, const char* sensorUni
         case OTIC_TYPE_NULL:
             fprintf((FILE*)data, "%lf\t%s\t%s\n", ts, sensorName, sensorUnit);
             break;
-        case OTIC_TYPE_INT32_POS:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t%u\n", ts, sensorName, sensorUnit, value->lval.value);
+        case OTIC_TYPE_INT_POS:
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%u\n", ts, sensorName, sensorUnit, value->lval);
             break;
-        case OTIC_TYPE_INT32_NEG:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t-%u\n", ts, sensorName, sensorUnit, value->lval.value);
+        case OTIC_TYPE_INT_NEG:
+            fprintf((FILE*)data, "%lf\t%s\t%s\t-%u\n", ts, sensorName, sensorUnit, value->lval);
             break;
         case OTIC_TYPE_DOUBLE:
             fprintf((FILE*)data, "%lf\t%s\t%s\t%lf\n", ts, sensorName, sensorUnit, value->dval);
@@ -44,11 +44,11 @@ static uint8_t flusher2(double ts, const char* sensorName, const char* sensorUni
         case OTIC_TYPE_NULL:
             printf("\n");
             break;
-        case OTIC_TYPE_INT32_NEG:
-            printf("\t-%u\n", value->lval.value);
+        case OTIC_TYPE_INT_NEG:
+            printf("\t-%u\n", value->lval);
             break;
-        case OTIC_TYPE_INT32_POS:
-            printf("\t%u\n", value->lval.value);
+        case OTIC_TYPE_INT_POS:
+            printf("\t%u\n", value->lval);
             break;
         case OTIC_TYPE_STRING:
             printf("\t%s\n", value->sval.ptr);

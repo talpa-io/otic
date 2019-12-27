@@ -44,23 +44,20 @@ otic_types_e otic_oval_getType(const oval_t* oval)
 
 void otic_oval_setd(oval_t* oval, uint32_t value, uint8_t neg)
 {
-    oval->lval.neg = neg;
-    oval->lval.value = value;
-    oval->type = neg ? OTIC_TYPE_INT32_NEG: OTIC_TYPE_INT32_POS;
+    oval->lval = value;
+    oval->type = neg ? OTIC_TYPE_INT_NEG: OTIC_TYPE_INT_POS;
 }
 
 void otic_oval_setdp(oval_t* oval, uint32_t value)
 {
-    oval->type = OTIC_TYPE_INT32_POS;
-    oval->lval.neg = 0;
-    oval->lval.value = value;
+    oval->type = OTIC_TYPE_INT_POS;
+    oval->lval = value;
 }
 
 void otic_oval_setdn(oval_t* oval, uint32_t value)
 {
-    oval->type = OTIC_TYPE_INT32_NEG;
-    oval->lval.neg = 1;
-    oval->lval.value = value;
+    oval->type = OTIC_TYPE_INT_NEG;
+    oval->lval = value;
 }
 
 void otic_oval_setlf(oval_t* oval, double value)
@@ -83,7 +80,7 @@ void otic_oval_setn(oval_t* oval)
 
 uint8_t otic_oval_isNumeric(oval_t* oval)
 {
-    return oval->type == OTIC_TYPE_DOUBLE || oval->type == OTIC_TYPE_INT32_POS || oval->type == OTIC_TYPE_INT32_NEG;
+    return oval->type == OTIC_TYPE_DOUBLE || oval->type == OTIC_TYPE_INT_POS || oval->type == OTIC_TYPE_INT_NEG;
 }
 
 /**
@@ -103,7 +100,7 @@ uint8_t otic_oval_isNumeric(oval_t* oval)
  *          dest[counter++] = byte;
  *      } while (value != 0);
  * \endcode
- * Factoring the \a if s results in the following algorithm
+ * Factoring the \a if s results in the following algorithm, which results in 17 ASM lines ouput from x86-64 GCC
  * @attention Notice that \a restrict is used despite the fact that the ptr is aliased (dest and p). We can force the compiler to
  * optimize the algorithm as one of the ptr doesn't change the values it is pointing to.
  * @return The number of bytes written into \a dest
