@@ -169,7 +169,7 @@ void            otic_oval_setdn(oval_t* oval, uint32_t value);
 void            otic_oval_setlf(oval_t* oval, double value);
 void            otic_oval_sets(oval_t* oval, const char* value, size_t size);
 void            otic_oval_setn(oval_t* oval);
-
+uint8_t         otic_oval_isNumeric(oval_t* oval);
 
 uint8_t         leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
 uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value) __attribute__((nonnull(1, 2)));

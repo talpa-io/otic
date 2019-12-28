@@ -1,5 +1,3 @@
-message(STATUS "Loading: tools.cmake")
-
 include(CheckIncludeFile)
 
 macro(otic_fing_header HEADER_NAME OUTPUT_VAR)

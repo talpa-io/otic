@@ -107,30 +107,46 @@ uint8_t otic_oval_isNumeric(oval_t* oval)
  */
 uint8_t leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest)
 {
-    uint8_t* p = dest;
+    typeof(dest) ptr = dest;
     while (value >= 128)
     {
-        *p++ = 0x80u | (value & 0x7Fu);
+        *ptr++ = 0x80u | (value & 0x7Fu);
         value >>= 7u;
     }
-    *p++ = (uint8_t)value;
-    return p - dest;
+    *ptr++ = (uint8_t)value;
+    return ptr - dest;
 }
 
+/**
+* @brief: In analogy to the \a leb128_encode_unsigned(), the algorithm from Wikipedia was improved here to improve the
+* overall Performance. The following function outputs 17 lines of ASM when compiled -O1 with GCC 9.2 for an X86-64 machine
+*/
 uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value)
 {
-    const uint8_t* ptr = encoded_values;
+    typeof(encoded_values) ptr = encoded_values;
     uint8_t shift = 0;
     *value = 0;
-    while(1)
-    {
+    do {
         *value |= ((*ptr & 0x7Fu) << shift);
-        if (!(*ptr++ >> 7u))
-            break;
         shift += 7;
-    }
+    } while (*ptr++ & 0x80);
     return ptr - encoded_values;
 }
+
+//uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value)
+//{
+//    const uint8_t* ptr = encoded_values;
+//    uint8_t shift = 0;
+//    *value = 0;
+//    while(1)
+//    {
+//        *value |= ((*ptr & 0x7Fu) << shift);
+//        if (!(*ptr++ >> 7u))
+//            break;
+//        shift += 7;
+//    }
+//    return ptr - encoded_values;
+//}
 
 uint8_t leb128_encode_signed(int64_t value, uint8_t* restrict dest)
 {

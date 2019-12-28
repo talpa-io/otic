@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Build
-        run: echo "Tiny Tim: God bless us ... everybody.\n";
+        run: /usr/bin/env echo "Tiny Tim: God bless us ... everybody.\n";
 #        run: /usr/bin/env ./kickstart.sh :make
 
   test:
@@ -19,5 +19,5 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: test
-      run: echo "Hallo World\n";
+      run: /usr/bin/env echo "Hallo World\n";
 #      run: /usr/bin/env ./kickstart.sh :test

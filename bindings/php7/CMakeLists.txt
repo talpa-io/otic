@@ -60,7 +60,7 @@ endforeach ()
 
 include(cmake/php.cmake)
 
-file(GLOB OTIC_PHP_INCLUDE include/*h)
+file(GLOB OTIC_PHP_INCLUDE include/*.h)
 file(GLOB OTIC_PHP_SRC src/*.c)
 
 set(OTIC_CORE_FILES

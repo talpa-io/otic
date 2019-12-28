@@ -1,7 +1,6 @@
-include <string.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <otic.h>
 #include "core/pack.h"
 
 

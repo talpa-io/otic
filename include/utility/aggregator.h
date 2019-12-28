@@ -1,7 +1,8 @@
-#include "base.h"
+#include "core/base.h"
 
 typedef enum
 {
+    OTIC_AGGREG_NULL,
     OTIC_AGGREG_MIN,
     OTIC_AGGREG_MAX,
     OTIC_AGGREG_AVG,
@@ -13,24 +14,25 @@ typedef enum
 
 typedef enum
 {
-    OTIC_AGGREG_NO_ERROR,
+    OTIC_AGGREG_ERROR_NONE,
 } otic_aggregError_e;
 
-typedef struct
+typedef struct otic_aggreg_t otic_aggreg_t;
+
+struct otic_aggreg_t
 {
-    aggregatorError_e error;
-    aggregatorType_e type;
+    otic_aggregError_e error;
+    otic_aggregType_e type;
     oval_t value;
     size_t counter;                     // if needed
-    void(insert*)(struct otic_aggreg_t*, oval*);
-    oval_t(get*)(struct otic_aggreg_t*);
-} otic_aggreg_t;
+    void(*insert)(otic_aggreg_t*, oval_t*);
+    oval_t(*get)(otic_aggreg_t*);
+};
 
 void otic_aggreg_init(otic_aggreg_t* aggreg, otic_aggregType_e type);
 void otic_aggreg_close(otic_aggreg_t* aggreg);
 otic_aggregType_e otic_aggreg_getType(otic_aggreg_t* aggreg);
 void otic_aggreg_reset(otic_aggreg_t* aggreg);
-uint8_t otic_oval_isNumeric(oval_t* val);
 void otic_oval_cpy(oval_t* dest, oval_t* source);
 
 void otic_aggreg_insert_min(otic_aggreg_t* aggreg, oval_t* val);

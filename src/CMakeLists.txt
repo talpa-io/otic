@@ -1,12 +1,5 @@
-set(OTIC_CORE_FILES
-        ${PROJECT_SOURCE_DIR}/include/core/base.h
-        ${PROJECT_SOURCE_DIR}/include/core/config.h
-        ${PROJECT_SOURCE_DIR}/include/core/pack.h
-        ${PROJECT_SOURCE_DIR}/include/core/unpack.h
-        ${PROJECT_SOURCE_DIR}/src/core/base.c
-        ${PROJECT_SOURCE_DIR}/src/core/pack.c
-        ${PROJECT_SOURCE_DIR}/src/core/unpack.c
-        )
+file(GLOB OTIC_INCLUDE_FILES ${PROJECT_SOURCE_DIR}/*/utility/*[.h.c])
+file(GLOB OTIC_CORE_FILES ${PROJECT_SOURCE_DIR}/*/core/*[.h.c])
 
 include(GenerateExportHeader)
 
@@ -33,7 +26,6 @@ target_compile_options(otic_shared PRIVATE -Wall -Wextra -Wpedantic)
 
 generate_export_header(otic_shared)
 include(GNUInstallDirs)
-
 
 install(TARGETS otic_shared
         EXPORT oticTargets
