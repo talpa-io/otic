@@ -31,9 +31,8 @@ struct otic_aggreg_t
 
 void otic_aggreg_init(otic_aggreg_t* aggreg, otic_aggregType_e type);
 void otic_aggreg_close(otic_aggreg_t* aggreg);
-otic_aggregType_e otic_aggreg_getType(otic_aggreg_t* aggreg);
+otic_aggregType_e otic_aggreg_getType(const otic_aggreg_t* aggreg);
 void otic_aggreg_reset(otic_aggreg_t* aggreg);
-void otic_oval_cpy(oval_t* dest, oval_t* source);
 
 void otic_aggreg_insert_min(otic_aggreg_t* aggreg, oval_t* val);
 void otic_aggreg_insert_max(otic_aggreg_t* aggreg, oval_t* val);

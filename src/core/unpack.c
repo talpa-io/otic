@@ -452,7 +452,6 @@ static uint8_t otic_unpack_read_data(otic_unpack_t* oticUnpack)
     for (counter = 0; counter < oticUnpack->totalChannels; counter++)
     {
         if (oticUnpack->channels[counter]->info.channelId == payload.channelId) {
-            oticUnpack->channels[counter]->base.timestamp_start = oticUnpack->channels[counter]->base.timestamp_current = payload.startTimestamp;
             oticUnpack->channels[counter]->ts  = (double)oticUnpack->channels[counter]->base.timestamp_start / OTIC_TS_MULTIPLICATOR;
             oticUnpack->channels[counter]->blockSize = payload.dataLen;
             oticUnpack->fetcher(oticUnpack->channels[counter]->base.cache, payload.dataLen, oticUnpack->fetcherData);
@@ -477,10 +476,6 @@ static uint8_t otic_unpack_read_data(otic_unpack_t* oticUnpack)
 
 uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t, void*), void* fetcherData, uint8_t(*seeker)(uint32_t, void*), void* seekerData)
 {
-    if (!fetcher){
-        otic_unpack_setError(oticUnpack, OTIC_ERROR_INVALID_POINTER);
-        goto fail;
-    }
     oticUnpack->fetcher = fetcher;
     oticUnpack->seeker = seeker;
     oticUnpack->seekerData = seekerData;
@@ -507,10 +502,6 @@ fail:
 
 oticUnpackChannel_t* otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void*), void* data)
 {
-    if (!flusher) {
-        otic_unpack_setError(oticUnpack, OTIC_ERROR_INVALID_POINTER);
-        goto fail;
-    }
     if (oticUnpack->state != OTIC_STATE_OPENED) {
         otic_unpack_setError(oticUnpack, OTIC_ERROR_AT_INVALID_STATE);
         goto fail;

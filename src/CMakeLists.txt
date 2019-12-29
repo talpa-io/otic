@@ -1,5 +1,5 @@
-file(GLOB OTIC_INCLUDE_FILES ${PROJECT_SOURCE_DIR}/*/utility/*[.h.c])
 file(GLOB OTIC_CORE_FILES ${PROJECT_SOURCE_DIR}/*/core/*[.h.c])
+file(GLOB OTIC_UTILITY_FILES ${PROJECT_SOURCE_DIR}/*/utility/*[.h.c])
 
 include(GenerateExportHeader)
 

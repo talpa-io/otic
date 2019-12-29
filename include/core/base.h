@@ -109,7 +109,6 @@ typedef struct
 
 typedef struct
 {
-    uint64_t startTimestamp;
     uint32_t dataLen;
     uint8_t channelId;
 } __attribute__((packed)) otic_payload_t;
@@ -170,6 +169,8 @@ void            otic_oval_setlf(oval_t* oval, double value);
 void            otic_oval_sets(oval_t* oval, const char* value, size_t size);
 void            otic_oval_setn(oval_t* oval);
 uint8_t         otic_oval_isNumeric(oval_t* oval);
+uint8_t         otic_oval_cmp(const oval_t* val1, const oval_t* val2);
+void            otic_oval_cpy(oval_t* dest, const oval_t* source);
 
 uint8_t         leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
 uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value) __attribute__((nonnull(1, 2)));

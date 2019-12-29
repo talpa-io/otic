@@ -5,7 +5,7 @@
 #include "core/base.h"
 
 
-otic_aggregType_e otic_aggreg_getType(otic_aggreg_t* aggreg)
+otic_aggregType_e otic_aggreg_getType(const otic_aggreg_t* aggreg)
 {
     return aggreg->type;
 }
@@ -14,11 +14,28 @@ void otic_aggreg_reset(otic_aggreg_t* aggreg)
 {
     aggreg->error = OTIC_AGGREG_ERROR_NONE;
     otic_oval_setn(&aggreg->value);
-}
-
-void otic_oval_cpy(oval_t* dest, oval_t* source)
-{
-    memcpy(dest, source, sizeof(*dest));
+    switch (otic_aggreg_getType(aggreg))
+    {
+        case OTIC_AGGREG_MIN:
+            aggreg->value.dval = DBL_MAX;
+            break;
+        case OTIC_AGGREG_MAX:
+            aggreg->value.dval = DBL_MIN;
+            break;
+        case OTIC_AGGREG_AVG:
+            aggreg->value.dval = 0.0;
+            aggreg->counter = 0;
+            break;
+        case OTIC_AGGREG_FIRST:
+            aggreg->counter = 0;
+            break;
+        case OTIC_AGGREG_SUM:
+            aggreg->value.dval = 0;
+            break;
+        case OTIC_AGGREG_COUNT:
+            aggreg->value.lval = 0;
+            break;
+    }
 }
 
 void otic_aggreg_init(otic_aggreg_t* aggreg, otic_aggregType_e type)
@@ -40,12 +57,15 @@ void otic_aggreg_init(otic_aggreg_t* aggreg, otic_aggregType_e type)
            aggreg->value.dval = DBL_MIN;
            break;
         case OTIC_AGGREG_AVG:
-           aggreg->value.type = OTIC_TYPE_DOUBLE;
+           aggreg->value.type = OTIC_TYPE_NULL;
            aggreg->insert = otic_aggreg_insert_avg;
            aggreg->get = otic_aggreg_get_avg;
            aggreg->value.dval = 0;
+           aggreg->counter = 0;
            break;
-        case OTIC_AGGREG_FIRST: 
+        case OTIC_AGGREG_FIRST:
+           aggreg->counter = 0;
+           aggreg->value.type = OTIC_TYPE_NULL; 
            aggreg->insert = otic_aggreg_insert_first;
            aggreg->get = otic_aggreg_get_first;
            break;
@@ -54,9 +74,10 @@ void otic_aggreg_init(otic_aggreg_t* aggreg, otic_aggregType_e type)
            aggreg->get = otic_aggreg_get_last;
            break;
         case OTIC_AGGREG_SUM:
-           aggreg->value.type = OTIC_TYPE_DOUBLE;
+           aggreg->value.type = OTIC_TYPE_NULL;
            aggreg->insert = otic_aggreg_insert_sum;
            aggreg->get = otic_aggreg_get_sum;
+           aggreg->value.dval = 0;
            break;
         case OTIC_AGGREG_COUNT:
            aggreg->value.type = OTIC_TYPE_INT_POS;
@@ -135,8 +156,9 @@ void otic_aggreg_insert_avg(otic_aggreg_t* aggreg, oval_t* val)
 
 void otic_aggreg_insert_first(otic_aggreg_t* aggreg, oval_t* val)
 {
-    if (aggreg->value.type != OTIC_TYPE_NULL)
+    if (aggreg->counter == 1)
         return;
+    aggreg->counter = 1;
     otic_oval_cpy(&aggreg->value, val);
 }
 
@@ -151,13 +173,16 @@ void otic_aggreg_insert_sum(otic_aggreg_t* aggreg, oval_t* val)
     {
         case OTIC_TYPE_INT_POS:
            aggreg->value.dval += val->lval;
+           aggreg->value.type = OTIC_TYPE_DOUBLE;
            break;
         case OTIC_TYPE_INT_NEG:
            aggreg->value.dval += -val->lval;
+           aggreg->value.type = OTIC_TYPE_DOUBLE;
            break;
         case OTIC_TYPE_DOUBLE:
            aggreg->value.dval += val->dval;
-          break; 
+           aggreg->value.type = OTIC_TYPE_DOUBLE;
+           break;
     }
 }
 
@@ -169,17 +194,17 @@ void otic_aggreg_insert_count(otic_aggreg_t* aggreg, oval_t* val)
 
 oval_t otic_aggreg_get_min(otic_aggreg_t* aggreg)
 {
-    return (oval_t){.dval = aggreg->value.dval, .type = OTIC_TYPE_DOUBLE};
+    return (oval_t){.type = (aggreg->value.dval == DBL_MAX ? OTIC_TYPE_NULL : OTIC_TYPE_DOUBLE), .dval = aggreg->value.dval};
 }
 
 oval_t otic_aggreg_get_max(otic_aggreg_t* aggreg)
 {
-    return (oval_t){.dval = aggreg->value.dval, .type = OTIC_TYPE_DOUBLE};
+    return (oval_t){.type = aggreg->value.dval == DBL_MIN ? OTIC_TYPE_NULL : OTIC_TYPE_DOUBLE, .dval = aggreg->value.dval};
 }
 
 oval_t otic_aggreg_get_avg(otic_aggreg_t* aggreg)
 {
-    return (oval_t){.dval = aggreg->value.dval / aggreg->counter, .type = OTIC_TYPE_DOUBLE};
+    return aggreg->counter == 0 ? (oval_t){.type = OTIC_TYPE_NULL} : (oval_t){.dval = aggreg->value.dval / aggreg->counter, .type = OTIC_TYPE_DOUBLE};
 }
 
 oval_t otic_aggreg_get_first(otic_aggreg_t* aggreg)
@@ -194,7 +219,7 @@ oval_t otic_aggreg_get_last(otic_aggreg_t* aggreg)
 
 oval_t otic_aggreg_get_sum(otic_aggreg_t* aggreg)
 {
-    return (oval_t){.dval = aggreg->value.dval, .type = OTIC_TYPE_DOUBLE};
+    return (oval_t){.type = aggreg->value.type, .dval = aggreg->value.dval};
 }
 
 oval_t otic_aggreg_get_count(otic_aggreg_t* aggreg)

@@ -83,6 +83,32 @@ uint8_t otic_oval_isNumeric(oval_t* oval)
     return oval->type == OTIC_TYPE_DOUBLE || oval->type == OTIC_TYPE_INT_POS || oval->type == OTIC_TYPE_INT_NEG;
 }
 
+uint8_t otic_oval_cmp(const oval_t* val1, const oval_t* val2)
+{
+    if (val1->type != val2->type)
+        return 0;
+    switch (val1->type)
+    {
+        case OTIC_TYPE_NULL:
+            return 1;
+        case OTIC_TYPE_INT_POS:
+        case OTIC_TYPE_INT_NEG:
+            return val1->lval == val2->lval;
+        case OTIC_TYPE_DOUBLE:
+            return val1->dval == val2->dval;
+        case OTIC_TYPE_STRING:
+            if (val1->sval.size != val2->sval.size)
+                return 0;
+            return strncmp(val1->sval.ptr, val2->sval.ptr, val1->sval.size) == 0;    
+    }
+    return 0;
+}
+
+void otic_oval_cpy(oval_t* dest, const oval_t* source)
+{
+    memcpy(dest, source, sizeof(typeof(*source)));
+}
+
 /**
  * Encode Integral values or more precisely uint32_t values to leb128.
  * @param value
@@ -132,21 +158,6 @@ uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t*
     } while (*ptr++ & 0x80);
     return ptr - encoded_values;
 }
-
-//uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value)
-//{
-//    const uint8_t* ptr = encoded_values;
-//    uint8_t shift = 0;
-//    *value = 0;
-//    while(1)
-//    {
-//        *value |= ((*ptr & 0x7Fu) << shift);
-//        if (!(*ptr++ >> 7u))
-//            break;
-//        shift += 7;
-//    }
-//    return ptr - encoded_values;
-//}
 
 uint8_t leb128_encode_signed(int64_t value, uint8_t* restrict dest)
 {

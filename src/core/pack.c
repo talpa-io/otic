@@ -174,11 +174,10 @@ static void otic_pack_id_assign(otic_pack_channel_t* channel, const otic_str_t* 
     channel->base.top += unit->size;
 }
 
-/*OTIC_PACK_INLINE
+OTIC_PACK_INLINE
 uint8_t static otic_ts_handler(otic_pack_channel_t* channel, double ts)
 {
-    static uint64_t intTs;
-    intTs = (uint64_t)(ts * OTIC_TS_MULTIPLICATOR);
+    uint64_t intTs = (uint64_t)(ts * OTIC_TS_MULTIPLICATOR);
     if (channel->base.timestamp_current == ts){
             return 1;
     } else if (channel->base.timestamp_current == 0){
@@ -195,9 +194,9 @@ uint8_t static otic_ts_handler(otic_pack_channel_t* channel, double ts)
         channel->base.timestamp_current = intTs;
     }
     return 1;
-}*/
+}
 
-OTIC_PACK_INLINE
+/*OTIC_PACK_INLINE
 static uint8_t otic_ts_handler(otic_pack_channel_t* channel, double ts)
 {
     uint64_t intTs = (uint64_t) (ts * OTIC_TS_MULTIPLICATOR);
@@ -217,6 +216,7 @@ static uint8_t otic_ts_handler(otic_pack_channel_t* channel, double ts)
     }
     return 1;
 }
+*/
 
 OTIC_PACK_INLINE
 static void otic_pack_flush_if_flushable(otic_pack_channel_t* channel)
@@ -564,7 +564,7 @@ uint8_t otic_pack_channel_close(otic_pack_channel_t* channel)
 uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel)
 {
 #if OTIC_PACK_NO_COMPRESSION
-    otic_payload_t payload = {.dataLen = channel->base.top - channel->base.cache, .startTimestamp = channel->base.timestamp_start, .channelId = channel->info.channelId};
+    otic_payload_t payload = {.dataLen = channel->base.top - channel->base.cache, .channelId = channel->info.channelId};
     if (!channel->info.parent->flusher((uint8_t*)&payload, sizeof(payload), channel->info.parent->data)){
         otic_base_setError(&channel->base, OTIC_ERROR_FLUSH_FAILED);
         goto fail;
@@ -586,7 +586,7 @@ uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel)
         otic_base_setError(&channel->base, OTIC_ERROR_ZSTD);
         goto fail;
     }
-    otic_payload_t payload = {.startTimestamp = channel->base.timestamp_start, .dataLen = ret, .channelId = channel->info.channelId};
+    otic_payload_t payload = {.dataLen = ret, .channelId = channel->info.channelId};
     uint8_t val = OTIC_TYPE_DATA;
     channel->info.parent->flusher(&val, 1, channel->info.parent->data);
     if (!channel->info.parent->flusher((uint8_t*)&payload, sizeof(otic_payload_t), channel->info.parent->data)) {
@@ -707,7 +707,6 @@ uint8_t otic_pack_flush(otic_pack_t* oticPack)
     {
         payload.channelId = oticPack->channels[counter]->info.channelId;
         payload.dataLen = oticPack->channels[counter]->base.top - oticPack->channels[counter]->base.cache;
-        payload.startTimestamp = oticPack->channels[counter]->base.timestamp_current;
         if (!oticPack->flusher((uint8_t*)&payload, sizeof(otic_payload_t), oticPack->data)){
             otic_base_setError(&oticPack->channels[counter]->base, OTIC_ERROR_FLUSH_FAILED);
             goto fail;
@@ -733,7 +732,6 @@ uint8_t otic_pack_flush(otic_pack_t* oticPack)
         }
         payload.channelId = oticPack->channels[counter]->info.channelId;
         payload.dataLen = ret;
-        payload.startTimestamp = oticPack->channels[counter]->base.timestamp_current;
         if (!oticPack->flusher((uint8_t*)&payload, sizeof(otic_payload_t), oticPack->data)){
             otic_base_setError(&oticPack->channels[counter]->base, OTIC_ERROR_FLUSH_FAILED);
             goto fail;
