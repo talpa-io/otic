@@ -26,8 +26,8 @@ typedef void(*empty_func_ptr)(void);
     {\
         static empty_func_ptr empty_funcs[] = {&otic_test_##_testCategory##_testName};\
         static otic_test_descr_t otic_test_descr_##_testCategory##_testName = {\
-            .testCategory = "##_testCategory",\
-            .testName     = "##_testName",\
+            .testCategory = #_testCategory,\
+            .testName     = #_testName,\
             .funcPtr      = otic_test_##_testCategory##_testName,\
             .fileName     = __FILE__,   \
             .lineNumber   = __LINE__,   \

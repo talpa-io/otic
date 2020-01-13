@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 
-#define OTIC_BASE_CACHE_SIZE 16384
+#define OTIC_BASE_CACHE_SIZE 12000
 #if OTIC_BASE_CACHE_SIZE < (255 * 2)
 #error OTIC Pack requires a buffer cache bigger than twice the size of permitted string value length (255)
 #endif
@@ -26,7 +26,7 @@ extern "C" {
 
 typedef enum
 {
-    OTIC_TYPE_NULL,
+    OTIC_TYPE_NULL = 0xC9,
     OTIC_TYPE_INT_NEG,
     OTIC_TYPE_INT_POS,
     OTIC_TYPE_DOUBLE,
@@ -36,6 +36,8 @@ typedef enum
     OTIC_TYPE_FLOAT,
     OTIC_TYPE_MED_DOUBLE,
     OTIC_TYPE_STRING,
+    OTIC_TYPE_ARRAY,
+    OTIC_TYPE_OBJECT,
     OTIC_TYPE_UNMODIFIED,
     OTIC_TYPE_RAWBUFFER,
     OTIC_TYPE_SET_TIMESTAMP,
@@ -45,7 +47,7 @@ typedef enum
     OTIC_TYPE_EOF,
     OTIC_TYPE_METADATA,
     OTIC_TYPE_DATA
-} otic_types_e;
+} otic_type_e;
 
 typedef enum
 {
@@ -64,7 +66,7 @@ typedef enum
     OTIC_ERROR_INVALID_ARGUMENT,
     OTIC_ERROR_AT_INVALID_STATE,
     OTIC_ERROR_ALLOCATION_FAILURE,
-} otic_errors_e;
+} otic_error_e;
 
 typedef enum
 {
@@ -78,7 +80,7 @@ typedef enum
     OTIC_FEATURE_COMPRESSION_ZSTD,
     OTIC_FEATURE_COMPRESSION_ZLIB,
     OTIC_FEATURE_COMPRESSION_GZIP,
-} otic_features_e;
+} otic_feature_e;
 
 typedef enum
 {
@@ -120,10 +122,16 @@ struct otic_base_t
     uint8_t* top;
     uint64_t timestamp_start;
     uint64_t timestamp_current;
-    otic_errors_e error;
+    otic_error_e error;
     otic_state_e state;
     size_t rowCounter;
 };
+
+typedef struct time_interval_t
+{
+    double time_start;
+    double time_end;
+} time_interval_t;
 
 typedef enum {
     OTIC_CHANNEL_TYPE_SENSOR,
@@ -132,8 +140,8 @@ typedef enum {
 
 
 void            otic_base_init(otic_base_t* base) __attribute__((nonnull(1)));
-void            otic_base_setError(otic_base_t *base, otic_errors_e error) __attribute__((nonnull(1)));
-otic_errors_e   otic_base_getError(otic_base_t *base) __attribute__((nonnull(1)));
+void            otic_base_setError(otic_base_t *base, otic_error_e error) __attribute__((nonnull(1)));
+otic_error_e   otic_base_getError(otic_base_t *base) __attribute__((nonnull(1)));
 void            otic_base_setState(otic_base_t* base, otic_state_e state) __attribute__((nonnull(1)));
 otic_state_e    otic_base_getState(otic_base_t* base) __attribute__((nonnull(1)));
 void            otic_base_close(otic_base_t* base) __attribute__((nonnull(1)));
@@ -149,21 +157,42 @@ otic_str_t*     otic_setStr(const char* ptr);
 void            otic_freeStr(otic_str_t* oticStr) __attribute__((nonnull(1)));
 void            otic_updateStr(otic_str_t* oticStr, const char* ptr) __attribute__((nonnull(1)));
 
+struct oval_t;
+struct oval_obj_element_t;
+
 
 typedef struct
 {
-    // TODO:: ASSERT SIZE
+    uint32_t size;
+    struct oval_t* elements;
+} oval_array_t;
+
+typedef struct
+{
+    uint32_t size;
+    struct oval_obj_element_t* elements;
+} oval_obj_t;
+
+typedef struct
+{
     union {
-        uint32_t lval;
+        uint64_t lval;
         double dval;
         otic_str_t sval;
-    };
+        oval_array_t aval;
+        oval_obj_t oval;
+    } val;
     uint8_t type;                   // Active Type == OTIC_TYPE
 } oval_t;
 
-otic_types_e    otic_oval_getType(const oval_t* oval);
+typedef struct
+{
+    oval_t key;
+    oval_t value;
+} oval_obj_element_t;
+
 void            otic_oval_setd(oval_t* oval, uint32_t value, uint8_t neg);
-void            otic_oval_setdp(oval_t* oval, uint32_t value);
+void            otic_oval_setdp(oval_t* oval, uint64_t value);
 void            otic_oval_setdn(oval_t* oval, uint32_t value);
 void            otic_oval_setlf(oval_t* oval, double value);
 void            otic_oval_sets(oval_t* oval, const char* value, size_t size);
@@ -172,8 +201,8 @@ uint8_t         otic_oval_isNumeric(oval_t* oval);
 uint8_t         otic_oval_cmp(const oval_t* val1, const oval_t* val2);
 void            otic_oval_cpy(oval_t* dest, const oval_t* source);
 
-uint8_t         leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
-uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value) __attribute__((nonnull(1, 2)));
+uint8_t         leb128_encode_unsigned(uint64_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
+uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t* restrict value) __attribute__((nonnull(1, 2)));
 uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
 uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value) __attribute__((nonnull(1, 2)));
 

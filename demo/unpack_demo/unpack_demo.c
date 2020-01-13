@@ -19,16 +19,16 @@ static uint8_t flusher1(double ts, const char* sensorName, const char* sensorUni
             fprintf((FILE*)data, "%lf\t%s\t%s\n", ts, sensorName, sensorUnit);
             break;
         case OTIC_TYPE_INT_POS:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t%u\n", ts, sensorName, sensorUnit, value->lval);
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%lu\n", ts, sensorName, sensorUnit, value->val.lval);
             break;
         case OTIC_TYPE_INT_NEG:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t-%u\n", ts, sensorName, sensorUnit, value->lval);
+            fprintf((FILE*)data, "%lf\t%s\t%s\t-%lu\n", ts, sensorName, sensorUnit, value->val.lval);
             break;
         case OTIC_TYPE_DOUBLE:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t%lf\n", ts, sensorName, sensorUnit, value->dval);
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%lf\n", ts, sensorName, sensorUnit, value->val.dval);
             break;
         case OTIC_TYPE_STRING:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t%s\n", ts, sensorName, sensorUnit, value->sval.ptr);
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%s\n", ts, sensorName, sensorUnit, value->val.sval.ptr);
             break;
         default:
             return 0;
@@ -45,16 +45,16 @@ static uint8_t flusher2(double ts, const char* sensorName, const char* sensorUni
             printf("\n");
             break;
         case OTIC_TYPE_INT_NEG:
-            printf("\t-%u\n", value->lval);
+            printf("\t-%lu\n", value->val.lval);
             break;
         case OTIC_TYPE_INT_POS:
-            printf("\t%u\n", value->lval);
+            printf("\t%lu\n", value->val.lval);
             break;
         case OTIC_TYPE_STRING:
-            printf("\t%s\n", value->sval.ptr);
+            printf("\t%s\n", value->val.sval.ptr);
             break;
         case OTIC_TYPE_DOUBLE:
-            printf("\t%lf\n", value->dval);
+            printf("\t%lf\n", value->val.dval);
             break;
         default:
             return 0;
@@ -91,7 +91,7 @@ int main()
     if (!otic_unpack_init(&oticUnpack, fetcher, srcFile, seeker, srcFile))
         goto fail;
 
-    oticUnpackChannel_t* channel1 = otic_unpack_defineChannel(&oticUnpack, 1, flusher1, destFile);
+    oticUnpackChannel_t* channel1 = otic_unpack_defineChannel(&oticUnpack, 1, flusher2, destFile);
     if (!channel1)
         goto fail;
     const char* toFetch[] = {"sensor1", "sensor2"};
@@ -100,8 +100,10 @@ int main()
     if (!channel2)
         goto fail;
 
-    while (fpeek(srcFile) != EOF)
-        otic_unpack_parse(&oticUnpack);
+    //while (fpeek(srcFile) != EOF)
+    //    otic_unpack_parse(&oticUnpack);
+
+    while (otic_unpack_parse(&oticUnpack));
 
     otic_unpack_close(&oticUnpack);
     fclose(destFile);

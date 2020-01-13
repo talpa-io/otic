@@ -17,13 +17,9 @@ struct otic_entry_t
 {
     uint32_t index;
     char* name;
-    union
-    {
-        uint32_t int_value;
-        double double_value;
-        otic_str_t string_value;
-    } last_value;
-    otic_types_e type;
+    oval_t lastValue;
+    char* strHolder;
+    otic_type_e type;
     otic_entry_t* next;
 };
 
@@ -42,6 +38,7 @@ typedef struct
         channel_type_e channelType;
         uint8_t channelId;
     } info;
+    time_interval_t timeInterval;
 } otic_pack_channel_t;
 
 uint8_t otic_pack_channel_init(
@@ -56,14 +53,14 @@ uint8_t otic_pack_channel_inject_i(
         double timestamp,
         const char* sensorName,
         const char* sensorUnit,
-        uint32_t value
+        uint64_t value
         ) __attribute__((nonnull(1)));
 uint8_t otic_pack_channel_inject_i_neg(
         otic_pack_channel_t* channel,
         double timestamp,
         const char* sensorName,
         const char* sensorUnit,
-        uint32_t value
+        uint64_t value
         ) __attribute__((nonnull(1)));
 uint8_t otic_pack_channel_inject_d(
         otic_pack_channel_t* channel,
@@ -102,13 +99,13 @@ struct otic_pack_t
     uint8_t totalChannels;
     uint8_t (*flusher)(uint8_t *, size_t, void*);
     void* data;
-    otic_errors_e error;
+    otic_error_e error;
     otic_state_e state;
 };
 
 uint8_t otic_pack_init(otic_pack_t* oticPack, uint8_t(*flusher)(uint8_t*, size_t, void*), void* data) __attribute__((nonnull(1)));
 otic_pack_channel_t*    otic_pack_defineChannel(otic_pack_t* oticPack, channel_type_e channelType, uint8_t id,
-                                                otic_features_e features) __attribute__((warn_unused_result)) __attribute__((nonnull(1)));
+                                                otic_feature_e features) __attribute__((warn_unused_result)) __attribute__((nonnull(1)));
 uint8_t                 otic_pack_closeChannel(otic_pack_t* oticPackBase, uint8_t id) __attribute__((nonnull(1)));
 uint8_t                 otic_pack_flush(otic_pack_t* oticPack) __attribute__((nonnull(1)));
 void                    otic_pack_close(otic_pack_t* oticPack) __attribute__((nonnull(1)));

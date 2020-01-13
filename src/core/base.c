@@ -12,12 +12,12 @@ void otic_base_init(otic_base_t* base)
     base->state = OTIC_STATE_OPENED;
 }
 
-inline void otic_base_setError(otic_base_t * base, otic_errors_e error)
+inline void otic_base_setError(otic_base_t * base, otic_error_e error)
 {
     base->error = error;
 }
 
-inline otic_errors_e otic_base_getError(otic_base_t *base)
+inline otic_error_e otic_base_getError(otic_base_t *base)
 {
     return base->error;
 }
@@ -37,40 +37,40 @@ inline void otic_base_close(otic_base_t* base)
     base->state = OTIC_STATE_CLOSED;
 }
 
-otic_types_e otic_oval_getType(const oval_t* oval)
+otic_type_e otic_oval_getType(const oval_t* oval)
 {
     return oval->type;
 }
 
 void otic_oval_setd(oval_t* oval, uint32_t value, uint8_t neg)
 {
-    oval->lval = value;
+    oval->val.lval = value;
     oval->type = neg ? OTIC_TYPE_INT_NEG: OTIC_TYPE_INT_POS;
 }
 
-void otic_oval_setdp(oval_t* oval, uint32_t value)
+void otic_oval_setdp(oval_t* oval, uint64_t value)
 {
     oval->type = OTIC_TYPE_INT_POS;
-    oval->lval = value;
+    oval->val.lval = value;
 }
 
 void otic_oval_setdn(oval_t* oval, uint32_t value)
 {
     oval->type = OTIC_TYPE_INT_NEG;
-    oval->lval = value;
+    oval->val.lval = value;
 }
 
 void otic_oval_setlf(oval_t* oval, double value)
 {
     oval->type = OTIC_TYPE_DOUBLE;
-    oval->dval = value;
+    oval->val.dval = value;
 }
 
 void otic_oval_sets(oval_t* oval, const char* value, size_t size)
 {
     oval->type = OTIC_TYPE_STRING;
-    oval->sval.ptr = (char*)value;
-    oval->sval.size = size;
+    oval->val.sval.ptr = (char*)value;
+    oval->val.sval.size = size;
 }
 
 void otic_oval_setn(oval_t* oval)
@@ -93,13 +93,11 @@ uint8_t otic_oval_cmp(const oval_t* val1, const oval_t* val2)
             return 1;
         case OTIC_TYPE_INT_POS:
         case OTIC_TYPE_INT_NEG:
-            return val1->lval == val2->lval;
+            return val1->val.lval == val2->val.lval;
         case OTIC_TYPE_DOUBLE:
-            return val1->dval == val2->dval;
+            return val1->val.dval == val2->val.dval;
         case OTIC_TYPE_STRING:
-            if (val1->sval.size != val2->sval.size)
-                return 0;
-            return strncmp(val1->sval.ptr, val2->sval.ptr, val1->sval.size) == 0;    
+            return val1->val.sval.size != val2->val.sval.size ? 0 : strncmp(val1->val.sval.ptr, val2->val.sval.ptr, val1->val.sval.size) == 0;
     }
     return 0;
 }
@@ -131,9 +129,9 @@ void otic_oval_cpy(oval_t* dest, const oval_t* source)
  * optimize the algorithm as one of the ptr doesn't change the values it is pointing to.
  * @return The number of bytes written into \a dest
  */
-uint8_t leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest)
+uint8_t leb128_encode_unsigned(uint64_t value, uint8_t* dest)
 {
-    typeof(dest) ptr = dest;
+    uint8_t* ptr = dest;
     while (value >= 128)
     {
         *ptr++ = 0x80u | (value & 0x7Fu);
@@ -147,15 +145,15 @@ uint8_t leb128_encode_unsigned(uint32_t value, uint8_t* restrict dest)
 * @brief: In analogy to the \a leb128_encode_unsigned(), the algorithm from Wikipedia was improved here to improve the
 * overall Performance. The following function outputs 17 lines of ASM when compiled -O1 with GCC 9.2 for an X86-64 machine
 */
-uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint32_t* restrict value)
+uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t* value)
 {
-    typeof(encoded_values) ptr = encoded_values;
+    const uint8_t* ptr = encoded_values;
     uint8_t shift = 0;
     *value = 0;
     do {
-        *value |= ((*ptr & 0x7Fu) << shift);
+        *value |= ((*ptr & 0x7FuL) << shift);
         shift += 7;
-    } while (*ptr++ & 0x80);
+    } while (*ptr++ & 0x80u);
     return ptr - encoded_values;
 }
 
@@ -169,15 +167,15 @@ uint8_t leb128_encode_signed(int64_t value, uint8_t* restrict dest)
     uint8_t counter = 0;
     while (more)
     {
-        byte = value & ~0x80uL;
-        signBit = ((uint8_t)value &~0xBFuL) >> 6u;
-        value >>= 7uL;
+        byte = value & ~0x80u;
+        signBit = ((uint8_t)value &~0xBFu) >> 6u;
+        value >>= 7u;
         if (negative)
-            value |= (~0uL << (size - 7uL));
+            value |= (~0L << (size - 7u));
         if ((value == 0 && !signBit) || (value == -1 && signBit))
             more = 0;
         else
-            byte |= 0x80uL;
+            byte |= 0x80u;
         dest[counter++] = byte;
     }
     return counter;

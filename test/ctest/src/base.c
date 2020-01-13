@@ -4,7 +4,7 @@
 #include "otic_test.h"
 
 
-static uint8_t numbLeb128BytesFinder_u(uint32_t value) {
+static uint8_t numbLeb128BytesFinder_u(uint64_t value) {
     uint8_t counter = 0;
     do {
         ++counter;
@@ -20,10 +20,10 @@ static uint8_t numbLeb128BytesFinder_s(int64_t value) {
     return counter;
 }
 
-static void leb128_unsigned_lambda(uint32_t value, uint8_t* buffer)
+static void leb128_unsigned_lambda(uint64_t value, uint8_t* buffer)
 {
     uint8_t totalLEB128Bytes = numbLeb128BytesFinder_u(value);
-    uint32_t decoded;
+    uint64_t decoded;
     TEST_ASSERT_EQUAL_HEX8(totalLEB128Bytes, leb128_encode_unsigned(value, buffer));
     TEST_ASSERT_EQUAL_HEX8(totalLEB128Bytes, leb128_decode_unsigned(buffer, &decoded));
     TEST_ASSERT_EQUAL_HEX32(value, decoded);
@@ -40,10 +40,11 @@ static uint8_t leb128_signed_lambda(int64_t value, uint8_t* buffer)
 
 OTIC_TEST_CASE(otic_base, leb128_unsigned)
 {
-    uint8_t buffer[10] = {};
-    for (uint32_t counter = 0; counter < 10000000; ++counter)
+    uint8_t buffer[12] = {};
+    for (uint64_t counter = 0; counter < 10000000; ++counter)
         leb128_unsigned_lambda(counter, buffer);
-    leb128_unsigned_lambda(UINT32_MAX, buffer);
+    leb128_unsigned_lambda(UINT64_MAX, buffer);
+    leb128_unsigned_lambda(15393578146222, buffer);
 }
 
 OTIC_TEST_CASE(otic_base, leb128_signed)
@@ -60,7 +61,7 @@ OTIC_TEST_CASE(otic_base, assert_sizes)
     TEST_ASSERT_EQUAL_size_t((OTIC_MAGIC_SIZE + 2) * sizeof(char), sizeof(otic_header_t));
     TEST_ASSERT_EQUAL_size_t(2 * sizeof(uint8_t), sizeof(otic_meta_head_t));
     TEST_ASSERT_EQUAL_size_t(2 * sizeof(uint8_t), sizeof(otic_meta_data_t));
-    TEST_ASSERT_EQUAL_size_t(sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint64_t), sizeof(otic_payload_t));
+    TEST_ASSERT_EQUAL_size_t(sizeof(uint8_t) + sizeof(uint32_t), sizeof(otic_payload_t));
 }
 
 // TODO: Timestamp handling
@@ -106,22 +107,22 @@ OTIC_TEST_CASE(otic_base, oval)
 {
     oval_t oval;
     otic_oval_setd(&oval, 12345, 1);
-    TEST_ASSERT_EQUAL_HEX32(oval.lval, 12345);
+    TEST_ASSERT_EQUAL_HEX32(oval.val.lval, 12345);
     TEST_ASSERT(oval.type == OTIC_TYPE_INT_NEG)
     otic_oval_setd(&oval, 12345, 0);
-    TEST_ASSERT_EQUAL_HEX32(oval.lval, 12345);
+    TEST_ASSERT_EQUAL_HEX32(oval.val.lval, 12345);
     TEST_ASSERT(oval.type == OTIC_TYPE_INT_POS)
     otic_oval_setdp(&oval, 98765);
-    TEST_ASSERT_EQUAL_HEX32(oval.lval, 98765);
+    TEST_ASSERT_EQUAL_HEX32(oval.val.lval, 98765);
     TEST_ASSERT(oval.type == OTIC_TYPE_INT_POS)
     otic_oval_setdn(&oval, 2345);
-    TEST_ASSERT_EQUAL_HEX32(oval.lval, 2345);
+    TEST_ASSERT_EQUAL_HEX32(oval.val.lval, 2345);
     TEST_ASSERT(oval.type == OTIC_TYPE_INT_NEG)
     otic_oval_setlf(&oval, 12345.6);
-    TEST_ASSERT_EQUAL_DOUBLE(oval.dval, 12345.6);
+    TEST_ASSERT_EQUAL_DOUBLE(oval.val.dval, 12345.6);
     TEST_ASSERT(oval.type == OTIC_TYPE_DOUBLE)
     otic_oval_sets(&oval, "Hallo World", strlen("Hallo World"));
-    TEST_ASSERT_EQUAL_STRING(oval.sval.ptr, "Hallo World");
+    TEST_ASSERT_EQUAL_STRING(oval.val.sval.ptr, "Hallo World");
     TEST_ASSERT(oval.type == OTIC_TYPE_STRING)
     otic_oval_setn(&oval);
     TEST_ASSERT(oval.type == OTIC_TYPE_NULL)

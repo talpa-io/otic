@@ -57,6 +57,7 @@ typedef struct
         size_t* ptr;
         size_t size;
     } toFetch;
+    time_interval_t timeInterval;
 } oticUnpackChannel_t;
 
 uint8_t                 otic_unpack_channel_init(oticUnpackChannel_t* channel, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void* data),void* data, otic_unpack_t* parent);
@@ -67,7 +68,7 @@ struct otic_unpack_t
 {
     oticUnpackChannel_t** channels;
     uint8_t totalChannels;
-    otic_errors_e error;
+    otic_error_e error;
     otic_state_e state;
     void* fetcherData, *seekerData;
     uint8_t(*fetcher)(uint8_t*, size_t, void*);

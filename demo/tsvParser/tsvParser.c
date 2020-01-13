@@ -14,7 +14,7 @@
 // Almost 1 MB ... memory friendly 1 MB. Did you know that 1 byte is actually 9 bits and not 8 bits?
 #define READ_BUFFERSIZE 1048576
 
-static otic_errors_e otic_error;
+static otic_error_e otic_error;
 
 typedef enum
 {
@@ -139,16 +139,16 @@ static inline uint8_t flusher2(double timestamp, const char* sensorName, const c
     switch (otic_oval_getType(val))
     {
         case OTIC_TYPE_INT_POS:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t%u\n", timestamp, sensorName, sensorUnit, val->lval);
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%lu\n", timestamp, sensorName, sensorUnit, val->val.lval);
             return 1;
         case OTIC_TYPE_INT_NEG:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t-%u\n", timestamp, sensorName, sensorUnit, val->lval);
+            fprintf((FILE*)data, "%lf\t%s\t%s\t-%lu\n", timestamp, sensorName, sensorUnit, val->val.lval);
             return 1;
         case OTIC_TYPE_DOUBLE:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t%lf\n", timestamp, sensorName, sensorUnit, val->dval);
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%lf\n", timestamp, sensorName, sensorUnit, val->val.dval);
             return 1;
         case OTIC_TYPE_STRING:
-            fprintf((FILE*)data, "%lf\t%s\t%s\t%s\n", timestamp, sensorName, sensorUnit, val->sval.ptr);
+            fprintf((FILE*)data, "%lf\t%s\t%s\t%s\n", timestamp, sensorName, sensorUnit, val->val.sval.ptr);
             return 1;
         case OTIC_TYPE_NULL:
             fprintf((FILE*)data, "%lf\t%s\t%s\t\n", timestamp, sensorName, sensorUnit);
@@ -276,6 +276,7 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut) 
     format_chunker_close(&formatChunker);
     fclose(inputFile);
     fclose(outputFile);
+    // TODO: Add statistics
     return 1;
 fail:
     if (tsvParserError == TSV_PARSER_ERROR_OTIC)
@@ -288,26 +289,31 @@ inline static uint8_t decompress(const char* fileNameIn, const char* fileNameOut
 {
     FILE* inputFile = fopen(fileNameIn, "rb");
     FILE* outputFile = fopen(fileNameOut, "w");
+    uint8_t error;
     if (!inputFile || !outputFile)
         return 0;
+
     otic_unpack_t oticUnpack;
     if (!otic_unpack_init(&oticUnpack, fetcher, inputFile, seeker, inputFile))
-        return 0;
+        goto fail;
     oticUnpackChannel_t* channel;
     if (!(channel = otic_unpack_defineChannel(&oticUnpack, 0x01, flusher2, outputFile)))
-        return 0;
+        goto fail;
     otic_unpack_channel_toFetch(channel, 0, 0);
 //    while(fpeek(inputFile) != EOF)
-//    {
 //        otic_unpack_parse(&oticUnpack);
-//    }
-
-    while (otic_unpack_parse(&oticUnpack));
-    uint8_t error = oticUnpack.channels[0]->base.error;
+    while(otic_unpack_parse(&oticUnpack));
+    if (oticUnpack.state == OTIC_STATE_ON_ERROR)
+        printOticError(oticUnpack.error);
+    error = oticUnpack.channels[0]->base.error;
     otic_unpack_close(&oticUnpack);
     fclose(inputFile);
     fclose(outputFile);
     return error;
+
+fail:
+    printOticError(oticUnpack.error);
+    return 0;
 }
 
 // Total number of lines 5090023

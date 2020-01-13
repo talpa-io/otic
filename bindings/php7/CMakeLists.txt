@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.8)
 
 project(
         otic_php
@@ -62,6 +62,10 @@ include(cmake/php.cmake)
 
 file(GLOB OTIC_PHP_INCLUDE include/*.h)
 file(GLOB OTIC_PHP_SRC src/*.c)
+
+find_package(otic REQUIRED)
+message(STATUS ${OTIC_CORE_FILES})
+
 
 set(OTIC_CORE_FILES
         ${PROJECT_SOURCE_DIR}/../../include/core/base.h

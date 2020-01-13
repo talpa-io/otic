@@ -11,7 +11,6 @@
 #include "core/pack.h"
 #include "utility/errHand.h"
 
-
 static uint8_t flusher(uint8_t* src, size_t size, void* file)
 {
     return fwrite(src, 1, size, (FILE*)file) != 0;
@@ -47,14 +46,14 @@ int main()
     otic_pack_channel_inject_i(channel2, 1234.4, "sensor1", "sensorUnit1", 1232434);
     otic_pack_channel_inject_d(channel2, 1234.5, "sensor1", "sensorUnit1", 3.1417);
     otic_pack_channel_inject_i_neg(channel2, 1234.5, "sensor1", "sensorUnit1", 54);
-    otic_pack_channel_inject_s(channel2, 12323, "sensor1", "sensorUnit1", "Some string");
     otic_pack_channel_inject_n(channel2, 12456, "sensor1", "sensorUnit1");
-    otic_pack_channel_inject_n(channel2, 12456, "sensor1", "");
-
+    otic_pack_channel_inject_s(channel2, 12456, "sensor1", "sensorUnit1", "Some string");
+    otic_pack_channel_inject_s(channel2, 12456, "sensor1", "sensorUnit1", "Some string1");
+    otic_pack_channel_inject_s(channel2, 12456, "sensor1", "sensorUnit1", "Some string");
 
     // Not needed. This feature was added to allow early file closes,
     // as otic_pack_close destroys every created channels, that isn't closed!
-    otic_pack_channel_close(channel1);
+    //otic_pack_channel_close(channel1);
 
     otic_pack_close(&oticPack);
     fclose(fileOut);

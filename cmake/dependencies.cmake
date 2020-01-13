@@ -5,7 +5,6 @@ FetchContent_Declare(
         GIT_REPOSITORY https://github.com/ThrowTheSwitch/Unity.git
         GIT_TAG        v2.5.0
 )
-
 FetchContent_Declare(
         zstd
         GIT_REPOSITORY https://github.com/facebook/zstd.git

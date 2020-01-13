@@ -7,7 +7,7 @@
 
 #include "core/base.h"
 
-const char* otic_strError(otic_errors_e e);
-void printOticError(otic_errors_e e);
+const char* otic_strError(otic_error_e e);
+void printOticError(otic_error_e e);
 
 #endif //OTIC_ERRORHAND_H
