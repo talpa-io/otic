@@ -19,7 +19,7 @@ struct otic_entry_t
     char* name;
     oval_t lastValue;
     char* strHolder;
-    otic_type_e type;
+    oval_t* aHolder;
     otic_entry_t* next;
 };
 

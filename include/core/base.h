@@ -14,13 +14,13 @@ extern "C" {
 #ifndef __STDC_IEC_559__
 #error OTIC requires IEEE 754 support for handling float values
 #endif
-#define OTIC_ZSTD_COMPRESSION_LEVEL 7
-#define OTIC_TS_MULTIPLICATOR 10000
-#define OTIC_ENTRY_STRING_SIZE 32
-#define OTIC_PACK_CACHE_SIZE 255
-#define OTIC_MAGIC_SIZE 4
-#define PTR_M 31
-
+#define OTIC_ZSTD_COMPRESSION_LEVEL     7
+#define OTIC_TS_MULTIPLICATOR           10000
+#define OTIC_ENTRY_STRING_SIZE          32
+#define OTIC_PACK_CACHE_SIZE            255
+#define OTIC_MAGIC_SIZE                 4
+#define PTR_M                           31
+#define SMALL_INT_LIMIT                 0xC9
 
 // TODO: HANDLE Memory allocation failure
 
@@ -38,6 +38,8 @@ typedef enum
     OTIC_TYPE_STRING,
     OTIC_TYPE_ARRAY,
     OTIC_TYPE_OBJECT,
+    OTIC_TYPE_TRUE,
+    OTIC_TYPE_FALSE,
     OTIC_TYPE_UNMODIFIED,
     OTIC_TYPE_RAWBUFFER,
     OTIC_TYPE_SET_TIMESTAMP,
@@ -160,12 +162,14 @@ void            otic_updateStr(otic_str_t* oticStr, const char* ptr) __attribute
 struct oval_t;
 struct oval_obj_element_t;
 
+typedef struct oval_t oval_t;
 
 typedef struct
 {
     uint32_t size;
-    struct oval_t* elements;
+    oval_t* elements;
 } oval_array_t;
+
 
 typedef struct
 {
@@ -173,7 +177,7 @@ typedef struct
     struct oval_obj_element_t* elements;
 } oval_obj_t;
 
-typedef struct
+struct oval_t
 {
     union {
         uint64_t lval;
@@ -183,7 +187,7 @@ typedef struct
         oval_obj_t oval;
     } val;
     uint8_t type;                   // Active Type == OTIC_TYPE
-} oval_t;
+};
 
 typedef struct
 {
@@ -200,6 +204,9 @@ void            otic_oval_setn(oval_t* oval);
 uint8_t         otic_oval_isNumeric(oval_t* oval);
 uint8_t         otic_oval_cmp(const oval_t* val1, const oval_t* val2);
 void            otic_oval_cpy(oval_t* dest, const oval_t* source);
+otic_type_e     otic_oval_getType(const oval_t* val);
+
+uint8_t oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalArray2);
 
 uint8_t         leb128_encode_unsigned(uint64_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
 uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t* restrict value) __attribute__((nonnull(1, 2)));

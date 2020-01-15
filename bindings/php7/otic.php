@@ -35,6 +35,8 @@ class OticException extends Exception
 
 class OticPackChannel
 {
+    const TYPE_SENSOR = 0x00;
+    const TYPE_BINARY = 0x01;
     public function __construct()
     {
     }
@@ -50,6 +52,9 @@ class OticPackChannel
     public function getSensorsList() : array
     {
     }
+    public function flush()
+    {
+    }
     public function close()
     {
     }
@@ -57,16 +62,19 @@ class OticPackChannel
 
 class OticPack
 {
-    public function __construct($fileName)
+    public function __construct($fileHandle)
     {
     }
-    public function __toString()
+    public function __toString() : string
     {
     }
     public function defineChannel(int $channelId, int $channelType, int $features) : OticPackChannel
     {
     }
     public function close()
+    {
+    }
+    public function flush()
     {
     }
     function __destruct()
@@ -101,7 +109,7 @@ class OticUnpackChannel
 
 class OticUnpack
 {
-    public function __construct()
+    public function __construct($fileHandle)
     {
     }
     public function __destruct()
@@ -113,7 +121,7 @@ class OticUnpack
     public function parse()
     {
     }
-    public function selectChannel(int channelId, callable $flusher): OticUnpackChannel
+    public function selectChannel(int $channelId, callable $flusher): OticUnpackChannel
     {
     }
     public function close()

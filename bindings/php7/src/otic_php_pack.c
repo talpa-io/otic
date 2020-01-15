@@ -5,7 +5,8 @@
 #include "otic_php_pack.h"
 #include "otic_exception.h"
 #include <Zend/zend_exceptions.h>
-
+#include <zend_string.h>
+#include <otic.h>
 
 /**
  * Useful links:
@@ -29,9 +30,25 @@ static inline uint8_t otic_zend_stream_isOpened(php_stream* file)
 #define Z_OTICPACKCHAN_P(zv) php_oticPackChannel_obj_from_obj(Z_OBJ_P(zv))
 zend_class_entry* oticPackChannel_ce;
 
+#define TO_STR_AND_LENGTH(string) string, strlen(string)
+
+PHP_METHOD(OticPackChannel, __construct)
+{
+    zend_declare_class_constant_long(oticPackChannel_ce, TO_STR_AND_LENGTH("TYPE_SENSOR"), OTIC_CHANNEL_TYPE_SENSOR);
+    zend_declare_class_constant_long(oticPackChannel_ce, TO_STR_AND_LENGTH("TYPE_BINARY"), OTIC_CHANNEL_TYPE_BINARY);
+}
+
 PHP_METHOD(OticPackChannel, __toString)
 {
-    RETURN_STRING(ZEND_NS_NAME("otic", "OticPackChannel"))
+    zval* id = getThis();
+    oticPackChannel_object* intern = Z_OTICPACKCHAN_P(id);
+    if (!intern || !intern->oticPackChannel)
+        return;
+    char buffer[512] = {};
+    sprintf(buffer, "<Class %s. Id: %hhu, Type: %hhu. Total Entries: %u. Ts: %lf - %lf>",
+            ZEND_NS_NAME("Otic", "OticPackChannel"), intern->oticPackChannel->info.channelId,
+            intern->oticPackChannel->info.channelType, intern->oticPackChannel->totalEntries, intern->oticPackChannel->timeInterval.time_start, (double)intern->oticPackChannel->base.timestamp_current / OTIC_TS_MULTIPLICATOR);
+    RETURN_STRING(buffer)
 }
 
 PHP_METHOD(OticPackChannel, inject)
@@ -44,7 +61,7 @@ PHP_METHOD(OticPackChannel, inject)
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "dssz", &timestamp, &sensorName.ptr, &sensorName.size, &sensorUnit.ptr, &sensorUnit.size, &value) == FAILURE)
         return;
     oticPackChannel_object* intern = Z_OTICPACKCHAN_P(id);
-    if (!intern)
+    if (!intern || !intern->oticPackChannel)
         return;
     switch (Z_TYPE_P(value))
     {
@@ -65,10 +82,10 @@ PHP_METHOD(OticPackChannel, inject)
             otic_pack_channel_inject_n(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr);
             break;
         default:
-            zend_throw_exception(oticExceptions_ce, "Unsupported Type", 0);
+            otic_php_throw_oticException("Unsupported Type", 0);
     }
     if (intern->oticPackChannel->base.state == OTIC_STATE_ON_ERROR)
-        zend_throw_exception(libOticExceptions_ce, "", intern->oticPackChannel->base.error);
+        otic_php_throw_libOticException(intern->oticPackChannel->base.error);
 }
 
 PHP_METHOD(OticPackChannel, flush)
@@ -77,10 +94,10 @@ PHP_METHOD(OticPackChannel, flush)
     if (zend_parse_parameters_none() == FAILURE)
         return;
     oticPackChannel_object* intern = Z_OTICPACKCHAN_P(id);
-    if (!intern)
+    if (!intern || !intern->oticPackChannel)
         return;
     if (!otic_pack_channel_flush(intern->oticPackChannel))
-        zend_throw_exception(libOticExceptions_ce, "", intern->oticPackChannel->base.error);
+        otic_php_throw_libOticException(intern->oticPackChannel->base.error);
 }
 
 PHP_METHOD(OticPackChannel, getTimeInterval)
@@ -89,7 +106,7 @@ PHP_METHOD(OticPackChannel, getTimeInterval)
         return;
     zval* id = getThis();
     oticPackChannel_object* intern = Z_OTICPACKCHAN_P(id);
-    if (!intern)
+    if (!intern || !intern->oticPackChannel)
         return;
     array_init(return_value);
     add_index_double(return_value, 0, intern->oticPackChannel->timeInterval.time_start);
@@ -102,10 +119,10 @@ PHP_METHOD(OticPackChannel, getSensorsList)
         return;
     zval* id = getThis();
     oticPackChannel_object* intern = Z_OTICPACKCHAN_P(id);
-    if (!intern)
+    if (!intern || !intern->oticPackChannel)
         return;
     if (otic_base_getState(&intern->oticPackChannel->base) == OTIC_STATE_CLOSED)
-        zend_throw_exception(oticExceptions_ce, "Channel already closed", -2);
+        otic_php_throw_oticException("Channel already closed", -2);
     array_init(return_value);
     size_t counter;
     for (counter = 0; counter < OTIC_PACK_CACHE_SIZE; ++counter)
@@ -124,10 +141,10 @@ PHP_METHOD(OticPackChannel, close)
     if (zend_parse_parameters_none() == FAILURE)
         return;
     oticPackChannel_object* intern = Z_OTICPACKCHAN_P(id);
-    if (!intern)
+    if (!intern || !intern->oticPackChannel)
         return;
     if (!otic_pack_channel_close(intern->oticPackChannel))
-        zend_throw_exception(libOticExceptions_ce, "", intern->oticPackChannel->base.error);
+        otic_php_throw_libOticException(intern->oticPackChannel->base.error);
 }
 
 ZEND_BEGIN_ARG_INFO_EX(argInfo_oticPackInj, 0, 0, 1)
@@ -138,6 +155,7 @@ ZEND_BEGIN_ARG_INFO_EX(argInfo_oticPackInj, 0, 0, 1)
 ZEND_END_ARG_INFO()
 
 const zend_function_entry oticPackChannel_methods[] = {
+        PHP_ME(OticPackChannel, __construct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
         PHP_ME(OticPackChannel, __toString, NULL, ZEND_ACC_PUBLIC)
         PHP_ME(OticPackChannel, inject, argInfo_oticPackInj, ZEND_ACC_PUBLIC)
         PHP_ME(OticPackChannel, getTimeInterval, NULL, ZEND_ACC_PUBLIC)
@@ -150,8 +168,8 @@ const zend_function_entry oticPackChannel_methods[] = {
 zend_object* oticPackChannel_object_new(zend_class_entry* ce TSRMLS_DC)
 {
     oticPackChannel_object* intern = (oticPackChannel_object*)ecalloc(1, sizeof(oticPackChannel_object) + zend_object_properties_size(ce));
+    zend_object_std_init(&intern->std, ce TSRMLS_CC);
     object_properties_init(&intern->std, ce);
-    object_properties_init(&intern->std, ce TSRMLS_CC);
     intern->std.handlers = &oticPackChannel_object_handlers;
     return &intern->std;
 }
@@ -198,14 +216,19 @@ PHP_METHOD(OticPack, __construct)
         php_stream_from_zval(stream, fileOut);
         intern->oticPack = emalloc(sizeof(otic_pack_t));
         if (!otic_pack_init(intern->oticPack, oticPack_flusher, stream))
-            zend_throw_exception(libOticExceptions_ce, "", intern->oticPack->error);
+            otic_php_throw_libOticException(intern->oticPack->error);
     }
 }
 
 PHP_METHOD(OticPack, __toString)
 {
+    char buffer[512] = {};
     zval* id = getThis();
-    RETURN_STRING(ZEND_NS_NAME("Otic", "OticPack"))
+    oticPack_object* intern = Z_OTICPACK_P(id);
+    if (!intern)
+        return;
+    sprintf(buffer, "<Class: %s. Total Channels: %hhu. State: %u>", ZEND_NS_NAME("Otic", "OticPack"), intern->oticPack->totalChannels, intern->oticPack->state);
+    RETURN_STRING(buffer)
 }
 
 PHP_METHOD(OticPack, __destruct)
@@ -219,7 +242,7 @@ PHP_METHOD(OticPack, __destruct)
             return;
         if (!otic_zend_stream_isOpened(intern->oticPack->data))
         {
-            zend_throw_exception(oticExceptions_ce, "Output Stream already closed!", -1);
+            otic_php_throw_oticException("Cannot close Pack because output file was already closed", -1);
             return;
         }
         otic_pack_close(intern->oticPack);
@@ -234,7 +257,7 @@ PHP_METHOD(OticPack, defineChannel)
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lll", &channelId, &channelType, &channelFeatures) == FAILURE)
         return;
     if (channelId < 0 || channelId > UINT8_MAX)
-        zend_throw_exception(oticExceptions_ce, "Invalid ChannelID", 0);
+        zend_throw_exception(oticExceptions_ce, "Invalid ChannelID! Reason: Valid Range (int): 0 - 255", 0);
     oticPack_object *intern = Z_OTICPACK_P(id);
     if (!intern)
         return;
@@ -257,7 +280,7 @@ PHP_METHOD(OticPack, closeChannel)
     if (intern) {
         otic_pack_closeChannel(intern->oticPack, (uint8_t)channelID);
         if (intern->oticPack->state == OTIC_STATE_ON_ERROR)
-            zend_throw_exception(libOticExceptions_ce, "", intern->oticPack->error);
+            otic_php_throw_libOticException(intern->oticPack->error);
     }
 }
 
@@ -270,7 +293,7 @@ PHP_METHOD(OticPack, flush)
     if (intern) {
         otic_pack_flush(intern->oticPack);
         if (intern->oticPack->state == OTIC_STATE_ON_ERROR)
-            zend_throw_exception(libOticExceptions_ce, "", intern->oticPack->error);
+            otic_php_throw_libOticException(intern->oticPack->error);
     }
 }
 
@@ -285,7 +308,7 @@ PHP_METHOD(OticPack, close)
             return;
         if (!otic_zend_stream_isOpened(intern->oticPack->data))
         {
-            zend_throw_exception(oticExceptions_ce, "Ouput Stream was already closed", -1);
+            zend_throw_exception(oticExceptions_ce, "Cannot close Pack because output File was already closed!", -1);
             return;
         }
         otic_pack_close(intern->oticPack);
@@ -341,3 +364,5 @@ void oticPack_object_free(zend_object* object)
     efree(myObj->oticPack);
     zend_object_std_dtor(object);
 }
+
+#undef TO_STR_AND_LENGTH

@@ -37,11 +37,6 @@ inline void otic_base_close(otic_base_t* base)
     base->state = OTIC_STATE_CLOSED;
 }
 
-otic_type_e otic_oval_getType(const oval_t* oval)
-{
-    return oval->type;
-}
-
 void otic_oval_setd(oval_t* oval, uint32_t value, uint8_t neg)
 {
     oval->val.lval = value;
@@ -106,6 +101,22 @@ void otic_oval_cpy(oval_t* dest, const oval_t* source)
 {
     memcpy(dest, source, sizeof(typeof(*source)));
 }
+
+otic_type_e otic_oval_getType(const oval_t* value)
+{
+    return value->type;
+}
+
+uint8_t oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalArray2)
+{
+    if (ovalArray1->size != ovalArray2->size)
+        return 0;
+    for (uint32_t counter = 0; counter < ovalArray1->size; ++counter)
+        if (!otic_oval_cmp(&ovalArray1->elements[counter], &ovalArray2->elements[counter]))
+            return 0;
+    return 1;
+}
+
 
 /**
  * Encode Integral values or more precisely uint32_t values to leb128.
