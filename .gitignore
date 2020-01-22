@@ -19,3 +19,6 @@ cmake_install.cmake
 CTestTestfile.cmake
 
 oticrc.vim
+
+.phpunit.result.cache
+vendor/

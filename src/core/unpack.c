@@ -2,9 +2,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <zstd.h>
-#include <otic.h>
 #include "core/unpack.h"
 #include "core/config.h"
+#include <stdio.h>
 
 
 #if OTIC_UNPACK_INLINE_ALL_STATIC
@@ -50,10 +50,10 @@ static oticUnpackEntry_t* otic_unpack_insert_entry(oticUnpackChannel_t* channel,
     {
         if (*ptr == ':') {
             *ptr = 0;
-            ptr++;
+            ++ptr;
             break;
         }
-        ptr++;
+        ++ptr;
     }
     channel->cache.cache[channel->cache.totalEntries] = malloc(sizeof(oticUnpackEntry_t));
     oticUnpackEntry_t* entry = channel->cache.cache[channel->cache.totalEntries];
@@ -557,8 +557,14 @@ oticUnpackChannel_t* otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_
         otic_unpack_setError(oticUnpack, OTIC_ERROR_AT_INVALID_STATE);
         goto fail;
     }
+    for (uint8_t counter = 0; counter < oticUnpack->totalChannels; ++counter) {
+        if (oticUnpack->channels[counter]->info.channelId == id) {
+            otic_unpack_setError(oticUnpack, OTIC_ERROR_INVALID_ARGUMENT);
+            goto fail;
+        }
+    }
     oticUnpackChannel_t** ptr = realloc(oticUnpack->channels, sizeof(oticUnpackChannel_t*) * (oticUnpack->totalChannels + 1));
-    if (!ptr){
+    if (!ptr) {
         otic_unpack_setError(oticUnpack, OTIC_ERROR_ALLOCATION_FAILURE);
         goto fail;
     }

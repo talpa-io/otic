@@ -1,41 +1,137 @@
 ## Extension Structure  
 ```php
+<?php namespace Otic;
+
+/**
+*   Not inside the namespace: \a Otic
+*/
+function getLibOticVersion() : string
+{
+}
+
+class LibOticException extends Exception
+{
+    const NONE                      = 0x00;
+    const INVALID_POINTER           = 0x01;
+    const BUFFER_OVERFLOW           = 0x02;
+    const INVALID_TIMESTAMP         = 0x03;
+    const ENTRY_INSERTION_FAILURE   = 0x04;
+    const ZSTD                      = 0x05;
+    const FLUSH_FAILED              = 0x06;
+    const EOF                       = 0x07;
+    const INVALID_FILE              = 0x08;
+    const DATA_CORRUPTED            = 0x09;
+    const VERSION_UNSUPPORTED       = 0x0A;
+    const ROW_COUNT_MISMATCH        = 0x0B;
+    const INVALID_ARGUMENT          = 0x0C;
+    const AT_INVALID_STATE          = 0x0D;
+    const ALLOCATION_FAILURE        = 0x0E;
+    public function __construct(int $errorNo)
+    {
+    }
+}
+
 class OticException extends Exception
 {
 }
 
-class LibOticException extends Exceptions 
+class OticPackChannel
 {
-    const OTIC_ERROR_NONE = 0;
-    const OTIC_ERROR_INVALID_POINTER = 1;
-    const OTIC_ERROR_BUFFER_OVERFLOW = 2;
-    const OTIC_ERROR_INVALID_TIMESTAMP = 3;
-    const OTIC_ERROR_ENTRY_INSERTION_FAILURE = 4;
-    const OTIC_ERROR_ZSTD = 5;
-    const OTIC_ERROR_FLUSH_FAILED = 6;
-    const OTIC_ERROR_EOF = 7;
-    const OTIC_ERROR_INVALID_FILE = 8;
-    const OTIC_ERROR_DATA_CORRUPTED = 9;
-    const OTIC_ERROR_VERSION_UNSUPPORTED = 10;
-    const OTIC_ERROR_ROW_COUNT_MISMATCH = 11;
-    const OTIC_ERROR_INVALID_ARGUMENT = 12;
-    const OTIC_ERROR_AT_INVALID_STATE = 13;
-    const OTIC_ERROR_ALLOCATION_FAILURE = 14;
-    
-    public function __construct(int $errorCode);
+    const TYPE_SENSOR = 0x00;
+    const TYPE_BINARY = 0x01;
+    public function __construct()
+    {
+    }
+    public function __toString() : string
+    {
+    }
+    public function inject(float $timestamp, string $sensorName, string $sensorUnit, $value)
+    {
+    }
+    public function getTimeInterval(): array
+    {
+    }
+    public function getSensorsList() : array
+    {
+    }
+    public function flush()
+    {
+    }
+    public function close()
+    {
+    }
+}
+
+class OticPack
+{
+    public function __construct($fileHandle)
+    {
+    }
+    public function __toString() : string
+    {
+    }
+    public function defineChannel(int $channelId, int $channelType, int $features) : OticPackChannel
+    {
+    }
+    public function close()
+    {
+    }
+    public function flush()
+    {
+    }
+    public function closeChannel(int $channelId)
+    {
+    }
+    function __destruct()
+    {
+    }
+}
+
+class OticUnpackChannel
+{
+    public function __construct()
+    {
+    }
+    public function __toString() : string
+    {
+    }
+    public function setFetchList(string ... $values)
+    {
+    }
+    public function getTimeInterval(): array
+    {
+    }
+    public function getSensorsList() : array
+    {
+    }
+    public function close()
+    {
+    }
+    public function __destruct()
+    {
+    }
+}
+
+class OticUnpack
+{
+    public function __construct($fileHandle)
+    {
+    }
+    public function __destruct()
+    {
+    }
+    public function __toString() : string
+    {
+    }
+    public function parse()
+    {
+    }
+    public function selectChannel(int $channelId, callable $flusher): OticUnpackChannel
+    {
+    }
+    public function close()
+    {
+    }
 }
 
 ```
-
-
-## Changes
-
-- Use `\Otic` - Namespace 
-- Provide / Maintain Class Reference in otic-php.php
-- Provide Statistics for Reader and Writer
-    - Which datatypes were written / read
-
-- Provide `\Otic\Otic` Class with Constants `CHANNEL_TYPE_SENSOR`, `CHANNEL_TYPE_BINARY`
-- Investigate Reader Segfault
-- Support Callable as callback (Speed comparison / Lambda / Function call)
-

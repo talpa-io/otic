@@ -1,13 +1,11 @@
-//
-// Created by talpaadmin on 06.12.19.
-//
-
 #include "otic_php_unpack.h"
 #include "otic_exception.h"
 #include <zend_exceptions.h>
 #include <zend_interfaces.h>
 
 #include <zend_generators.h>
+#include <otic.h>
+
 /**
  * Useful Links:
  *
@@ -24,6 +22,9 @@
  * Variadic functions:
  * https://github.com/ryantenney/php7/blob/master/README.PARAMETER_PARSING_API
  * https://wiki.php.net/phpng-upgrading
+ *
+ * Zend Streams:
+ * https://www.php.net/manual/de/internals2.ze1.streams.php
  */
 
 
@@ -57,7 +58,7 @@ PHP_METHOD(OticUnpackChannel, __construct)
     if (!zend_is_callable(callback, 0, 0))
         otic_php_throw_oticException("Invalid Callable", -4);
     zval* id = getThis();
-    oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
+    oticUnpackChannel_object* intern = Z_OUNPACKCHAN(id);
     if (!intern)
         return;
     zend_update_property(oticUnpackChannel_ce, id, TO_STRING_AND_LENGTH("callback"), callback);
@@ -65,7 +66,6 @@ PHP_METHOD(OticUnpackChannel, __construct)
 
 PHP_METHOD(OticUnpackChannel, __destruct)
 {
-
 }
 
 PHP_METHOD(OticUnpackChannel, getTimeInterval)
@@ -97,7 +97,17 @@ PHP_METHOD(OticUnpackChannel, getSensorsList)
 
 PHP_METHOD(OticUnpackChannel, __toString)
 {
-    RETURN_STRING(ZEND_NS_NAME("Otic", "OticUnpackChannel"))
+    zval* id = getThis();
+    oticUnpackChannel_object* intern = Z_OUNPACKCHAN(id);
+    if (!intern || !intern->oticUnpackChannel) {
+        return;
+    }
+    char buffer[512] = {};
+    sprintf(buffer, "<Class: %s. Id: %hhu. Type: %hhu. Total Entries: %lu. Ts: %lf - %lf>",
+            ZEND_NS_NAME("Otic", "OticUnpackChannel"), intern->oticUnpackChannel->info.channelId,
+            intern->oticUnpackChannel->info.channelType, intern->oticUnpackChannel->cache.totalEntries,
+            intern->oticUnpackChannel->timeInterval.time_start, intern->oticUnpackChannel->ts);
+    RETURN_STRING(buffer);
 }
 
 PHP_METHOD(OticUnpackChannel, setFetchList)
@@ -178,32 +188,38 @@ zend_object_handlers oticUnpack_object_handlers;
 
 static inline uint8_t otic_php_unpack_seeker(uint32_t pos, void* data)
 {
-    return !php_stream_seek((php_stream*)data, SEEK_CUR, pos);
+    return !php_stream_seek((php_stream*)data, pos, SEEK_CUR);
 }
 
 PHP_METHOD(OticUnpack, __construct)
 {
-    zval* id = getThis();
-    php_stream* stream;
     zval* fileIn;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &fileIn) == FAILURE)
         return;
+    zval* id = getThis();
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
     if (!intern)
         return;
+    php_stream* stream;
     php_stream_from_zval(stream, fileIn);
     intern->oticUnpack = emalloc(sizeof(otic_unpack_t));
     if (!otic_unpack_init(intern->oticUnpack, otic_php_unpack_fetcher, stream, otic_php_unpack_seeker, stream))
         otic_php_throw_libOticException(intern->oticUnpack->error);
-
-    //zend_declare_property_null(oticUnpack_ce, "flusher", strlen("flusher"), ZEND_ACC_PROTECTED);
-    // TODO:
-    //zend_declare_class_constant()
 }
 
 PHP_METHOD(OticUnpack, __toString)
 {
-    RETURN_STRING(ZEND_NS_NAME("otic", "OticUnpack"))
+    if (zend_parse_parameters_none() == FAILURE)
+        return;
+    zval* id = getThis();
+    oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
+    if (!intern)
+        return;
+    char buffer[512] = {};
+    sprintf(buffer, "<Class: %s. Total Channels: %hhu. State: %hhu. Error: %hhu>",
+            ZEND_NS_NAME("Otic", "OticUnpack"), intern->oticUnpack->totalChannels, intern->oticUnpack->state,
+            intern->oticUnpack->error);
+    RETURN_STRING(buffer);
 }
 
 PHP_METHOD(OticUnpack, __destruct)
@@ -258,30 +274,39 @@ PHP_METHOD(OticUnpack, selectChannel)
     long channelId;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lz", &channelId, &callback) == FAILURE)
         return;
-    if (channelId < 0 || channelId > 255)
-        otic_php_throw_oticException("Invalid Channel ID! Reason: Valid Range (int): 0 - 255", 0);
-    if (!zend_is_callable(callback, 0, 0))
-        otic_php_throw_oticException("Invalid Callback", 0);
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
     if (!intern)
         return;
+    if (channelId < 0 || channelId > 255)
+        otic_php_throw_oticException("Invalid Channel ID! Reason: Valid Range (int): 0 - 255", 0);
+    zend_string* funcName;
+    if (!zend_is_callable(callback, 0, &funcName TSRMLS_CC)) {
+        php_error_docref0(NULL TSRMLS_CC, E_ERROR, "Invalid Callback %s", funcName->val);
+        zend_string_release(funcName);
+    }
+    zend_string_release(funcName);
     oticUnpackChannel_object* channel = (oticUnpackChannel_object*)ecalloc(1, sizeof(oticUnpackChannel_object) + zend_object_properties_size(oticUnpackChannel_ce));
-    ZVAL_ZVAL(&channel->funcptr, callback, 0, 0);
-    zend_object_std_init(&channel->std, oticUnpackChannel_ce TSRMLS_CC);
-    channel->std.handlers = &oticUnpack_object_handlers;
-    channel->oticUnpackChannel = otic_unpack_defineChannel(intern->oticUnpack, channelId, oticUnpack_channelSelect_wrapper, &channel->funcptr);
-    if (channel->oticUnpackChannel->base.error != 0)
-        otic_php_throw_libOticException(channel->oticUnpackChannel->base.error);
     zval retVal;
-    zend_call_method_with_1_params(id, oticUnpackChannel_ce, &oticUnpackChannel_ce->constructor, "__construct", &retVal, callback);
+    ZVAL_ZVAL(&channel->funcptr, callback, 1, 1);
+    channel->funcptr.value.ref->gc.refcount = 2;
+    zend_call_method_with_1_params(id, oticUnpackChannel_ce, &oticUnpackChannel_ce->constructor, "__construct", &retVal, &channel->funcptr);
+    channel->oticUnpackChannel = otic_unpack_defineChannel(intern->oticUnpack, channelId, oticUnpack_channelSelect_wrapper, &channel->funcptr);
+    if (!channel->oticUnpackChannel)
+    {
+        efree(channel);
+        otic_php_throw_libOticException(intern->oticUnpack->error);
+    }
+    zend_object_std_init(&channel->std, oticUnpackChannel_ce TSRMLS_CC);
+    object_properties_init(&channel->std, oticUnpackChannel_ce);
+    channel->std.handlers = &oticUnpack_object_handlers;
     RETURN_OBJ(&channel->std)
 }
 
 PHP_METHOD(OticUnpack, parse)
 {
-    zval* id = getThis();
     if (zend_parse_parameters_none() == FAILURE)
         return;
+    zval* id = getThis();
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
     if (!intern)
         return;
@@ -303,9 +328,9 @@ PHP_METHOD(OticUnpack, read)
 
 PHP_METHOD(OticUnpack, close)
 {
-    zval* id = getThis();
     if (zend_parse_parameters_none() == FAILURE)
         return;
+    zval* id = getThis();
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
     if (!intern)
         return;
@@ -356,3 +381,5 @@ void oticUnpack_object_free(zend_object* object)
 }
 
 #undef TO_STRING_AND_LENGTH
+#undef T_OTICUNPACKOBJ_P
+#undef Z_OUNPACKCHAN

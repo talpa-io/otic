@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <zstd.h>
 #include <core/base.h>
+#include <otic.h>
 #include "core/pack.h"
 
 #if OTIC_PACK_INLINE_ALL_STATIC
@@ -671,7 +672,7 @@ uint8_t otic_pack_channel_close(otic_pack_channel_t* channel)
             channel->info.parent->channels[sCounter] = channel->info.parent->channels[--channel->info.parent->totalChannels];
             channel->info.parent->channels[channel->info.parent->totalChannels] = channel;
             free(channel->info.parent->channels[channel->info.parent->totalChannels]);
-            otic_base_setState(&channel->base, OTIC_STATE_CLOSED);
+            //otic_base_setState(&channel->base, OTIC_STATE_CLOSED);
             return 1;
         }
     return 0;
@@ -805,7 +806,7 @@ uint8_t otic_pack_closeChannel(otic_pack_t* oticPack, uint8_t id)
             otic_pack_channel_t* temp = oticPack->channels[counter];
             oticPack->channels[counter] = oticPack->channels[oticPack->totalChannels];
             free(temp);
-            oticPack = realloc(oticPack, sizeof(otic_pack_channel_t*) * oticPack->totalChannels);
+            oticPack->channels = realloc(oticPack, sizeof(otic_pack_channel_t*) * oticPack->totalChannels);
             return 1;
         }
     }

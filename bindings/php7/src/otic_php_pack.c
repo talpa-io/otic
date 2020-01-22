@@ -45,9 +45,12 @@ PHP_METHOD(OticPackChannel, __toString)
     if (!intern || !intern->oticPackChannel)
         return;
     char buffer[512] = {};
-    sprintf(buffer, "<Class %s. Id: %hhu, Type: %hhu. Total Entries: %u. Ts: %lf - %lf>",
+    sprintf(buffer, "<Class %s. Id: %hhu, Type: %hhu. State: %hhu. Error: %hhu. Total Entries: %u. Ts: %lf - %lf>",
             ZEND_NS_NAME("Otic", "OticPackChannel"), intern->oticPackChannel->info.channelId,
-            intern->oticPackChannel->info.channelType, intern->oticPackChannel->totalEntries, intern->oticPackChannel->timeInterval.time_start, (double)intern->oticPackChannel->base.timestamp_current / OTIC_TS_MULTIPLICATOR);
+            intern->oticPackChannel->info.channelType, intern->oticPackChannel->base.state,
+            intern->oticPackChannel->base.error, intern->oticPackChannel->totalEntries,
+            intern->oticPackChannel->timeInterval.time_start,
+            (double)intern->oticPackChannel->base.timestamp_current / OTIC_TS_MULTIPLICATOR);
     RETURN_STRING(buffer)
 }
 
@@ -58,7 +61,8 @@ PHP_METHOD(OticPackChannel, inject)
     otic_str_t sensorName;
     otic_str_t sensorUnit;
     zval* value;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "dssz", &timestamp, &sensorName.ptr, &sensorName.size, &sensorUnit.ptr, &sensorUnit.size, &value) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "dssz", &timestamp, &sensorName.ptr,
+            &sensorName.size, &sensorUnit.ptr, &sensorUnit.size, &value) == FAILURE)
         return;
     oticPackChannel_object* intern = Z_OTICPACKCHAN_P(id);
     if (!intern || !intern->oticPackChannel)
@@ -241,30 +245,31 @@ PHP_METHOD(OticPack, __destruct)
         if (intern->oticPack->state == OTIC_STATE_CLOSED)
             return;
         if (!otic_zend_stream_isOpened(intern->oticPack->data))
-        {
             otic_php_throw_oticException("Cannot close Pack because output file was already closed", -1);
-            return;
-        }
         otic_pack_close(intern->oticPack);
     }
 }
 
 PHP_METHOD(OticPack, defineChannel)
 {
-    // TODO: Keep argument series
-    zval* id = getThis();
     long channelId, channelType, channelFeatures;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lll", &channelId, &channelType, &channelFeatures) == FAILURE)
         return;
-    if (channelId < 0 || channelId > UINT8_MAX)
-        zend_throw_exception(oticExceptions_ce, "Invalid ChannelID! Reason: Valid Range (int): 0 - 255", 0);
+    zval* id = getThis();
     oticPack_object *intern = Z_OTICPACK_P(id);
     if (!intern)
         return;
+    if (channelId < 0 || channelId > UINT8_MAX)
+        zend_throw_exception(oticExceptions_ce, "Invalid ChannelID! Reason: Valid Range (int): 0 - 255", 0);
     oticPackChannel_object* channel = (oticPackChannel_object*)ecalloc(1, sizeof(oticPackChannel_object) + zend_object_properties_size(oticPackChannel_ce));
-    zend_object_std_init(&channel->std, oticPackChannel_ce TSRMLS_CC);
-    channel->std.handlers = &oticPackChannel_object_handlers;
     channel->oticPackChannel = otic_pack_defineChannel(intern->oticPack, channelType, channelId, 0x00);
+    if (!channel->oticPackChannel) {
+        efree(channel);
+        otic_php_throw_libOticException(intern->oticPack->error);
+    }
+    zend_object_std_init(&channel->std, oticPackChannel_ce TSRMLS_CC);
+    object_properties_init(&channel->std, oticPackChannel_ce);
+    channel->std.handlers = &oticPackChannel_object_handlers;
     RETURN_OBJ(&channel->std)
 }
 
@@ -307,10 +312,8 @@ PHP_METHOD(OticPack, close)
         if (intern->oticPack->state == OTIC_STATE_CLOSED)
             return;
         if (!otic_zend_stream_isOpened(intern->oticPack->data))
-        {
-            zend_throw_exception(oticExceptions_ce, "Cannot close Pack because output File was already closed!", -1);
-            return;
-        }
+            otic_php_throw_oticException("Close Failure! Reason: Output Stream already closed.", -1);
+
         otic_pack_close(intern->oticPack);
     }
 }
@@ -366,3 +369,5 @@ void oticPack_object_free(zend_object* object)
 }
 
 #undef TO_STR_AND_LENGTH
+#undef Z_OTICPACK_P
+#undef Z_OTICPACKCHAN_P
