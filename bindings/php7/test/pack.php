@@ -1,5 +1,7 @@
 <?php
 
+    use Otic\OticPack;
+
     // throw new OticException("Some Test!");
     // throw new LibOticException(3);
     $fileOut = fopen("dump.otic", "w");
@@ -7,13 +9,17 @@
     $y = $x->defineChannel(1, 0, 1);
     $z = $x->defineChannel(2, 0, 1);
 
-    for ($counter = 0; $counter < 1000000; $counter++)
-        $z->inject($counter, "sensor1", "unit1", 12345);
+//     for ($counter = 0; $counter < 1000000; $counter++)
+//         $z->inject($counter, "sensor1", "unit1", 12345);
+//
+    $z->inject(1000000, "sensor2", "unit2", "someString");
+    $z->inject(1000000, "sensor2", "unit2", 123.34);
+    $z->inject(1000000, "sensor2", "unit2", null);
+    $z->inject(1000000, "sensor2", "unit2", "some other string");
 
-//     $z->inject(1000000, "sensor2", "unit2", "someString");
-//     $z->inject(1000000, "sensor2", "unit2", 123.34);
-//     $z->inject(1000000, "sensor2", "unit2", null);
-//     $z->inject(1000000, "sensor2", "unit2", "some other string");
+    var_dump($z->getTimeInterval());
 
-    $x->close = null;
+//     $x->close();
+//
+    $x = null;
     fclose($fileOut);

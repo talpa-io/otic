@@ -6,8 +6,9 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include "portability.h"
 
-#define OTIC_BASE_CACHE_SIZE 12000
+#define OTIC_BASE_CACHE_SIZE            12000
 #if OTIC_BASE_CACHE_SIZE < (255 * 2)
 #error OTIC Pack requires a buffer cache bigger than twice the size of permitted string value length (255)
 #endif
@@ -21,34 +22,28 @@ extern "C" {
 #define OTIC_MAGIC_SIZE                 4
 #define PTR_M                           31
 #define SMALL_INT_LIMIT                 0xC9
+#define OTIC_MAGIC                      "O\xa9\x46\x35"
+#define TS_NULL                         (uint64_t)-1
 
-// TODO: HANDLE Memory allocation failure
 
 typedef enum
 {
-    OTIC_TYPE_NULL = 0xC9,
+    OTIC_TYPE_NULL                      = SMALL_INT_LIMIT,
     OTIC_TYPE_INT_NEG,
     OTIC_TYPE_INT_POS,
-    OTIC_TYPE_DOUBLE,
-    OTIC_TYPE_MIN1_FLOAT,
-    OTIC_TYPE_MIN2_FLOAT,
-    OTIC_TYPE_MIN3_FLOAT,
     OTIC_TYPE_FLOAT,
-    OTIC_TYPE_MED_DOUBLE,
+    OTIC_TYPE_DOUBLE,
     OTIC_TYPE_STRING,
     OTIC_TYPE_ARRAY,
     OTIC_TYPE_OBJECT,
     OTIC_TYPE_TRUE,
     OTIC_TYPE_FALSE,
-    OTIC_TYPE_UNMODIFIED,
     OTIC_TYPE_RAWBUFFER,
+    OTIC_TYPE_UNMODIFIED,
     OTIC_TYPE_SET_TIMESTAMP,
     OTIC_TYPE_SHIFT_TIMESTAMP,
-    OTIC_TYPE_FILE_VERSION,
     OTIC_TYPE_NAME_ASSIGN,
     OTIC_TYPE_EOF,
-    OTIC_TYPE_METADATA,
-    OTIC_TYPE_DATA
 } otic_type_e;
 
 typedef enum
@@ -90,43 +85,45 @@ typedef enum
     OTIC_META_TYPE_CHANNEL_TYPE,
     OTIC_META_TYPE_COMPRESSION_METHOD,
     OTIC_META_TYPE_CHUNK_SIZE,
+    OTIC_META_TYPE_DATA
 } otic_meta_type_e;
 
 typedef struct
 {
     uint8_t magic[OTIC_MAGIC_SIZE];
-    uint8_t features;
+    uint8_t features;                   // Reserved
     uint8_t version;
-} __attribute__((packed)) otic_header_t;
+} PACK_MAX otic_header_t;
 
 typedef struct
 {
-    uint8_t otic_type;         // Should be OTIC_TYPE_META
-    uint8_t metaDataSize;
-} __attribute__((packed)) otic_meta_head_t;
+    uint8_t metaType;                   // otic_meta_type_e
+    uint8_t channelId;
+} PACK_MAX otic_meta_data_t;
 
 typedef struct
 {
-    uint8_t metaType;
-    uint8_t metaArg;
-} __attribute__((packed)) otic_meta_data_t;
+    otic_meta_data_t meta;
+    uint32_t size;
+} PACK_MAX otic_meta_data_size_t;
 
 typedef struct
 {
     uint32_t dataLen;
     uint8_t channelId;
-} __attribute__((packed)) otic_payload_t;
+} PACK_MAX otic_payload_t;
 
 typedef struct otic_base_t otic_base_t;
 struct otic_base_t
 {
-    uint8_t cache[OTIC_BASE_CACHE_SIZE];
+    uint8_t* cache;
     uint8_t* top;
-    uint64_t timestamp_start;
-    uint64_t timestamp_current;
+    uint64_t timestampStart;
+    uint64_t timestampCurrent;
     otic_error_e error;
     otic_state_e state;
     size_t rowCounter;
+    uint32_t cacheSize;
 };
 
 typedef struct time_interval_t
@@ -141,12 +138,12 @@ typedef enum {
 } channel_type_e;
 
 
-void            otic_base_init(otic_base_t* base) __attribute__((nonnull(1)));
-void            otic_base_setError(otic_base_t *base, otic_error_e error) __attribute__((nonnull(1)));
-otic_error_e   otic_base_getError(otic_base_t *base) __attribute__((nonnull(1)));
-void            otic_base_setState(otic_base_t* base, otic_state_e state) __attribute__((nonnull(1)));
-otic_state_e    otic_base_getState(otic_base_t* base) __attribute__((nonnull(1)));
-void            otic_base_close(otic_base_t* base) __attribute__((nonnull(1)));
+uint8_t         otic_base_init(otic_base_t* base, uint32_t bucketSize) NONNULL(1);
+void            otic_base_setError(otic_base_t *base, otic_error_e error) NONNULL(1);
+otic_error_e    otic_base_getError(otic_base_t *base) NONNULL(1);
+void            otic_base_setState(otic_base_t* base, otic_state_e state) NONNULL(1);
+otic_state_e    otic_base_getState(otic_base_t* base) NONNULL(1);
+void            otic_base_close(otic_base_t* base) NONNULL(1);
 
 
 typedef struct
@@ -156,8 +153,8 @@ typedef struct
 } otic_str_t;
 
 otic_str_t*     otic_setStr(const char* ptr);
-void            otic_freeStr(otic_str_t* oticStr) __attribute__((nonnull(1)));
-void            otic_updateStr(otic_str_t* oticStr, const char* ptr) __attribute__((nonnull(1)));
+void            otic_freeStr(otic_str_t* oticStr) NONNULL(1);
+void            otic_updateStr(otic_str_t* oticStr, const char* ptr) NONNULL(1);
 
 struct oval_t;
 struct oval_obj_element_t;
@@ -170,6 +167,9 @@ typedef struct
     oval_t* elements;
 } oval_array_t;
 
+uint8_t         otic_array_init(oval_t* val);
+uint8_t         otic_array_init_size(oval_t* val, size_t size);
+uint8_t         otic_array_release(oval_t* val);
 
 typedef struct
 {
@@ -180,11 +180,11 @@ typedef struct
 struct oval_t
 {
     union {
-        uint64_t lval;
-        double dval;
-        otic_str_t sval;
-        oval_array_t aval;
-        oval_obj_t oval;
+        uint64_t        lval;
+        double          dval;
+        otic_str_t      sval;
+        oval_array_t    aval;
+        oval_obj_t      oval;
     } val;
     uint8_t type;                   // Active Type == OTIC_TYPE
 };
@@ -206,12 +206,12 @@ uint8_t         otic_oval_cmp(const oval_t* val1, const oval_t* val2);
 void            otic_oval_cpy(oval_t* dest, const oval_t* source);
 otic_type_e     otic_oval_getType(const oval_t* val);
 
-uint8_t oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalArray2);
+uint8_t         oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalArray2);
 
-uint8_t         leb128_encode_unsigned(uint64_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
-uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t* restrict value) __attribute__((nonnull(1, 2)));
-uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest) __attribute__((nonnull(2)));
-uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value) __attribute__((nonnull(1, 2)));
+uint8_t         leb128_encode_unsigned(uint64_t value, uint8_t* restrict dest) NONNULL(2);
+uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t* restrict value) NONNULL(1, 2);
+uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest) NONNULL(2);
+uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value) NONNULL(1, 2);
 
 #ifdef __cplusplus
 }

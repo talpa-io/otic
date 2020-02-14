@@ -8,11 +8,17 @@
 
 A valid otic file starts with a header frame (6 Bytes): 
 
-- 4 Bytes: The Magic sequence is always `0x79 0x67 0x07 0xff`
+- 4 Bytes: The Magic sequence is always `0x79 0xa9 0x46 0x35`  
+Except for the `0x79` byte, the rest of the magic sequence was generated from the following code:  
+```python
+import random
+print(*map(lambda x: hex(int(random.random() * 10000) % int(random.random() * 1000) % 255), range(3)))
+``` 
+They were chosen so to be as random and therefore (most probably) as distinct from other files' magic as possible.
 - 1 Byte: Features (reserved): `0x00`
 - 1 Byte: Format version: `0x01` 
 
-```cpp
+```c
 typedef struct
 {
     uint8_t magic[OTIC_MAGIC_SIZE];
@@ -26,7 +32,7 @@ typedef struct
 The Meta sections starts immediately after the Header section with at least a `otic_meta_channel_t` with 
 frame_type `OTIC_END_OF_META`:
 
-```
+```c
 typedef struct
 {
     otic_meta_frame_t frame_type;
@@ -36,7 +42,7 @@ typedef struct
 ```
 
 
-```
+```c
 typedef enum
 {
     OTIC_CHANNEL_DEFINE=0x01

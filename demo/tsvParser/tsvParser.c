@@ -189,12 +189,12 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut) 
     }
 
     otic_pack_t oticPack;
-    if (!otic_pack_init(&oticPack, flusher, outputFile)) {
+    if (!otic_pack_init(&oticPack, 0x00, flusher, outputFile)) {
         tsvParserError = TSV_PARSER_ERROR_OTIC;
         goto fail;
     }
 
-    otic_pack_channel_t* channel = otic_pack_defineChannel(&oticPack, OTIC_CHANNEL_TYPE_SENSOR, 0x1, 0x0);
+    otic_pack_channel_t* channel = otic_pack_defineChannel(&oticPack, OTIC_CHANNEL_TYPE_SENSOR, 0x1, 0x00, 12000);
     if (!channel) {
         tsvParserError = TSV_PARSER_ERROR_OTIC;
         goto fail;
@@ -305,7 +305,7 @@ inline static uint8_t decompress(const char* fileNameIn, const char* fileNameOut
     while(otic_unpack_parse(&oticUnpack));
     if (oticUnpack.state == OTIC_STATE_ON_ERROR)
         printOticError(oticUnpack.error);
-    error = oticUnpack.channels[0]->base.error;
+    error = oticUnpack.channels[0].base.error;
     otic_unpack_close(&oticUnpack);
     fclose(inputFile);
     fclose(outputFile);

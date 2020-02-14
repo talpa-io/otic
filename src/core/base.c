@@ -1,15 +1,21 @@
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
+#include <core/base.h>
 #include "core/base.h"
 
 
-void otic_base_init(otic_base_t* base)
+uint8_t otic_base_init(otic_base_t* base, uint32_t bucketSize)
 {
-    base->top = base->cache;
-    base->timestamp_current = base->rowCounter = 0;
+    base->top = base->cache = malloc(bucketSize);
+    if (!base->cache)
+        return 0;
+    base->timestampCurrent = base->timestampStart = TS_NULL;
     base->error = OTIC_ERROR_NONE;
     base->state = OTIC_STATE_OPENED;
+    base->cacheSize = bucketSize;
+    base->rowCounter = 0;
+    return 1;
 }
 
 inline void otic_base_setError(otic_base_t * base, otic_error_e error)
@@ -34,6 +40,7 @@ inline otic_state_e otic_base_getState(otic_base_t* base)
 
 inline void otic_base_close(otic_base_t* base)
 {
+    free(base->cache);
     base->state = OTIC_STATE_CLOSED;
 }
 
@@ -116,7 +123,6 @@ uint8_t oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalA
             return 0;
     return 1;
 }
-
 
 /**
  * Encode Integral values or more precisely uint32_t values to leb128.
@@ -226,4 +232,34 @@ void otic_updateStr(otic_str_t* oticStr, const char* ptr)
 {
     oticStr->size = ptr ? strlen(ptr) : 0;
     oticStr->ptr = (char*)ptr;
+}
+
+uint8_t otic_array_init(oval_t* oval)
+{
+    return otic_array_init_size(oval, 0);
+}
+
+uint8_t otic_array_init_size(oval_t* oval, size_t size)
+{
+    oval->val.aval.size = size;
+    if (size  != 0) {
+        oval->val.aval.elements = malloc(size * sizeof(oval_t));
+        if (oval->val.aval.elements == 0)
+            goto fail;
+        for (uint32_t counter = 0; counter < size; ++counter)
+            oval->val.aval.elements[counter].type = OTIC_TYPE_NULL;
+    }
+    oval->type = OTIC_TYPE_ARRAY;
+    return 1;
+fail:
+    return 0;
+}
+
+uint8_t otic_array_release(oval_t* oval)
+{
+    if (oval->type != OTIC_TYPE_ARRAY)
+        return 0;
+    free(oval->val.aval.elements);
+    oval->val.aval.size = 0;
+    return 1;
 }

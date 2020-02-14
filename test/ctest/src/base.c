@@ -59,7 +59,6 @@ OTIC_TEST_CASE(otic_base, leb128_signed)
 OTIC_TEST_CASE(otic_base, assert_sizes)
 {
     TEST_ASSERT_EQUAL_size_t((OTIC_MAGIC_SIZE + 2) * sizeof(char), sizeof(otic_header_t));
-    TEST_ASSERT_EQUAL_size_t(2 * sizeof(uint8_t), sizeof(otic_meta_head_t));
     TEST_ASSERT_EQUAL_size_t(2 * sizeof(uint8_t), sizeof(otic_meta_data_t));
     TEST_ASSERT_EQUAL_size_t(sizeof(uint8_t) + sizeof(uint32_t), sizeof(otic_payload_t));
 }
@@ -68,12 +67,12 @@ OTIC_TEST_CASE(otic_base, assert_sizes)
 OTIC_TEST_CASE(otic_base, base)
 {
     otic_base_t oticBase;
-    otic_base_init(&oticBase);
+    otic_base_init(&oticBase, 16384);
     TEST_ASSERT(oticBase.error == OTIC_ERROR_NONE)
     TEST_ASSERT(oticBase.state == OTIC_STATE_OPENED)
-//    TEST_ASSERT(oticBase.timestamp_start == 0)
+    TEST_ASSERT(oticBase.timestampStart == TS_NULL)
     TEST_ASSERT(oticBase.top == oticBase.cache)
-    TEST_ASSERT(oticBase.timestamp_current == 0)
+    TEST_ASSERT(oticBase.timestampCurrent == TS_NULL)
 
     TEST_ASSERT(otic_base_getError(&oticBase) == OTIC_ERROR_NONE)
     otic_base_setError(&oticBase, OTIC_ERROR_ROW_COUNT_MISMATCH);

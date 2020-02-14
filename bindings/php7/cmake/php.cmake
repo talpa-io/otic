@@ -1,4 +1,4 @@
-# Build this target! Don't run it else CMake will try to `./` the output binary.
+# Build this target! Don't run it else your IDE will try to `./` the output binary.
 function(add_php_executable EXECUTABLE_PATH)
     string(REPLACE / _ STRIPPED_NAME ${EXECUTABLE_PATH})
     add_custom_target(${STRIPPED_NAME}

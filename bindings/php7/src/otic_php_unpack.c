@@ -217,7 +217,7 @@ PHP_METHOD(OticUnpack, __toString)
         return;
     char buffer[512] = {};
     sprintf(buffer, "<Class: %s. Total Channels: %hhu. State: %hhu. Error: %hhu>",
-            ZEND_NS_NAME("Otic", "OticUnpack"), intern->oticUnpack->totalChannels, intern->oticUnpack->state,
+            ZEND_NS_NAME("Otic", "OticUnpack"), otic_unpack_getTotalAmountOfChannel(intern->oticUnpack), intern->oticUnpack->state,
             intern->oticUnpack->error);
     RETURN_STRING(buffer);
 }
@@ -259,6 +259,12 @@ static inline uint8_t oticUnpack_channelSelect_wrapper(double timestamp, const c
         case OTIC_TYPE_STRING:
             ZVAL_STRING(&params[3], val->val.sval.ptr);
             break;
+        case OTIC_TYPE_TRUE:
+            ZVAL_TRUE(&params[3]);
+            break;
+        case OTIC_TYPE_FALSE:
+            ZVAL_FALSE(&params[3]);
+            break;
         default:
             otic_php_throw_oticException("Unknown Type", 0);
     }
@@ -288,7 +294,7 @@ PHP_METHOD(OticUnpack, selectChannel)
     oticUnpackChannel_object* channel = (oticUnpackChannel_object*)ecalloc(1, sizeof(oticUnpackChannel_object) + zend_object_properties_size(oticUnpackChannel_ce));
     zval retVal;
     ZVAL_ZVAL(&channel->funcptr, callback, 1, 1);
-    channel->funcptr.value.ref->gc.refcount = 2;
+    channel->funcptr.value.ref->gc.refcount++;
     zend_call_method_with_1_params(id, oticUnpackChannel_ce, &oticUnpackChannel_ce->constructor, "__construct", &retVal, &channel->funcptr);
     channel->oticUnpackChannel = otic_unpack_defineChannel(intern->oticUnpack, channelId, oticUnpack_channelSelect_wrapper, &channel->funcptr);
     if (!channel->oticUnpackChannel)

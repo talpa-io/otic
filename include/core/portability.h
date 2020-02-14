@@ -35,6 +35,55 @@ extern "C" {
 
 #endif // OTIC_HAS_ENDIAN_H
 
+#if __GNUC__ >= 3
+#define ALWAYS_INLINE           inline __attribute__((always_inline))
+#define NOINLINE                __attribute__((noinline))
+#define PURE                    __attribute__((pure))
+#define CONST                   __attribute__((const))
+#define NORETURN                __attribute__((noreturn))
+#define MALLOC                  __attribute__((malloc))
+#define MUST_CHECK              __attribute__((warn_unused_result))
+#define DEPRECATED              __attribute__((deprecated))
+#define USED                    __attribute__((used))
+#define UNUSED                  __attribute__((unused))
+#define PACKED                  __attribute__((packed))
+#define ALIGN(x)                __attribute__((aligned (x)))
+#define ALIGN_MAX               __attribute__((aligned))
+#define LIKELY(x)               __builtin_expect(!!(x), 1)
+#define UNLIKELY(x)             __builtin_expect(!!(x), 0)
+#else
+#define NOINLINE
+#define PURE
+#define CONST
+#define NORETURN
+#define MALLOC
+#define MUST_CHECK
+#define DEPRECATED
+#define USED
+#define UNUSED
+#define PACKED
+#define ALIGN(x)
+#define ALIGN_MAX
+#define LIKELY(x)   (x)
+#define UNLIKELY(x) (x)
+#endif
+
+// TODO: Window __attribute__((packed)) equivalent #pragma push()
+
+#ifdef OTIC_WIN32
+#define OTIC_API __declspec(dllexport)
+#define NONNULL(...)
+#define MAXPACK
+#elif defined(__GNUC__) && __GNUC__ >= 4
+#define OTIC_API                __attribute__((visibility("default")))
+#define NONNULL(...)            __attribute__((nonnull(__VA_ARGS__)))
+#define PACK_MAX                __attribute__((packed))
+#else
+#define OTIC_API
+#define NONNULL(...)
+#define MAXPACK
+#endif
+
 #ifdef __cplusplus
 }
 #endif

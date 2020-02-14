@@ -9,13 +9,7 @@ extern "C" {
 #include "base.h"
 
 #define OTIC_UNPACK_OUT_SIZE 12000
-#define OTIC_UNPACK_OUTPUT_LIMIT 512
-#define OTIC_UNPACK_RESULT_OUTSIZE 1048576
-#if OTIC_UNPACK_RESULT_OUTSIZE < (OTIC_UNPACK_OUTPUT_LIMIT * 2)
-#error OTIC unpack requires the Output buffer to be at least twice as big as the threshold limit
-#endif
 #define OTIC_UNPACK_CACHE_ALLOCATION_RESERVE_SIZE 8
-
 
 typedef struct
 {
@@ -27,8 +21,9 @@ typedef struct
 } oticUnpackEntry_t;
 
 typedef struct otic_unpack_t otic_unpack_t;
+typedef struct oticUnpackChannel_t oticUnpackChannel_t;
 
-typedef struct
+struct oticUnpackChannel_t
 {
     otic_base_t base;
     ZSTD_DCtx* dCtx;
@@ -58,7 +53,8 @@ typedef struct
         size_t size;
     } toFetch;
     time_interval_t timeInterval;
-} oticUnpackChannel_t;
+    oticUnpackChannel_t* previous;
+};
 
 uint8_t                 otic_unpack_channel_init(oticUnpackChannel_t* channel, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void* data),void* data, otic_unpack_t* parent);
 void                    otic_unpack_channel_toFetch(oticUnpackChannel_t* channel, const char** values, size_t size);
@@ -66,20 +62,20 @@ uint8_t                 otic_unpack_channel_close(oticUnpackChannel_t* channel);
 
 struct otic_unpack_t
 {
-    oticUnpackChannel_t** channels;
-    uint8_t totalChannels;
-    otic_error_e error;
+    oticUnpackChannel_t* channels;
     otic_state_e state;
+    otic_error_e error;
     void* fetcherData, *seekerData;
     uint8_t(*fetcher)(uint8_t*, size_t, void*);
     uint8_t(*seeker)(uint32_t, void*);
 };
 
-uint8_t                 otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t, void*), void* fetcherData, uint8_t(*seeker)(uint32_t, void*), void* seekerData) __attribute__((nonnull(1,2)));
-oticUnpackChannel_t*    otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void* data), void* data) __attribute__((nonnull(1, 3)));
-uint8_t                 otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8_t id) __attribute__((nonnull(1)));
-uint8_t                 otic_unpack_parse(otic_unpack_t* oticUnpackBase) __attribute__((nonnull(1)));
-uint8_t                 otic_unpack_close(otic_unpack_t* oticUnpackBase) __attribute__((nonnull(1)));
+uint8_t                 otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t, void*), void* fetcherData, uint8_t(*seeker)(uint32_t, void*), void* seekerData) NONNULL(1,2);
+oticUnpackChannel_t*    otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void* data), void* data) NONNULL(1, 3);
+uint8_t                 otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8_t id) NONNULL(1);
+uint8_t                 otic_unpack_getTotalAmountOfChannel(const otic_unpack_t* oticUnpack) NONNULL(1);
+uint8_t                 otic_unpack_parse(otic_unpack_t* oticUnpackBase) NONNULL(1);
+uint8_t                 otic_unpack_close(otic_unpack_t* oticUnpackBase) NONNULL(1);
 
 #ifdef __cplusplus
 }
