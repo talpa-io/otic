@@ -121,7 +121,7 @@ PHP_METHOD(OticUnpackChannel, setFetchList)
     for (int counter = 0; counter < argn; ++counter)
     {
         if (Z_TYPE(argv[counter]) != IS_STRING)
-            zend_throw_exception(oticExceptions_ce, "Excepted string!", -4);
+            zend_throw_exception(oticExceptions_ce, "Expected string!", -4);
         buffer[counter] = Z_STRVAL(argv[counter]);
     }
     oticUnpackChannel_object* intern = Z_OUNPACKCHAN(id);

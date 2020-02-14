@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 
+cmake_policy(PUSH)
+
 if (POLICY CMP0048)
     message(STATUS "To newer CMP0048 Policy")
     cmake_policy(SET CMP0048 NEW)
@@ -145,3 +147,5 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/
         DESTINATION include/otic
         FILES_MATCHING PATTERN "*.h"
         )
+
+cmake_policy(POP)

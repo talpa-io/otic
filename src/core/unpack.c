@@ -624,8 +624,7 @@ static void otic_unpack_channel_setState(oticUnpackChannel_t* channel, otic_stat
 uint8_t otic_unpack_parse(otic_unpack_t* oticUnpack) {
     otic_meta_data_t metaData;
     if (oticUnpack->fetcher((uint8_t *)&metaData, sizeof(metaData), oticUnpack->fetcherData) == 0) {
-        otic_unpack_setError(oticUnpack, OTIC_ERROR_EOF);
-        goto fail;
+        return 0;
     }
     oticUnpackChannel_t* channel = findChannel(oticUnpack, metaData.channelId);
     switch (metaData.metaType) {
