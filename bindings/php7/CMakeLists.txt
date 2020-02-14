@@ -63,7 +63,7 @@ include(cmake/php.cmake)
 file(GLOB OTIC_PHP_INCLUDE include/*.h)
 file(GLOB OTIC_PHP_SRC src/*.c)
 
-find_package(otic REQUIRED)
+#find_package(otic REQUIRED)
 #message(STATUS ${OTIC_CORE_FILES})
 
 

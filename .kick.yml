@@ -17,7 +17,8 @@ command:
 
   make:
     - "sudo rm -rf build"
-    - "mkdir -p build && cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release && make -C build"
+    - "mkdir -p build && cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release -DPHP_BIND=ON -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=dist -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=dist && make -C build"
+    - "cp bindings/php7/otic.php.stub bindings/php7/otic.php"
     - "sudo ldconfig"
 
   test:
