@@ -16,7 +16,7 @@ static oval_t aggreg_min_lambda(oval_t* randContainer, size_t size)
         if (randContainer[counter].val.dval < min)
             min = randContainer[counter].val.dval;
     }
-    return (oval_t){.type = (min == DBL_MAX ? OTIC_TYPE_NULL: OTIC_TYPE_DOUBLE), .val.dval = min}; 
+    return (oval_t){.type = (min == DBL_MAX ? OTIC_TYPE_NULL: OTIC_TYPE_DOUBLE), .val.dval = min};
 }
 
 static oval_t aggreg_max_lambda(oval_t* randContainer, size_t size)
@@ -53,15 +53,15 @@ OTIC_TEST_CASE(aggregator, aggregator_min)
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_MIN);
     TEST_ASSERT(aggreg.value.type == OTIC_TYPE_DOUBLE);
     TEST_ASSERT(aggreg.value.val.dval == DBL_MAX);
-    
+
     unsigned maxRand = 128;
     oval_t randVector[maxRand];
     srand(time(0));
-        
+
     for (typeof(maxRand) counter = 0; counter < maxRand; ++counter)
     {
         otic_oval_setlf(&randVector[counter], rand());
-        aggreg.insert(&aggreg, &randVector[counter]); 
+        aggreg.insert(&aggreg, &randVector[counter]);
     }
     TEST_ASSERT(aggreg.get(&aggreg).val.dval == aggreg_min_lambda(randVector, maxRand).val.dval);
     TEST_ASSERT(aggreg.error == OTIC_AGGREG_ERROR_NONE);
@@ -73,9 +73,9 @@ OTIC_TEST_CASE(aggregator, aggregator_min)
 
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_STRING});
     TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL);
-    
+
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_NULL});
-    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL); 
+    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL);
 
     otic_aggreg_close(&aggreg);
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_NULL);
@@ -94,18 +94,18 @@ OTIC_TEST_CASE(aggregator, aggregator_max)
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_MAX);
     TEST_ASSERT(aggreg.value.type == OTIC_TYPE_DOUBLE);
     TEST_ASSERT(aggreg.value.val.dval == DBL_MIN);
-   
+
     unsigned maxRand = 128;
     oval_t randVector[maxRand];
     srand(time(0));
-        
+
     for (typeof(maxRand) counter = 0; counter < maxRand; ++counter)
     {
         otic_oval_setlf(&randVector[counter], rand());
-        aggreg.insert(&aggreg, &randVector[counter]); 
+        aggreg.insert(&aggreg, &randVector[counter]);
     }
     TEST_ASSERT(aggreg.get(&aggreg).val.dval == aggreg_max_lambda(randVector, maxRand).val.dval);
-    
+
     otic_aggreg_reset(&aggreg);
     TEST_ASSERT(aggreg.error == OTIC_AGGREG_ERROR_NONE);
     TEST_ASSERT(otic_oval_getType(&aggreg.value) == OTIC_TYPE_NULL);
@@ -113,9 +113,9 @@ OTIC_TEST_CASE(aggregator, aggregator_max)
 
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_STRING});
     TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL);
-    
+
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_NULL});
-    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL); 
+    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL);
 
     otic_aggreg_close(&aggreg);
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_NULL);
@@ -134,15 +134,15 @@ OTIC_TEST_CASE(aggregator, aggregator_avg)
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_AVG);
     TEST_ASSERT(aggreg.value.type == OTIC_TYPE_NULL);
     TEST_ASSERT(aggreg.value.val.dval == 0.0);
-   
+
     unsigned maxRand = 128;
     oval_t randVector[maxRand];
     srand(time(0));
-        
+
     for (typeof(maxRand) counter = 0; counter < maxRand; ++counter)
     {
         otic_oval_setlf(&randVector[counter], rand());
-        aggreg.insert(&aggreg, &randVector[counter]); 
+        aggreg.insert(&aggreg, &randVector[counter]);
     }
     TEST_ASSERT(aggreg.get(&aggreg).val.dval == aggreg_avg_lambda(randVector, maxRand).val.dval);
     otic_aggreg_reset(&aggreg);
@@ -153,9 +153,9 @@ OTIC_TEST_CASE(aggregator, aggregator_avg)
 
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_STRING});
     TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL);
-    
+
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_NULL});
-    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL); 
+    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL);
 
     otic_aggreg_close(&aggreg);
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_NULL);
@@ -173,7 +173,7 @@ OTIC_TEST_CASE(aggregator, aggregator_first)
     TEST_ASSERT(aggreg.error == OTIC_AGGREG_ERROR_NONE);
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_FIRST);
     TEST_ASSERT(aggreg.value.type == OTIC_TYPE_NULL);
-   
+
     unsigned maxRand = 8;
     oval_t randVector[maxRand];
 
@@ -185,10 +185,10 @@ OTIC_TEST_CASE(aggregator, aggregator_first)
     otic_oval_setd(&randVector[5], 12, 0);
     otic_oval_setn(&randVector[6]);
     otic_oval_setn(&randVector[7]);
-    
-    oval_t* randVector2[maxRand]; 
 
-    srand(time(0));    
+    oval_t* randVector2[maxRand];
+
+    srand(time(0));
     oval_t temp;
     for (typeof(maxRand) counter = 0; counter <  maxRand; ++counter) {
         randVector2[counter] = &randVector[rand() % maxRand];
@@ -201,12 +201,12 @@ OTIC_TEST_CASE(aggregator, aggregator_first)
     TEST_ASSERT(aggreg.error == OTIC_AGGREG_ERROR_NONE);
     TEST_ASSERT(otic_oval_getType(&aggreg.value) == OTIC_TYPE_NULL);
 
-    
+
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_STRING});
     TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_STRING);
-    
+
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_NULL});
-    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_STRING); 
+    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_STRING);
 
     otic_aggreg_close(&aggreg);
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_NULL);
@@ -223,7 +223,7 @@ OTIC_TEST_CASE(aggregator, aggregator_last)
     TEST_ASSERT(aggreg.error == OTIC_AGGREG_ERROR_NONE);
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_LAST);
     TEST_ASSERT(aggreg.value.type == OTIC_TYPE_NULL);
-   
+
     unsigned maxRand = 8;
     oval_t randVector[maxRand];
 
@@ -235,10 +235,10 @@ OTIC_TEST_CASE(aggregator, aggregator_last)
     otic_oval_setd(&randVector[5], 12, 0);
     otic_oval_setn(&randVector[6]);
     otic_oval_setn(&randVector[7]);
-    
-    oval_t* randVector2[maxRand]; 
 
-    srand(time(0));    
+    oval_t* randVector2[maxRand];
+
+    srand(time(0));
     oval_t temp;
     for (typeof(maxRand) counter = 0; counter <  maxRand; ++counter) {
         randVector2[counter] = &randVector[rand() % maxRand];
@@ -251,12 +251,12 @@ OTIC_TEST_CASE(aggregator, aggregator_last)
     TEST_ASSERT(aggreg.error == OTIC_AGGREG_ERROR_NONE);
     TEST_ASSERT(otic_oval_getType(&aggreg.value) == OTIC_TYPE_NULL);
 
-    
+
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_STRING});
     TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_STRING);
-    
+
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_NULL});
-    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL); 
+    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL);
 
     otic_aggreg_close(&aggreg);
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_NULL);
@@ -273,18 +273,18 @@ OTIC_TEST_CASE(aggregator, aggregator_sum)
     TEST_ASSERT(aggreg.error == OTIC_AGGREG_ERROR_NONE);
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_SUM);
     TEST_ASSERT(aggreg.value.val.dval == 0);
-   
+
     unsigned maxRand = 128;
     oval_t randVector[maxRand];
     srand(time(0));
-        
+
     for (typeof(maxRand) counter = 0; counter < maxRand; ++counter)
     {
         otic_oval_setlf(&randVector[counter], rand());
-        aggreg.insert(&aggreg, &randVector[counter]); 
+        aggreg.insert(&aggreg, &randVector[counter]);
     }
     TEST_ASSERT(aggreg.get(&aggreg).val.dval == aggreg_sum_lambda(randVector, maxRand).val.dval);
-   
+
     otic_aggreg_reset(&aggreg);
     TEST_ASSERT(aggreg.error == OTIC_AGGREG_ERROR_NONE);
     TEST_ASSERT(otic_oval_getType(&aggreg.value) == OTIC_TYPE_NULL);
@@ -292,9 +292,9 @@ OTIC_TEST_CASE(aggregator, aggregator_sum)
 
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_STRING});
     TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL);
-    
+
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_NULL});
-    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL); 
+    TEST_ASSERT(aggreg.get(&aggreg).type == OTIC_TYPE_NULL);
 
     otic_aggreg_close(&aggreg);
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_NULL);
@@ -316,14 +316,14 @@ OTIC_TEST_CASE(aggregator, aggregator_count)
     unsigned maxRand = 128;
     oval_t randVector[maxRand];
     srand(time(0));
-        
+
     for (typeof(maxRand) counter = 0; counter < maxRand; ++counter)
     {
         otic_oval_setlf(&randVector[counter], rand());
-        aggreg.insert(&aggreg, &randVector[counter]); 
+        aggreg.insert(&aggreg, &randVector[counter]);
     }
     TEST_ASSERT(aggreg.get(&aggreg).val.lval  == maxRand);
- 
+
     otic_aggreg_reset(&aggreg);
     TEST_ASSERT(aggreg.error == OTIC_AGGREG_ERROR_NONE);
     TEST_ASSERT(otic_oval_getType(&aggreg.value) == OTIC_TYPE_NULL);
@@ -331,9 +331,9 @@ OTIC_TEST_CASE(aggregator, aggregator_count)
 
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_STRING});
     TEST_ASSERT(aggreg.get(&aggreg).val.lval == 1);
-    
+
     aggreg.insert(&aggreg, &(oval_t){.type = OTIC_TYPE_NULL});
-    TEST_ASSERT(aggreg.get(&aggreg).val.lval == 2); 
+    TEST_ASSERT(aggreg.get(&aggreg).val.lval == 2);
 
     otic_aggreg_close(&aggreg);
     TEST_ASSERT(aggreg.type == OTIC_AGGREG_NULL);

@@ -24,11 +24,21 @@ typedef struct
     uint8_t magic[OTIC_MAGIC_SIZE];
     uint8_t features;
     uint8_t version;
-} __attribute__((packed)) otic_header_t;
+} PACK_MAX otic_header_t;
+```  
+where  
+```c
+#if OTIC_WIN32
+#define MAX_PACK
+#elif defined(__GNUC__) && __GNUC__ >= 4
+#define MAX_PACK __attribute__((packed))
+#else
+#define MAX_PACK
+#endif
 ```
 
-### Meta Section
-
+### Meta Section  
+Meta tags describe how the decompressor should behave (kind of like commands).
 The Meta sections starts immediately after the Header section with at least a `otic_meta_channel_t` with 
 frame_type `OTIC_END_OF_META`:
 

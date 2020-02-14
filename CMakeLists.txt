@@ -36,7 +36,7 @@ endif()
 project(otic
         VERSION 1.0.0
         DESCRIPTION "Open Telemetry Interchange Container Format"
-        LANGUAGES C
+        LANGUAGES C CXX
         )
 
 set(CMAKE_C_STANDARD 99)

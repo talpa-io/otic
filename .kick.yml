@@ -6,21 +6,22 @@ command:
   build:
     - "sudo apt-get update"
     - "sudo apt-get install -y pkg-config libzstd1-dev build-essential php7.2-dom php7.2-mbstring php-dev cmake"
+    - "sudo rm -rf deps/Unity"
+    - "[[ -d 'deps/Unity' ]] || git clone https://github.com/ThrowTheSwitch/Unity.git deps/Unity"
+    - "sudo rm -rf build"
+    - "sudo rm -rf deps/Unity/build"
+    - "mkdir -p deps/Unity/build"
+    - "cmake deps/Unity -Bdeps/Unity/build -DCMAKE_BUILD_TYPE=Release && sudo make -C deps/Unity/build install"
+
   init:
 
   make:
-    - "if [ -d `pwd`/kbuild ]; then rm -rf `pwd`/kbuild/*; else mkdir kbuild; fi"
-    - "cmake . -Bkbuild -DCMAKE_BUILD_TYPE=Release"
-    - "make -C kbuild"
-    #- "sudo make install -C kbuild"
-#    - "sudo ldconfig"
-#    - "cp /opt/bindings/php7/lib/libotic_php.so /opt/dist/"
-#    - "cp /opt/bin/otic /opt/dist/otic"
+    - "sudo rm -rf build"
+    - "mkdir -p build && cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release && make -C build"
+    - "sudo ldconfig"
 
   test:
-    - "echo hallo"
-#    - "cd kbuild && ctest"
-#    - "ls"
+    - "make test -C build"
 
   run:
   dev:
