@@ -17,10 +17,12 @@
 #include "otic_php_unpack.h"
 #include <zend_exceptions.h>
 #include <zend_string.h>
+#include <zend_generators.h>
 
 #define OTIC_PHP_EXTNAME "otic"
 #define OTIC_PHP_EXTVER  "1.0.0"
 #define OTIC_NS_NAME "Otic"
+
 
 PHP_FUNCTION(getLibOticVersion)
 {
@@ -37,12 +39,30 @@ static const zend_function_entry oticFunctions[] =
     PHP_FE_END
 };
 
+#define STRING_AND_LENGTH(str) #str, strlen(#str)
+#define TO_OTIC_ERROR(str) STRING_AND_LENGTH(str), OTIC_ERROR_##str
+#define OTIC_PHP_EXCEPTION(str) zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(str))
+
 PHP_MINIT_FUNCTION(otic)
 {
     zend_class_entry temp_ce;
     INIT_NS_CLASS_ENTRY(temp_ce, OTIC_NS_NAME, "LibOticException", libOticExceptions_functions);
     libOticExceptions_ce = zend_register_internal_class(&temp_ce TSRMLS_CC);
     libOticExceptions_ce = zend_register_internal_class_ex(&temp_ce, zend_exception_get_default(TSRMLS_C));
+    OTIC_PHP_EXCEPTION(NONE);
+    OTIC_PHP_EXCEPTION(INVALID_POINTER);
+    OTIC_PHP_EXCEPTION(BUFFER_OVERFLOW);
+    OTIC_PHP_EXCEPTION(INVALID_TIMESTAMP);
+    OTIC_PHP_EXCEPTION(ENTRY_INSERTION_FAILURE);
+    OTIC_PHP_EXCEPTION(ZSTD);
+    OTIC_PHP_EXCEPTION(FLUSH_FAILED);
+    OTIC_PHP_EXCEPTION(INVALID_FILE);
+    OTIC_PHP_EXCEPTION(DATA_CORRUPTED);
+    OTIC_PHP_EXCEPTION(VERSION_UNSUPPORTED);
+    OTIC_PHP_EXCEPTION(ROW_COUNT_MISMATCH);
+    OTIC_PHP_EXCEPTION(INVALID_ARGUMENT);
+    OTIC_PHP_EXCEPTION(AT_INVALID_STATE);
+    zend_declare_class_constant_long(libOticExceptions_ce, "EOF", 3, OTIC_ERROR_EOF); // EOF already defined als Macro
 
     zend_class_entry temp2_ce;
     INIT_NS_CLASS_ENTRY(temp2_ce, OTIC_NS_NAME, "OticException", NULL)
@@ -65,6 +85,9 @@ PHP_MINIT_FUNCTION(otic)
     oticPackChannel_object_handlers.free_obj = oticPackChannel_object_free;
     oticPackChannel_object_handlers.dtor_obj = oticPackChannel_object_destroy;
     oticPackChannel_object_handlers.offset   = XtOffsetOf(oticPackChannel_object, std);
+
+    zend_declare_class_constant_long(oticPackChannel_ce, STRING_AND_LENGTH("TYPE_SENSOR"), OTIC_CHANNEL_TYPE_SENSOR);
+    zend_declare_class_constant_long(oticPackChannel_ce, STRING_AND_LENGTH("TYPE_BINARY"), OTIC_CHANNEL_TYPE_BINARY);
 
     zend_class_entry temp5_ce;
     INIT_NS_CLASS_ENTRY(temp5_ce, OTIC_NS_NAME, "OticUnpack", oticUnpack_methods)
@@ -106,6 +129,11 @@ zend_module_entry otic_module_entry =
         };
 
 ZEND_GET_MODULE(otic)
+
 #undef OTIC_PHP_EXTNAME
 #undef OTIC_PHP_EXTVER
 #undef OTIC_NS_NAME
+
+#undef STRING_AND_LENGTH
+#undef TO_OTIC_ERROR
+#undef OTIC_PHP_EXCEPTION

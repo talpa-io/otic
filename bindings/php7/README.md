@@ -54,6 +54,9 @@ class OticPackChannel
     public function getSensorsList() : array
     {
     }
+    public function resizeBucket(int $bufferSize) : void
+    {
+    }
     public function flush()
     {
     }

@@ -38,6 +38,7 @@ struct oticUnpackChannel_t
     uint8_t out[OTIC_UNPACK_OUT_SIZE];
     uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void*);
     void* data;
+
     struct
     {
         otic_unpack_t *parent;
@@ -66,6 +67,7 @@ struct otic_unpack_t
     otic_state_e state;
     otic_error_e error;
     void* fetcherData, *seekerData;
+    oticUnpackChannel_t* current;
     uint8_t(*fetcher)(uint8_t*, size_t, void*);
     uint8_t(*seeker)(uint32_t, void*);
 };
@@ -76,6 +78,7 @@ uint8_t                 otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8
 uint8_t                 otic_unpack_getTotalAmountOfChannel(const otic_unpack_t* oticUnpack) NONNULL(1);
 uint8_t                 otic_unpack_parse(otic_unpack_t* oticUnpackBase) NONNULL(1);
 uint8_t                 otic_unpack_close(otic_unpack_t* oticUnpackBase) NONNULL(1);
+uint8_t                 otic_unpack_generate(otic_unpack_t* oticUnpack) NONNULL(1);
 
 #ifdef __cplusplus
 }

@@ -34,8 +34,6 @@ zend_class_entry* oticPackChannel_ce;
 
 PHP_METHOD(OticPackChannel, __construct)
 {
-    zend_declare_class_constant_long(oticPackChannel_ce, TO_STR_AND_LENGTH("TYPE_SENSOR"), OTIC_CHANNEL_TYPE_SENSOR);
-    zend_declare_class_constant_long(oticPackChannel_ce, TO_STR_AND_LENGTH("TYPE_BINARY"), OTIC_CHANNEL_TYPE_BINARY);
 }
 
 PHP_METHOD(OticPackChannel, __toString)

@@ -28,20 +28,6 @@ PHP_METHOD(LibOticException, __construct)
     zend_string* message = zend_string_init(otic_strError(error), strlen(otic_strError(error)), 0);
     zend_update_property_str(libOticExceptions_ce, id, STRING_AND_LENGTH(message), message);
     zend_update_property_long(libOticExceptions_ce, id,STRING_AND_LENGTH(code), error);
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(NONE));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(INVALID_POINTER));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(BUFFER_OVERFLOW));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(INVALID_TIMESTAMP));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(ENTRY_INSERTION_FAILURE));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(ZSTD));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(FLUSH_FAILED));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(EOF));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(INVALID_FILE));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(DATA_CORRUPTED));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(VERSION_UNSUPPORTED));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(ROW_COUNT_MISMATCH));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(INVALID_ARGUMENT));
-    zend_declare_class_constant_long(libOticExceptions_ce, TO_OTIC_ERROR(AT_INVALID_STATE));
     zend_string_release(message);
 }
 
