@@ -129,8 +129,10 @@ int main(void)
     if (!channel)
         return 1;
     while(otic_unpack_generate(&oticUnpack));
+    otic_unpack_close(&oticUnpack);
     return 0;
 }
+//
 
 //int main(void)
 //{
@@ -147,8 +149,7 @@ int main(void)
 //    otic_unpack_close(&oticUnpack);
 //    return 0;
 //}
-
-
+//
 //int main()
 //{
 //    FILE* srcFile = fopen("pack_demo.otic", "rb");
@@ -187,3 +188,4 @@ int main(void)
 //    printOticError(oticUnpack.error);
 //    return 1;
 //}
+//

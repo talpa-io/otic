@@ -4,6 +4,7 @@ kbuild/
 .idea/
 lib/
 deps/
+dist/
 bindings/php/src/*
 !bindings/php/src/otic_php.c
 !bindings/php/src/otic_php.h

@@ -208,6 +208,24 @@ otic_type_e     otic_oval_getType(const oval_t* val);
 
 uint8_t         oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalArray2);
 
+#ifdef OTIC_STATS
+typedef struct
+{
+    uint64_t blocksWritten;
+    uint64_t type_unmodified;
+    uint64_t type_integer;
+    uint64_t type_string;
+    uint64_t type_bool;
+    uint64_t type_double;
+    uint64_t type_array;
+    uint64_t type_object;
+    uint64_t time_sets;
+    uint64_t time_shifts;
+    uint64_t cols_assigned;
+    uint64_t channels;
+} otic_stats;
+#endif
+
 uint8_t         leb128_encode_unsigned(uint64_t value, uint8_t* restrict dest) NONNULL(2);
 uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t* restrict value) NONNULL(1, 2);
 uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest) NONNULL(2);

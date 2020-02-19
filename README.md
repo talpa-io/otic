@@ -13,7 +13,7 @@ It features:
 - Support of every basic and compounded types
 - Customizable flusher and seeker callbacks
 - Low memory footprint  
-- Portable ABI (Soon WIN32 support)
+- Portable API (Soon WIN32 support)
 
 ## Install:  
 Due to portability reasons (MSB / LSB for example), it is recommended to build the library using CMake.

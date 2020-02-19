@@ -69,7 +69,7 @@ int main()
     otic_pack_channel_inject_n(channel1, 12456, "sensor1", "sensorUnit1");
 
 //    otic_pack_channel_inject_array(channel1, 123456, "sensor1", "sensorUnit1", &array.val.aval);
-
+//
     otic_pack_channel_inject_i(channel2, 1234.4, "sensor1", "sensorUnit1", 1232434);
     otic_pack_channel_inject_d(channel2, 1234.5, "sensor1", "sensorUnit1", 3.1417);
     otic_pack_channel_inject_i_neg(channel2, 1234.5, "sensor1", "sensorUnit1", 54);
@@ -80,7 +80,7 @@ int main()
 
 //     Not needed. This feature was added to allow early file closes,
 //     as otic_pack_close destroys every created channels, that aren't already closed!
-//    otic_pack_channel_close(channel1);
+    otic_pack_channel_close(channel1);
 
     otic_pack_close(&oticPack);
     fclose(fileOut);

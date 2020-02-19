@@ -98,7 +98,7 @@ add_subdirectory(src)
 
 if (ENABLE_TESTS)
     include(CTest)
-    find_package(unity QUIET)
+#    find_package(unity QUIET)
     if (${unity_FOUND})
         set(unity_SOURCE_DIR ${CMAKE_INSTALL_PREFIX})
         message(STATUS "Unity found!")

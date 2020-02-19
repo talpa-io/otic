@@ -75,6 +75,20 @@ static oticUnpackEntry_t* otic_unpack_insert_entry(oticUnpackChannel_t* channel,
 }
 
 OTIC_UNPACK_INLINE
+static void otic_unpack_cleaner(oval_t* oval)
+{
+    switch (oval->type)
+    {
+        case OTIC_TYPE_STRING:
+            return free(oval->val.sval.ptr);
+        case OTIC_TYPE_ARRAY:
+            return free(oval->val.aval.elements);
+        case OTIC_TYPE_OBJECT:
+            return free(oval->val.oval.elements);
+    }
+}
+
+OTIC_UNPACK_INLINE
 static void flush_if_flushable(const oticUnpackChannel_t* channel)
 {
     if (channel->cache.currentEntry->ignore && channel->toFetch.size != 0)
@@ -107,6 +121,7 @@ static void otic_unpack_read_null(oticUnpackChannel_t* channel)
 {
     channel->base.top += leb128_decode_unsigned(channel->base.top, (uint64_t*)&channel->entryIndex);
     channel->cache.currentEntry = channel->cache.cache[channel->entryIndex];
+    otic_unpack_cleaner(&channel->cache.currentEntry->value);
     channel->cache.currentEntry->value.type = OTIC_TYPE_NULL;
     flush_if_flushable(channel);
     ++channel->base.rowCounter;
@@ -123,11 +138,7 @@ static void otic_unpack_read_smallint(oticUnpackChannel_t* channel, uint8_t val)
 {
     channel->base.top += leb128_decode_unsigned(channel->base.top, (uint64_t*)&channel->entryIndex);
     channel->cache.currentEntry = channel->cache.cache[channel->entryIndex];
-//    if (channel->cache.currentEntry->value.type == OTIC_TYPE_STRING) {
-//        free((void*)channel->cache.currentEntry->value.val.sval.ptr);
-//        channel->cache.currentEntry->value.val.sval.ptr = 0;
-//        channel->cache.currentEntry->value.val.sval.size = 0;
-//    }
+    otic_unpack_cleaner(&channel->cache.currentEntry->value);
     channel->cache.currentEntry->value.type = OTIC_TYPE_INT_POS;
     channel->cache.currentEntry->value.val.lval = val;
     flush_if_flushable(channel);
@@ -139,11 +150,7 @@ static void otic_unpack_read_intneg(oticUnpackChannel_t* channel)
 {
     channel->base.top += leb128_decode_unsigned(channel->base.top, (uint64_t*)&channel->entryIndex);
     channel->cache.currentEntry = channel->cache.cache[channel->entryIndex];
-//    if (channel->cache.currentEntry->value.type == OTIC_TYPE_STRING) {
-//        free((void*)channel->cache.currentEntry->value.val.sval.ptr);
-//        channel->cache.currentEntry->value.val.sval.ptr = 0;
-//        channel->cache.currentEntry->value.val.sval.size = 0;
-//    }
+    otic_unpack_cleaner(&channel->cache.currentEntry->value);
     channel->base.top += leb128_decode_unsigned(channel->base.top, &channel->cache.currentEntry->value.val.lval);
     channel->cache.currentEntry->value.type = OTIC_TYPE_INT_NEG;
     flush_if_flushable(channel);
@@ -155,11 +162,7 @@ static void otic_unpack_read_intpos(oticUnpackChannel_t* channel)
 {
     channel->base.top += leb128_decode_unsigned(channel->base.top, (uint64_t*)&channel->entryIndex);
     channel->cache.currentEntry = channel->cache.cache[channel->entryIndex];
-//    if (channel->cache.currentEntry->value.type == OTIC_TYPE_STRING) {
-//        free((void*)channel->cache.currentEntry->value.val.sval.ptr);
-//        channel->cache.currentEntry->value.val.sval.ptr = 0;
-//        channel->cache.currentEntry->value.val.sval.size = 0;
-//    }
+    otic_unpack_cleaner(&channel->cache.currentEntry->value);
     channel->base.top += leb128_decode_unsigned(channel->base.top, &channel->cache.currentEntry->value.val.lval);
     channel->cache.currentEntry->value.type = OTIC_TYPE_INT_POS;
     flush_if_flushable(channel);
@@ -172,11 +175,7 @@ static void otic_unpack_read_double(oticUnpackChannel_t* channel)
     // TODO: ASSERT DOUBLE SIZE
     channel->base.top += leb128_decode_unsigned(channel->base.top, (uint64_t*)&channel->entryIndex);
     channel->cache.currentEntry = channel->cache.cache[channel->entryIndex];
-//    if (channel->cache.currentEntry->value.type == OTIC_TYPE_STRING) {
-//        free((void*)channel->cache.currentEntry->value.val.sval.ptr);
-//        channel->cache.currentEntry->value.val.sval.ptr = 0;
-//        channel->cache.currentEntry->value.val.sval.size = 0;
-//    }
+    otic_unpack_cleaner(&channel->cache.currentEntry->value);
     memcpy(&channel->cache.currentEntry->value.val.dval, channel->base.top, sizeof(double));
     channel->base.top += sizeof(double);
     channel->cache.currentEntry->value.type = OTIC_TYPE_DOUBLE;
@@ -190,11 +189,7 @@ static void otic_unpack_read_float(oticUnpackChannel_t* channel)
     // TODO: ASSERT FLOAT SIZE
     channel->base.top += leb128_decode_unsigned(channel->base.top, (uint64_t*)&channel->entryIndex);
     channel->cache.currentEntry = channel->cache.cache[channel->entryIndex];
-    if (channel->cache.currentEntry->value.type == OTIC_TYPE_STRING) {
-        free((void*)channel->cache.currentEntry->value.val.sval.ptr);
-        channel->cache.currentEntry->value.val.sval.ptr = 0;
-        channel->cache.currentEntry->value.val.sval.size = 0;
-    }
+    otic_unpack_cleaner(&channel->cache.currentEntry->value);
     memcpy(&channel->cache.currentEntry->value.val.dval, channel->base.top, sizeof(float));
     channel->base.top += sizeof(float);
     channel->cache.currentEntry->value.type = OTIC_TYPE_FLOAT;
@@ -208,12 +203,9 @@ static void otic_unpack_read_string(oticUnpackChannel_t* channel)
     channel->base.top += leb128_decode_unsigned(channel->base.top, (uint64_t*)&channel->entryIndex);
     channel->cache.currentEntry = channel->cache.cache[channel->entryIndex];
     uint8_t total = *channel->base.top++;
-    if (channel->cache.currentEntry->value.type != OTIC_TYPE_STRING)
-        channel->cache.currentEntry->value.val.sval.ptr = 0;
-    if (channel->cache.currentEntry->value.val.sval.size < total) {
-        channel->cache.currentEntry->value.val.sval.ptr = realloc((char *) channel->cache.currentEntry->value.val.sval.ptr, (total + 1) * sizeof(char));
-        channel->cache.currentEntry->value.val.sval.size = total;
-    }
+    otic_unpack_cleaner(&channel->cache.currentEntry->value);
+    channel->cache.currentEntry->value.val.sval.ptr = malloc((total + 1) * sizeof(char));
+    channel->cache.currentEntry->value.val.sval.size = total;
     memcpy((void*)channel->cache.currentEntry->value.val.sval.ptr, channel->base.top, total);
     channel->cache.currentEntry->value.val.sval.ptr[total] = 0;
     channel->cache.currentEntry->value.type = OTIC_TYPE_STRING;
@@ -436,13 +428,13 @@ uint8_t otic_unpack_channel_close(oticUnpackChannel_t* channel)
             for (counter = 0; counter < channel->cache.cache_allocated; ++counter)
             {
                 if (channel->cache.cache[counter]) {
-//                    if (channel->cache.cache[counter]->value.val.sval.size != 0)
-//                        free((void*)channel->cache.cache[counter]->value.val.sval.ptr);
+                    otic_unpack_cleaner(&channel->cache.cache[counter]->value);
                     free(channel->cache.cache[counter]->name);
                     free(channel->cache.cache[counter]->unit);
                     free(channel->cache.cache[counter]);
                 }
             }
+            otic_base_close(&channel->base);
             free(channel->cache.cache);
             free(channel->toFetch.ptr);
             free(channel->info.metaData);

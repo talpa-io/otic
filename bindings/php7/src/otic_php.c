@@ -63,6 +63,7 @@ PHP_MINIT_FUNCTION(otic)
     OTIC_PHP_EXCEPTION(INVALID_ARGUMENT);
     OTIC_PHP_EXCEPTION(AT_INVALID_STATE);
     zend_declare_class_constant_long(libOticExceptions_ce, "EOF", 3, OTIC_ERROR_EOF); // EOF already defined als Macro
+    OTIC_PHP_EXCEPTION(ALLOCATION_FAILURE);
 
     zend_class_entry temp2_ce;
     INIT_NS_CLASS_ENTRY(temp2_ce, OTIC_NS_NAME, "OticException", NULL)
