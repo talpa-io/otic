@@ -1,0 +1,6 @@
+build
+dist
+vendor
+.phpunit.result.cache
+composer.lock
+test/dump
