@@ -1023,6 +1023,12 @@ fail:
     return 0;
 }
 
+void otic_pack_clearErrorFlag(otic_pack_t* oticPack)
+{
+    oticPack->error = OTIC_ERROR_NONE;
+    oticPack->state = OTIC_STATE_OPENED;
+}
+
 uint8_t otic_pack_close(otic_pack_t* oticPack) {
     otic_pack_channel_t* current = oticPack->channels;
     while (current) {

@@ -122,6 +122,7 @@ otic_pack_channel_t*    otic_pack_defineChannel(otic_pack_t* oticPack, channel_t
 uint8_t                 otic_pack_closeChannel(otic_pack_t* oticPackBase, uint8_t id) NONNULL(1);
 uint8_t                 otic_pack_getTotalAmountOfChannel(otic_pack_t* oticPack) NONNULL(1);
 uint8_t                 otic_pack_flush(otic_pack_t* oticPack) NONNULL(1);
+void                    otic_pack_clearErrorFlag(otic_pack_t* oticPack) NONNULL(1);
 uint8_t                 otic_pack_close(otic_pack_t* oticPack) NONNULL(1);
 
 #ifdef __cplusplus

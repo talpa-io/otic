@@ -2,7 +2,6 @@
 
     use Otic\OticPack;
     use Otic\OticUnpack;
-    use Otic\Aggregator;
     use Otic\OticUnpackChannel;
     use Otic\LibOticException;
     use Otic\OticPackChannel;

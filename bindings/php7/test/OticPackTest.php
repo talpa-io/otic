@@ -58,6 +58,62 @@ class OticPackTest extends TestCase
 
     public function test_createsChannel()
     {
-        $this->packer->defineChannel(1, OticPackChannel::TYPE_SENSOR, 0x00);
+        $channel = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
+        static::assertIsObject($channel);
+        $interval = $channel->getTimeInterval();
+        $this->assertIsArray($interval);
+        $this->assertNull($interval[0]);
+        $this->packer->flush();
+        $this->packer->close();
+    }
+
+    public function test_createsMultipleChannels()
+    {
+        $channel1 = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
+        static::assertIsObject($channel1);
+
+        $channel2 = $this->packer->defineChannel(0x02, OticPackChannel::TYPE_SENSOR, 0x00);
+        static::assertIsObject($channel1);
+        $channel3 = $this->packer->defineChannel(0x03, OticPackChannel::TYPE_SENSOR, 0x00);
+        static::assertIsObject($channel1);
+        $channel4 = $this->packer->defineChannel(0x04, OticPackChannel::TYPE_SENSOR, 0x00);
+        static::assertIsObject($channel1);
+
+        $channel1->close();
+        $channel2->close();
+        $channel3->close();
+        $channel4->close();
+    }
+
+    public function test_assertInvalidMultipleChannels()
+    {
+        $channel1 = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
+        $channel2 = null;
+        try {
+            $channel2 = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
+        } catch (LibOticException $e) {
+            static::assertSame($e->getMessage(), "Invalid Argument");
+        } finally {
+            static::assertNull($channel2);
+        }
+        $channel1->close();
+        $this->packer->clearErrorFlag();
+        $channel2 = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
+        $channel2->close();
+    }
+
+    public function test_assertInvalidArgs()
+    {
+        try {
+            $channel1 = $this->packer->defineChannel(0x01, 2, 0x00);
+        } catch (OticException $e) {
+            static::assertSame("Invalid Channel Type", $e->getMessage());
+        }
+
+        try {
+            $channel1 = $this->packer->defineChannel(-1, OticPackChannel::TYPE_SENSOR, 0x00);
+        } catch (OticException $e) {
+            static::assertSame("Invalid ChannelID! Reason: Valid Range (int): 0 - 255", $e->getMessage());
+        }
     }
 }

@@ -1,7 +1,6 @@
 //
 // Created by talpaadmin on 06.12.19.
 //
-#define OTIC_STATS 1
 #include "otic_php_pack.h"
 #include "otic_exception.h"
 #include <Zend/zend_exceptions.h>
@@ -118,8 +117,11 @@ PHP_METHOD(OticPackChannel, getTimeInterval)
     if (!intern || !intern->oticPackChannel)
         return;
     array_init(return_value);
-    add_index_double(return_value, 0, intern->oticPackChannel->timeInterval.time_start);
-    add_index_double(return_value, 1, (double)intern->oticPackChannel->base.timestampCurrent / OTIC_TS_MULTIPLICATOR);
+    intern->oticPackChannel->timeInterval.time_start == TS_NULL ? add_index_null(return_value, 0) : add_index_double(return_value, 0, intern->oticPackChannel->timeInterval.time_start);
+    intern->oticPackChannel->timeInterval.time_start == TS_NULL ? add_index_null(return_value, 0) : add_index_double(return_value, 0, (double)intern->oticPackChannel->base.timestampCurrent / OTIC_TS_MULTIPLICATOR);
+
+   // add_index_double(return_value, 0, intern->oticPackChannel->timeInterval.time_start);
+   // add_index_double(return_value, 1, (double)intern->oticPackChannel->base.timestampCurrent / OTIC_TS_MULTIPLICATOR);
 }
 
 PHP_METHOD(OticPackChannel, getSensorsList)
@@ -308,22 +310,36 @@ PHP_METHOD(OticPack, defineChannel)
     long channelId, channelType, channelFeatures;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lll", &channelId, &channelType, &channelFeatures) == FAILURE)
         return;
+    if (channelId < 0 || channelId > UINT8_MAX)
+        otic_php_throw_oticException("Invalid ChannelID! Reason: Valid Range (int): 0 - 255", -6);
+    if (channelType != OTIC_CHANNEL_TYPE_SENSOR && channelType != OTIC_CHANNEL_TYPE_BINARY)
+	otic_php_throw_oticException("Invalid Channel Type", -6);
     zval* id = getThis();
     oticPack_object *intern = Z_OTICPACK_P(id);
     if (!intern)
         return;
-    if (channelId < 0 || channelId > UINT8_MAX)
-        zend_throw_exception(oticExceptions_ce, "Invalid ChannelID! Reason: Valid Range (int): 0 - 255", 0);
     oticPackChannel_object* channel = (oticPackChannel_object*)ecalloc(1, sizeof(oticPackChannel_object) + zend_object_properties_size(oticPackChannel_ce));
     channel->oticPackChannel = otic_pack_defineChannel(intern->oticPack, channelType, channelId, 0x00, 0);
     if (!channel->oticPackChannel) {
         efree(channel);
         otic_php_throw_libOticException(intern->oticPack->error);
+	return;
     }
     zend_object_std_init(&channel->std, oticPackChannel_ce TSRMLS_CC);
     object_properties_init(&channel->std, oticPackChannel_ce);
     channel->std.handlers = &oticPackChannel_object_handlers;
     RETURN_OBJ(&channel->std)
+}
+
+PHP_METHOD(OticPack, clearErrorFlag)
+{
+    if (zend_parse_parameters_none() == FAILURE)
+        return;
+    zval* id = getThis();
+    oticPack_object* intern = Z_OTICPACK_P(id);
+    if (!intern)
+	return;
+    otic_pack_clearErrorFlag(intern->oticPack);    
 }
 
 PHP_METHOD(OticPack, closeChannel)
@@ -394,6 +410,7 @@ const zend_function_entry oticPack_methods[] = {
         PHP_ME(OticPack, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
         PHP_ME(OticPack, defineChannel, argInfo_oticPackDefChan, ZEND_ACC_PUBLIC)
         PHP_ME(OticPack, closeChannel, argInfo_oticPackCloseChan, ZEND_ACC_PUBLIC)
+	PHP_ME(OticPack, clearErrorFlag, NULL, ZEND_ACC_PUBLIC)
         PHP_ME(OticPack, flush, NULL, ZEND_ACC_PUBLIC)
         PHP_ME(OticPack, close, NULL, ZEND_ACC_PUBLIC)
         PHP_FE_END
