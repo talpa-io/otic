@@ -1,12 +1,13 @@
 //
 // Created by talpaadmin on 06.12.19.
 //
-
+#define OTIC_STATS 1
 #include "otic_php_pack.h"
 #include "otic_exception.h"
 #include <Zend/zend_exceptions.h>
 #include <zend_string.h>
 #include <otic.h>
+#include <otic/core/base.h>
 
 /**
  * Useful links:
@@ -143,6 +144,33 @@ PHP_METHOD(OticPackChannel, getSensorsList)
     }
 }
 
+PHP_METHOD(OticPackChannel, getStats)
+{
+    if (zend_parse_parameters_none() == FAILURE)
+        return;
+    zval* id = getThis();
+    oticPackChannel_object* intern = Z_OTICPACKCHAN_P(id);
+    if (!intern || !intern->oticPackChannel)
+        return;
+    array_init(return_value);
+#if OTIC_STATS
+#define ADD2ARRAY(key, val) add_assoc_long(return_value, #key, val);
+    ADD2ARRAY(blocksWritten, intern->oticPackChannel->stats.blocksWritten)
+    ADD2ARRAY(typeUnmodified, intern->oticPackChannel->stats.blocksWritten)
+    ADD2ARRAY(typeInteger, intern->oticPackChannel->stats.type_integer)
+    ADD2ARRAY(typeString, intern->oticPackChannel->stats.type_string)
+    ADD2ARRAY(typeBool, intern->oticPackChannel->stats.type_bool)
+    ADD2ARRAY(typeDouble, intern->oticPackChannel->stats.type_double)
+    ADD2ARRAY(typeArray, intern->oticPackChannel->stats.type_array)
+    ADD2ARRAY(typeObject, intern->oticPackChannel->stats.type_object)
+    ADD2ARRAY(typeNull, intern->oticPackChannel->stats.type_null)
+    ADD2ARRAY(typeTimestampSets, intern->oticPackChannel->stats.time_sets)
+    ADD2ARRAY(typeTimestampShifts, intern->oticPackChannel->stats.time_shifts)
+    ADD2ARRAY(typeColsAssigned, intern->oticPackChannel->stats.cols_assigned)
+#undef ADD2ARRAY
+#endif
+}
+
 PHP_METHOD(OticPackChannel, resizeBucket)
 {
     long size;
@@ -187,6 +215,7 @@ const zend_function_entry oticPackChannel_methods[] = {
         PHP_ME(OticPackChannel, inject, argInfo_oticPackInj, ZEND_ACC_PUBLIC)
         PHP_ME(OticPackChannel, getTimeInterval, NULL, ZEND_ACC_PUBLIC)
         PHP_ME(OticPackChannel, getSensorsList, NULL, ZEND_ACC_PUBLIC)
+        PHP_ME(OticPackChannel, getStats, NULL, ZEND_ACC_PUBLIC)
         PHP_ME(OticPackChannel, resizeBucket, argInfo_resizeInt, ZEND_ACC_PUBLIC)
         PHP_ME(OticPackChannel, flush, NULL, ZEND_ACC_PUBLIC)
         PHP_ME(OticPackChannel, close, NULL, ZEND_ACC_PUBLIC)

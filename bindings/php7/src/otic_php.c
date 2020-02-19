@@ -28,7 +28,7 @@ PHP_FUNCTION(getLibOticVersion)
 {
     if (zend_parse_parameters_none() == FAILURE)
         return;
-    char buffer[12] = {};
+    char buffer[16] = {};
     sprintf(buffer, "%u.%u.%u", OTIC_VERSION_MAJOR, OTIC_VERSION_MINOR, OTIC_VERSION_PATCH);
     RETURN_STRING(buffer)
 }
@@ -87,8 +87,9 @@ PHP_MINIT_FUNCTION(otic)
     oticPackChannel_object_handlers.dtor_obj = oticPackChannel_object_destroy;
     oticPackChannel_object_handlers.offset   = XtOffsetOf(oticPackChannel_object, std);
 
-    zend_declare_class_constant_long(oticPackChannel_ce, STRING_AND_LENGTH("TYPE_SENSOR"), OTIC_CHANNEL_TYPE_SENSOR);
-    zend_declare_class_constant_long(oticPackChannel_ce, STRING_AND_LENGTH("TYPE_BINARY"), OTIC_CHANNEL_TYPE_BINARY);
+
+    zend_declare_class_constant_long(oticPackChannel_ce, STRING_AND_LENGTH(TYPE_SENSOR), OTIC_CHANNEL_TYPE_SENSOR);
+    zend_declare_class_constant_long(oticPackChannel_ce, STRING_AND_LENGTH(TYPE_BINARY), OTIC_CHANNEL_TYPE_BINARY);
 
     zend_class_entry temp5_ce;
     INIT_NS_CLASS_ENTRY(temp5_ce, OTIC_NS_NAME, "OticUnpack", oticUnpack_methods)

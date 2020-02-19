@@ -80,11 +80,14 @@ static void otic_unpack_cleaner(oval_t* oval)
     switch (oval->type)
     {
         case OTIC_TYPE_STRING:
-            return free(oval->val.sval.ptr);
+            free(oval->val.sval.ptr);
+            break;
         case OTIC_TYPE_ARRAY:
-            return free(oval->val.aval.elements);
+            free(oval->val.aval.elements);
+            break;
         case OTIC_TYPE_OBJECT:
-            return free(oval->val.oval.elements);
+            free(oval->val.oval.elements);
+            break;
     }
 }
 
@@ -297,7 +300,6 @@ fail:
 
 static uint8_t read_object(oticUnpackChannel_t* channel, oval_t* oval)
 {
-fail:
     return 0;
 }
 

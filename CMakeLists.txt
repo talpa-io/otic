@@ -20,7 +20,9 @@ option(PHP_BIND "Build PHP Bindings" OFF)
 option(OTIC_PACK_NO_COMPRESSION "Disable Otic Pack Second Compression: ZSTD, ZLIB, GZIP" OFF)
 option(OTIC_PACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Pack src file" ON)
 option(OTIC_UNPACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Unpack src file" ON)
+option(OTIC_STATS "Enable Statistics" ON)
 set(PACK_BUCKET_SIZE 16384 CACHE STRING "Cache size in bytes of the pack bucket")
+
 
 if (ENABLE_FUZZ)
     set(CMAKE_C_COMPILER clang)
@@ -98,7 +100,7 @@ add_subdirectory(src)
 
 if (ENABLE_TESTS)
     include(CTest)
-#    find_package(unity QUIET)
+    find_package(unity QUIET)
     if (${unity_FOUND})
         set(unity_SOURCE_DIR ${CMAKE_INSTALL_PREFIX})
         message(STATUS "Unity found!")

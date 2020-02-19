@@ -208,7 +208,7 @@ otic_type_e     otic_oval_getType(const oval_t* val);
 
 uint8_t         oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalArray2);
 
-#ifdef OTIC_STATS
+#if OTIC_STATS
 typedef struct
 {
     uint64_t blocksWritten;
@@ -219,10 +219,10 @@ typedef struct
     uint64_t type_double;
     uint64_t type_array;
     uint64_t type_object;
+    uint64_t type_null;
     uint64_t time_sets;
     uint64_t time_shifts;
     uint64_t cols_assigned;
-    uint64_t channels;
 } otic_stats;
 #endif
 

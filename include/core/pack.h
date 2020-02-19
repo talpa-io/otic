@@ -40,8 +40,8 @@ struct otic_pack_channel_t
     } info;
     time_interval_t timeInterval;
     otic_pack_channel_t* previous;
-#ifdef OTIC_STATS
-    otic_sta
+#if OTIC_STATS
+    otic_stats stats;
 #endif
 };
 
