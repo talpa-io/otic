@@ -56,7 +56,7 @@ static otic_entry_t* otic_pack_entry_insert_routine(otic_pack_channel_t* channel
     memcpy(ptr->name, o->ptr, o->size);
     ptr->name[o->size] = ':';
     memcpy(ptr->name + o->size + 1, unit->ptr, unit->size);
-    ptr->name[o->size + unit->size] = 0;
+    ptr->name[o->size + unit->size + 1] = 0;
     ptr->index = index;
     ptr->next = channel->cache[hash_address];
     channel->cache[hash_address] = ptr;

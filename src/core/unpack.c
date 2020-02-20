@@ -387,7 +387,7 @@ uint8_t otic_unpack_channel_init(oticUnpackChannel_t* channel, uint8_t id, uint8
         otic_unpack_setError(parent, OTIC_ERROR_ZSTD);
         goto fail;
     }
-    otic_base_init(&channel->base, 12000);
+    otic_base_init(&channel->base, OTIC_BASE_CACHE_SIZE);
     channel->info.channelId = id;
     channel->info.metaData = 0;
     channel->info.parent = parent;

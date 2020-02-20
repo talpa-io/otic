@@ -9,6 +9,9 @@
  * The following link contains an error. While registring function `FE_END` needs to be added at the end
  * of the array, something that wasn't shown in the tutorial
  * http://www.phpinternalsbook.com/php7/extensions_design/php_functions.html#registering-php-functions
+ *
+ * A bug in PHP's source code?
+ * https://bugs.php.net/bug.php?id=78446
  */
 
 #include "otic_php.h"
@@ -86,7 +89,6 @@ PHP_MINIT_FUNCTION(otic)
     oticPackChannel_object_handlers.free_obj = oticPackChannel_object_free;
     oticPackChannel_object_handlers.dtor_obj = oticPackChannel_object_destroy;
     oticPackChannel_object_handlers.offset   = XtOffsetOf(oticPackChannel_object, std);
-
 
     zend_declare_class_constant_long(oticPackChannel_ce, STRING_AND_LENGTH(TYPE_SENSOR), OTIC_CHANNEL_TYPE_SENSOR);
     zend_declare_class_constant_long(oticPackChannel_ce, STRING_AND_LENGTH(TYPE_BINARY), OTIC_CHANNEL_TYPE_BINARY);

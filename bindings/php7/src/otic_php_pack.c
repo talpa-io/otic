@@ -47,8 +47,8 @@ PHP_METHOD(OticPackChannel, __toString)
             ZEND_NS_NAME("Otic", "OticPackChannel"), intern->oticPackChannel->info.channelId,
             intern->oticPackChannel->info.channelType, intern->oticPackChannel->base.state,
             intern->oticPackChannel->base.error, intern->oticPackChannel->totalEntries,
-            intern->oticPackChannel->timeInterval.time_start,
-            (double)intern->oticPackChannel->base.timestampCurrent / OTIC_TS_MULTIPLICATOR);
+            intern->oticPackChannel->timeInterval.time_start == TS_NULL? 0 : intern->oticPackChannel->timeInterval.time_start,
+            intern->oticPackChannel->base.timestampCurrent == TS_NULL ? 0 : (double)intern->oticPackChannel->base.timestampCurrent / OTIC_TS_MULTIPLICATOR);
     RETURN_STRING(buffer)
 }
 
@@ -117,11 +117,10 @@ PHP_METHOD(OticPackChannel, getTimeInterval)
     if (!intern || !intern->oticPackChannel)
         return;
     array_init(return_value);
-    intern->oticPackChannel->timeInterval.time_start == TS_NULL ? add_index_null(return_value, 0) : add_index_double(return_value, 0, intern->oticPackChannel->timeInterval.time_start);
-    intern->oticPackChannel->timeInterval.time_start == TS_NULL ? add_index_null(return_value, 0) : add_index_double(return_value, 0, (double)intern->oticPackChannel->base.timestampCurrent / OTIC_TS_MULTIPLICATOR);
-
-   // add_index_double(return_value, 0, intern->oticPackChannel->timeInterval.time_start);
-   // add_index_double(return_value, 1, (double)intern->oticPackChannel->base.timestampCurrent / OTIC_TS_MULTIPLICATOR);
+    intern->oticPackChannel->timeInterval.time_start == TS_NULL ? add_index_null(return_value, 0)
+        : add_index_double(return_value, 0, intern->oticPackChannel->timeInterval.time_start);
+    intern->oticPackChannel->timeInterval.time_start == TS_NULL ? add_index_null(return_value, 1)
+        : add_index_double(return_value, 1, (double)intern->oticPackChannel->base.timestampCurrent / OTIC_TS_MULTIPLICATOR);
 }
 
 PHP_METHOD(OticPackChannel, getSensorsList)
@@ -169,6 +168,7 @@ PHP_METHOD(OticPackChannel, getStats)
     ADD2ARRAY(typeTimestampSets, intern->oticPackChannel->stats.time_sets)
     ADD2ARRAY(typeTimestampShifts, intern->oticPackChannel->stats.time_shifts)
     ADD2ARRAY(typeColsAssigned, intern->oticPackChannel->stats.cols_assigned)
+    ADD2ARRAY(rowsRead, intern->oticPackChannel->base.rowCounter)
 #undef ADD2ARRAY
 #endif
 }

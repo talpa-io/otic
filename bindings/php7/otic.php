@@ -52,6 +52,10 @@ class OticPackChannel
     public function getSensorsList() : array
     {
     }
+    public function getStats(): array
+    {
+
+    }
     public function flush()
     {
     }

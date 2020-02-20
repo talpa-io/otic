@@ -3,7 +3,6 @@
 #include <zend_exceptions.h>
 #include <zend_interfaces.h>
 
-#include <zend_generators.h>
 #include <otic.h>
 #include <core/base.h>
 
@@ -67,6 +66,17 @@ PHP_METHOD(OticUnpackChannel, __construct)
 
 PHP_METHOD(OticUnpackChannel, __destruct)
 {
+    if (zend_parse_parameters_none() == FAILURE)
+        return;
+    zval* id = getThis();
+    oticUnpackChannel_object* intern = Z_OUNPACKCHAN(id);
+    if (!intern)
+        return;
+    if (intern->funcptr.value.ref->gc.refcount) {
+        php_printf("Counter: %u\n", intern->funcptr.value.ref->gc.refcount);
+        --intern->funcptr.value.ref->gc.refcount;
+        zval_ptr_dtor(&intern->funcptr);
+    }
 }
 
 PHP_METHOD(OticUnpackChannel, getTimeInterval)
@@ -281,6 +291,9 @@ static inline uint8_t oticUnpack_channelSelect_wrapper(double timestamp, const c
     }
     if (call_user_function_ex(EG(function_table), NULL, data, &ret, 4, params, 0, 0 TSRMLS_CC) == FAILURE)
         php_error_docref0(NULL TSRMLS_CC, E_WARNING, "User Function Error\n");
+    zval_ptr_dtor(&ret);
+    for (uint8_t counter = 0; counter < 4; counter++)
+        zval_ptr_dtor(&params[counter]);
     return 1;
 }
 
@@ -304,9 +317,9 @@ PHP_METHOD(OticUnpack, selectChannel)
     zend_string_release(funcName);
     oticUnpackChannel_object* channel = (oticUnpackChannel_object*)ecalloc(1, sizeof(oticUnpackChannel_object) + zend_object_properties_size(oticUnpackChannel_ce));
     zval retVal;
-    ZVAL_ZVAL(&channel->funcptr, callback, 1, 1);
+    ZVAL_ZVAL(&channel->funcptr, callback, 0, 0);
     channel->funcptr.value.ref->gc.refcount++;
-    zend_call_method_with_1_params(id, oticUnpackChannel_ce, &oticUnpackChannel_ce->constructor, "__construct", &retVal, &channel->funcptr);
+//    zend_call_method_with_1_params(Z_OBJ_P(), hannel_ce, &oticUnpackChannel_ce->constructor, "__construct", &retVal, callback);
     channel->oticUnpackChannel = otic_unpack_defineChannel(intern->oticUnpack, channelId, oticUnpack_channelSelect_wrapper, &channel->funcptr);
     if (!channel->oticUnpackChannel)
     {
@@ -316,6 +329,10 @@ PHP_METHOD(OticUnpack, selectChannel)
     zend_object_std_init(&channel->std, oticUnpackChannel_ce TSRMLS_CC);
     object_properties_init(&channel->std, oticUnpackChannel_ce);
     channel->std.handlers = &oticUnpack_object_handlers;
+
+    zend_call_method_with_1_params(id, intern->std.ce, &oticUnpackChannel_ce->constructor, "__construct", &retVal, &channel->funcptr);
+    zval_ptr_dtor(&retVal);
+//    zval_ptr_dtor(callback);
     RETURN_OBJ(&channel->std)
 }
 

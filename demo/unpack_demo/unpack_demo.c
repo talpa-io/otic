@@ -119,19 +119,19 @@ static int fpeek(FILE* stream)
     return c;
 }
 
-int main(void)
-{
-    FILE* srcFile = fopen("pack_demo.otic", "rb"), *destFile = fopen("unpack_demo.tsv", "w");
-    otic_unpack_t oticUnpack;
-    if (!otic_unpack_init(&oticUnpack, fetcher, srcFile, seeker, srcFile))
-        return 1;
-    oticUnpackChannel_t* channel = otic_unpack_defineChannel(&oticUnpack, 1, flusher2, destFile);
-    if (!channel)
-        return 1;
-    while(otic_unpack_generate(&oticUnpack));
-    otic_unpack_close(&oticUnpack);
-    return 0;
-}
+//int main(void)
+//{
+//    FILE* srcFile = fopen("pack_demo.otic", "rb"), *destFile = fopen("unpack_demo.tsv", "w");
+//    otic_unpack_t oticUnpack;
+//    if (!otic_unpack_init(&oticUnpack, fetcher, srcFile, seeker, srcFile))
+//        return 1;
+//    oticUnpackChannel_t* channel = otic_unpack_defineChannel(&oticUnpack, 1, flusher2, destFile);
+//    if (!channel)
+//        return 1;
+//    while(otic_unpack_generate(&oticUnpack));
+//    otic_unpack_close(&oticUnpack);
+//    return 0;
+//}
 //
 
 //int main(void)
@@ -150,21 +150,21 @@ int main(void)
 //    return 0;
 //}
 //
-//int main()
-//{
-//    FILE* srcFile = fopen("pack_demo.otic", "rb");
-//    FILE* destFile = fopen("unpack_demo.tsv", "w");
-//    if (!srcFile || !destFile) {
-//        perror("fopen() failed!");
-//        return 1;
-//    }
-//    otic_unpack_t oticUnpack;
-//    if (!otic_unpack_init(&oticUnpack, fetcher, srcFile, seeker, srcFile))
-//        goto fail;
-//
-//    oticUnpackChannel_t* channel1 = otic_unpack_defineChannel(&oticUnpack, 1, flusher2, destFile);
-//    if (!channel1)
-//        goto fail;
+int main()
+{
+    FILE* srcFile = fopen("pack_demo.otic", "rb");
+    FILE* destFile = fopen("unpack_demo.tsv", "w");
+    if (!srcFile || !destFile) {
+        perror("fopen() failed!");
+        return 1;
+    }
+    otic_unpack_t oticUnpack;
+    if (!otic_unpack_init(&oticUnpack, fetcher, srcFile, seeker, srcFile))
+        goto fail;
+
+    oticUnpackChannel_t* channel1 = otic_unpack_defineChannel(&oticUnpack, 1, flusher2, destFile);
+    if (!channel1)
+        goto fail;
 //    const char* toFetch[] = {"sensor1", "sensor2"};
 //    otic_unpack_channel_toFetch(channel1, toFetch, 2);
 //    oticUnpackChannel_t* channel2 = otic_unpack_defineChannel(&oticUnpack, 2, flusher2, srcFile);
@@ -175,17 +175,16 @@ int main(void)
 //    //    otic_unpack_parse(&oticUnpack);
 //
 //    while (otic_unpack_parse(&oticUnpack));
-//
-//    otic_unpack_close(&oticUnpack);
-//    fclose(destFile);
-//    fclose(srcFile);
-//
-//    if (oticUnpack.state == OTIC_STATE_ON_ERROR)
-//        goto fail;
-//    return 0;
-//
-//fail:
-//    printOticError(oticUnpack.error);
-//    return 1;
-//}
-//
+
+    otic_unpack_close(&oticUnpack);
+    fclose(destFile);
+    fclose(srcFile);
+
+    if (oticUnpack.state == OTIC_STATE_ON_ERROR)
+        goto fail;
+    return 0;
+
+fail:
+    printOticError(oticUnpack.error);
+    return 1;
+}
