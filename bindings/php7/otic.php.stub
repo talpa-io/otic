@@ -86,6 +86,9 @@ class OticPack
     public function closeChannel(int $channelId)
     {
     }
+    public function clearErrorFlag() : void
+    {
+    }
     function __destruct()
     {
     }

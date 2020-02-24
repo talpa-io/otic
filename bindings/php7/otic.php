@@ -40,7 +40,7 @@ class OticPackChannel
     public function __construct()
     {
     }
-    public function __toString() : string
+    public function __toString(): string
     {
     }
     public function inject(float $timestamp, string $sensorName, string $sensorUnit, $value)
@@ -49,12 +49,14 @@ class OticPackChannel
     public function getTimeInterval(): array
     {
     }
-    public function getSensorsList() : array
+    public function getSensorsList(): array
     {
     }
-    public function getStats(): array
+    public function resizeBucket(): void
     {
-
+    }
+    public function clearErrorFlag(): void
+    {
     }
     public function flush()
     {
@@ -71,7 +73,6 @@ class OticPack
     }
     public function __toString() : string
     {
-
     }
     public function defineChannel(int $channelId, int $channelType, int $features) : OticPackChannel
     {
@@ -83,6 +84,9 @@ class OticPack
     {
     }
     public function closeChannel(int $channelId)
+    {
+    }
+    public function clearErrorFlag() : void
     {
     }
     function __destruct()
@@ -126,15 +130,13 @@ class OticUnpack
     public function __toString() : string
     {
     }
-    public function parse() : void
+    public function parse()
     {
     }
     public function selectChannel(int $channelId, callable $flusher): OticUnpackChannel
     {
-
-
     }
-    public function close() : void
+    public function close()
     {
     }
 }

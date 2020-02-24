@@ -105,7 +105,7 @@ class OticPackChannelTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->outputFile = fopen("dump/dump.otic", "w");
+        $this->outputFile = fopen(dirname(__FILE__)."/dump/dump.otic", "w");
         $this->packer = new OticPack($this->outputFile);
     }
 
@@ -165,5 +165,13 @@ class OticPackChannelTest extends TestCase
         static::assertAlmostEqual([$this->startTs, $generated["timestamp"]], $channel->getTimeInterval());
 
         $channel->close();
+    }
+
+    public function testInvalidTs()
+    {
+        $channel = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
+        $channel->inject(123, "abc", "cdef", 232);
+        static::expectException(LibOticException::class);
+        $channel->inject(122, "asd", "asdsad", "asd");
     }
 }

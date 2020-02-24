@@ -13,16 +13,18 @@ command:
     - "mkdir -p deps/Unity/build"
     - "cmake deps/Unity -Bdeps/Unity/build -DCMAKE_BUILD_TYPE=Release && sudo make -C deps/Unity/build install"
 
-  init:
-
   make:
     - "sudo rm -rf build"
     - "mkdir -p build && cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release -DPHP_BIND=ON -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=dist -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=dist && make -C build"
     - "cp bindings/php7/otic.php.stub bindings/php7/otic.php"
     - "sudo ldconfig"
 
-  test:
+  test-c:
     - "make test -C build"
+
+  test-php:
+    - 'composer install -d "bindings/php7/"'
+    - 'php -dextension="`pwd`/dist/libotic_php.so" ./bindings/php7/vendor/bin/phpunit --testdox `pwd`/bindings/php7/test'
 
   run:
   dev:

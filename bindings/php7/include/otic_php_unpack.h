@@ -8,7 +8,6 @@
 #include <php.h>
 #include "core/unpack.h"
 
-
 typedef struct oticUnpackChannel_object_t
 {
     zval funcptr;
@@ -21,9 +20,9 @@ extern zend_object_handlers oticUnpackChannel_object_handlers;
 extern zend_class_entry* oticUnpackChannel_ce;
 
 
-zend_object* oticUnpackChannel_object_new(zend_class_entry* ce TSRMLS_DC);
-void oticUnpackChannel_object_destroy(zend_object* object);
-void oticUnpackChannel_object_free(zend_object* object);
+zend_object*    oticUnpackChannel_object_new(zend_class_entry* ce TSRMLS_DC);
+void            oticUnpackChannel_object_destroy(zend_object* object);
+void            oticUnpackChannel_object_free(zend_object* object);
 
 
 typedef struct oticUnpack_object_t

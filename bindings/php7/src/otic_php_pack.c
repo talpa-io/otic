@@ -6,7 +6,6 @@
 #include <Zend/zend_exceptions.h>
 #include <zend_string.h>
 #include <otic.h>
-#include <otic/core/base.h>
 
 /**
  * Useful links:
@@ -235,13 +234,11 @@ zend_object* oticPackChannel_object_new(zend_class_entry* ce TSRMLS_DC)
 
 void oticPackChannel_object_destroy(zend_object* object)
 {
-    oticPackChannel_object* myObj = (oticPackChannel_object*)((char*)object - XtOffsetOf(oticPackChannel_object, std));
     zend_objects_destroy_object(object);
 }
 
 void oticPackChannel_object_free(zend_object* object)
 {
-    oticPackChannel_object* myObj = (oticPackChannel_object*)((char*)object - XtOffsetOf(oticPackChannel_object, std));
     zend_object_std_dtor(object);
 }
 
@@ -323,7 +320,7 @@ PHP_METHOD(OticPack, defineChannel)
     if (!channel->oticPackChannel) {
         efree(channel);
         otic_php_throw_libOticException(intern->oticPack->error);
-	return;
+	    return;
     }
     zend_object_std_init(&channel->std, oticPackChannel_ce TSRMLS_CC);
     object_properties_init(&channel->std, oticPackChannel_ce);
@@ -382,7 +379,6 @@ PHP_METHOD(OticPack, close)
             return;
         if (!otic_zend_stream_isOpened(intern->oticPack->data))
             otic_php_throw_oticException("Close Failure! Reason: Output Stream already closed.", -1);
-
         otic_pack_close(intern->oticPack);
     }
 }

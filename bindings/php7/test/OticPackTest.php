@@ -6,16 +6,19 @@ namespace Otic;
 use phpDocumentor\Reflection\Types\Resource_;
 use PHPUnit\Framework\Constraint\IsIdentical;
 use PHPUnit\Framework\TestCase;
+use Exception;
+use Otic\OticPack;
+use Otic\OticException;
 
 class OticPackTest extends TestCase
 {
-    const FILE_DUMP_PATH = "dump/";
+    const FILE_DUMP_PATH = "/dump/";
     private $packer = null;
     private $file;
 
     static private function toDumpDest($fileName): string
     {
-        return self::FILE_DUMP_PATH.$fileName;
+        return dirname(__FILE__).self::FILE_DUMP_PATH.$fileName;
     }
 
     static private function assertFileContent($fileHandle, $content, string $message = "") : void
@@ -27,6 +30,9 @@ class OticPackTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
+        if (!extension_loaded("otic")) {
+            throw new Exception("Could not load otic");
+        }
         $this->file = fopen($this->toDumpDest("temp.otic"), "w");
         $this->packer = new OticPack($this->file);
     }
@@ -45,7 +51,7 @@ class OticPackTest extends TestCase
 
         $this->assertFileExists($this->toDumpDest("file1.otic"));
         $this->assertIsObject($this->packer);
-        
+
         $this->packer->close();
         fclose($file);
 

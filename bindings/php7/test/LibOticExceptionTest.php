@@ -8,7 +8,7 @@ use Otic\OticException;
 
 class LibOticExceptionTest extends TestCase
 {
-    static private $errorCodes = [
+    const errorCodes = [
         LibOticException::NONE => "None",
         LibOticException::INVALID_POINTER => "Invalid Pointer",
         LibOticException::BUFFER_OVERFLOW => "Buffer Overflow",
@@ -26,9 +26,17 @@ class LibOticExceptionTest extends TestCase
         LibOticException::ALLOCATION_FAILURE => "Allocation failure"
     ];
 
+    protected function setUp()
+    {
+        parent::setUp();
+        if (!extension_loaded("otic"))
+            throw new \Exception("Could not load Otic");
+    }
+
     public function testErrors()
     {
-        foreach ($this::$errorCodes as $errorNum => $errorMessage)
+        static::assertTrue(class_exists(LibOticException::class));
+        foreach ($this::errorCodes as $errorNum => $errorMessage)
         {
             try {
                 throw new LibOticException($errorNum);
