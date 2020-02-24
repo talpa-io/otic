@@ -72,8 +72,6 @@ include(cmake/php.cmake)
 file(GLOB OTIC_PHP_INCLUDE include/*.h)
 file(GLOB OTIC_PHP_SRC src/*.c)
 
-#find_package(otic REQUIRED)
-#message(STATUS ${OTIC_CORE_FILES})
 
 
 set(OTIC_CORE_FILES
@@ -106,3 +104,13 @@ add_php_executable(test/pack.php)
 add_php_executable(test/unpack.php)
 add_php_executable(test/test.php)
 add_php_executable(test/gene_test.php)
+
+install(SCRIPT cmake/installExt.cmake)
+
+message(STATUS "Path: ${PHP_EXTENSION_DIR}")
+
+install(TARGETS otic_php
+        RUNTIME DESTINATION ${PHP_EXTENSION_DIR}
+        LIBRARY DESTINATION ${PHP_EXTENSION_DIR}
+        ARCHIVE DESTINATION ${PHP_EXTENSION_DIR}
+        )
