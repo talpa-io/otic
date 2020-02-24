@@ -18,7 +18,4 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: test
-      run: |
-        /usr/bin/env ./kickstart.sh :make
-        /usr/bin/env ./kickstart.sh :test-c
-        /usr/bin/env ./kickstart.sh :test-php
+      run: /usr/bin/env ./kickstart.sh :makeTest
