@@ -20,7 +20,7 @@ command:
     - "sudo ldconfig"
 
   test-c:
-    - "make test -C build"
+    - "make test -C `pwd`/build"
 
   test-php:
     - 'composer install -d "bindings/php7/"'
