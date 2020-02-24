@@ -13,8 +13,8 @@ class OticUnpackTest extends TestCase
     private $unPacker = null;
     private $inputFile = null;
 
-    const INPUT_FILE_NAME = "dump/inFile.otic";
-    const OUTPUT_FILE_NAME = "dump/outFile.otic";
+    const INPUT_FILE_NAME = "inFile.otic";
+    const OUTPUT_FILE_NAME = "outFile.otic";
 
     private function normalizePath(string $path) : string
     {

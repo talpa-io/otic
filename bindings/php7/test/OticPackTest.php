@@ -12,13 +12,12 @@ use Otic\OticException;
 
 class OticPackTest extends TestCase
 {
-    const FILE_DUMP_PATH = "/dump/";
     private $packer = null;
     private $file;
 
     static private function toDumpDest($fileName): string
     {
-        return dirname(__FILE__).self::FILE_DUMP_PATH.$fileName;
+        return dirname(__FILE__)."/$fileName";
     }
 
     static private function assertFileContent($fileHandle, $content, string $message = "") : void

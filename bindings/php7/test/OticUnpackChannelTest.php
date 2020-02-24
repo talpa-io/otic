@@ -9,7 +9,7 @@ class OticUnpackChannelTest extends TestCase
 {
     private $packer = null;
     private $packChannel = null;
-    const OUTPUT_FILE_NAME = "dump/someOutputFile.otic";
+    const OUTPUT_FILE_NAME = "someOutputFile.otic";
     private $outputFile;
     private $injected = [];
 

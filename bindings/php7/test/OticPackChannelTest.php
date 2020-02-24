@@ -105,7 +105,7 @@ class OticPackChannelTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->outputFile = fopen(dirname(__FILE__)."/dump/dump.otic", "w");
+        $this->outputFile = fopen(dirname(__FILE__)."/dump.otic", "w");
         $this->packer = new OticPack($this->outputFile);
     }
 
