@@ -1,3 +1,24 @@
+## Overview  
+The current directory contains PHP bindings of OTIC.  
+This binding is written as a PHP extension using the Zend Engine version 7 and therefore works for early version of PHP7 
+(tested on PHP 7.3. It seems some Zend functions are going to change in the next versions: i.e. `zend_call_method_with_0_params` 
+will require `zend_object *`  instead of `zval*` in the first argument).  
+
+## Installation  
+The Extension is to be built using cmake.  
+ - **Build**:  
+```bash
+mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && make
+```
+This will create an `libotic_php.so` in the `lib` directory.  
+ - **Install**
+```bash
+sudo make install
+```
+still in the `build` directory that was created a step above. The previous command will copy `libotic_php.so` into the 
+corresponding PHP extension directory and create a `libotic_php.ini` file with content `extension=libotic_php` inside the 
+ PHP extension config directory.  
+ 
 ## Extension Structure  
 ```php
 <?php namespace Otic;

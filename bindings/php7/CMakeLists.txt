@@ -19,9 +19,6 @@ set(CMAKE_C_STANDARD 99)
 set(CMAKE_MODUlE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHAVE_CONFIG_H -fvisibility=hidden")
 
-message(STATUS "PHP_archive: ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
-message(STATUS "PHP_lib: ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
-
 if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib")
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/lib")
@@ -107,10 +104,22 @@ add_php_executable(test/gene_test.php)
 
 install(SCRIPT cmake/installExt.cmake)
 
-message(STATUS "Path: ${PHP_EXTENSION_DIR}")
-
 install(TARGETS otic_php
+        EXPORT otic_phpTargets
+        CONFIGURATIONS Release
         RUNTIME DESTINATION ${PHP_EXTENSION_DIR}
         LIBRARY DESTINATION ${PHP_EXTENSION_DIR}
         ARCHIVE DESTINATION ${PHP_EXTENSION_DIR}
         )
+
+# uninstall target
+if (NOT TARGET uninstall)
+    message(STATUS "Adding uninstall")
+    configure_file(
+            "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    )
+    add_custom_target(uninstall
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+            )
+endif()

@@ -785,6 +785,9 @@ uint8_t otic_pack_channel_close(otic_pack_channel_t* channel)
     return 0;
 }
 
+#include <stdio.h>
+#include <assert.h>
+
 uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel)
 {
 #if OTIC_PACK_NO_COMPRESSION
@@ -798,6 +801,7 @@ uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel)
         goto fail;
     }
 #else
+
     size_t ret = ZSTD_compressCCtx(
             channel->cCtx,
             channel->ztd_out,

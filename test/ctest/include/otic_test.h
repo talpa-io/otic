@@ -31,8 +31,6 @@ typedef void(*empty_func_ptr)(void);
             .funcPtr      = otic_test_##_testCategory##_testName,\
             .fileName     = __FILE__,   \
             .lineNumber   = __LINE__,   \
-            .totalTestCounter = 1   ,   \
-            .testFuncNames = 0,         \
             .next          = 0,         \
         };      \
         otic_register_test(&otic_test_descr_##_testCategory##_testName);\

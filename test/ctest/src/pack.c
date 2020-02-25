@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
 #include "otic_test.h"
 #include "core/pack.h"
 

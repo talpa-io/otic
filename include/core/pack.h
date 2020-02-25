@@ -9,7 +9,7 @@ extern "C" {
 #include "config.h"
 #include "base.h"
 
-#define OTIC_PACK_CACHE_TOP_LIMIT 255
+#define OTIC_PACK_CACHE_TOP_LIMIT 512
 
 typedef struct otic_entry_t otic_entry_t;
 typedef void (*ovalClean)(oval_t*);

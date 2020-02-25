@@ -9,7 +9,7 @@ extern "C" {
 #include "portability.h"
 
 #define OTIC_BASE_CACHE_SIZE            12000
-#if OTIC_BASE_CACHE_SIZE < (255 * 2)
+#if OTIC_BASE_CACHE_SIZE < (512 * 2)
 #error OTIC Pack requires a buffer cache bigger than twice the size of permitted string value length (255)
 #endif
 #ifndef __STDC_IEC_559__

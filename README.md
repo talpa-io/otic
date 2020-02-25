@@ -1,6 +1,7 @@
 # Open Telemetry Interchange Container Format  
 
-![otic_logo](doc/Zeichnung.png "Otic")
+<p width="64" height="64" align="center"><img src="https://raw.githubusercontent.com/talpa-io/otic/develop/doc/Zeichnung.png" alt="otic_logo"></p>
+
 
 [![Actions Status](https://github.com/talpa-io/otic/workflows/build/badge.svg)](https://github.com/talpa-io/otic/actions)  
 
