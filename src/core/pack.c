@@ -56,7 +56,7 @@ static otic_entry_t* otic_pack_entry_insert_routine(otic_pack_channel_t* channel
     memcpy(ptr->name, o->ptr, o->size);
     ptr->name[o->size] = ':';
     memcpy(ptr->name + o->size + 1, unit->ptr, unit->size);
-    ptr->name[o->size + unit->size + 1] = 0;
+    ptr->name[o->size + unit->size] = 0;
     ptr->index = index;
     ptr->next = channel->cache[hash_address];
     channel->cache[hash_address] = ptr;
@@ -269,6 +269,13 @@ static void otic_pack_id_assign(otic_pack_channel_t* channel, const otic_str_t* 
 }
 
 OTIC_PACK_INLINE
+static void otic_pack_flush_if_flushable(otic_pack_channel_t* channel)
+{
+    if (channel->base.top > channel->threshold)
+        otic_pack_channel_flush(channel);
+}
+
+OTIC_PACK_INLINE
 static uint8_t otic_ts_handler(otic_pack_channel_t* channel, double ts)
 {
     uint64_t intTs = (uint64_t)(ts * OTIC_TS_MULTIPLICATOR);
@@ -296,14 +303,8 @@ static uint8_t otic_ts_handler(otic_pack_channel_t* channel, double ts)
       ++channel->stats.time_shifts;
 #endif
     }
+    otic_pack_flush_if_flushable(channel);
     return 1;
-}
-
-OTIC_PACK_INLINE
-static void otic_pack_flush_if_flushable(otic_pack_channel_t* channel)
-{
-    if (channel->base.top > channel->threshold)
-        otic_pack_channel_flush(channel);
 }
 
 OTIC_PACK_INLINE
