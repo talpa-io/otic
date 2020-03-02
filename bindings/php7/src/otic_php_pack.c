@@ -64,6 +64,7 @@ PHP_METHOD(OticPackChannel, inject)
     oticPackChannel_object* intern = Z_OTICPACKCHAN_P(id);
     if (!intern || !intern->oticPackChannel)
         return;
+    uint8_t ret;
     switch (Z_TYPE_P(value))
     {
         case IS_LONG:

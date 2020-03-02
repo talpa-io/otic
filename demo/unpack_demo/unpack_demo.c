@@ -165,16 +165,16 @@ int main()
     oticUnpackChannel_t* channel1 = otic_unpack_defineChannel(&oticUnpack, 1, flusher2, destFile);
     if (!channel1)
         goto fail;
-//    const char* toFetch[] = {"sensor1", "sensor2"};
-//    otic_unpack_channel_toFetch(channel1, toFetch, 2);
-//    oticUnpackChannel_t* channel2 = otic_unpack_defineChannel(&oticUnpack, 2, flusher2, srcFile);
-//    if (!channel2)
-//        goto fail;
-//
-//    //while (fpeek(srcFile) != EOF)
-//    //    otic_unpack_parse(&oticUnpack);
-//
-//    while (otic_unpack_parse(&oticUnpack));
+    const char* toFetch[] = {"sensor1", "sensor2"};
+    otic_unpack_channel_toFetch(channel1, toFetch, 2);
+    oticUnpackChannel_t* channel2 = otic_unpack_defineChannel(&oticUnpack, 2, flusher2, srcFile);
+    if (!channel2)
+        goto fail;
+
+    //while (fpeek(srcFile) != EOF)
+    //    otic_unpack_parse(&oticUnpack);
+
+    while (otic_unpack_parse(&oticUnpack));
 
     otic_unpack_close(&oticUnpack);
     fclose(destFile);

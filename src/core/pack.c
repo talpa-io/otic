@@ -52,11 +52,11 @@ static otic_entry_t* otic_pack_entry_insert_routine(otic_pack_channel_t* channel
     ptr->next = 0;
     ptr->lastValue.val.sval.ptr = 0;
     ptr->lastValue.val.sval.size = 0;
-    ptr->name = malloc(o->size + unit->size + 1);
+    ptr->name = malloc(o->size + unit->size + 2);
     memcpy(ptr->name, o->ptr, o->size);
-    ptr->name[o->size] = ':';
+    ptr->name[o->size] = 0;
     memcpy(ptr->name + o->size + 1, unit->ptr, unit->size);
-    ptr->name[o->size + unit->size] = 0;
+    ptr->name[o->size + unit->size + 1] = 0;
     ptr->index = index;
     ptr->next = channel->cache[hash_address];
     channel->cache[hash_address] = ptr;
@@ -260,7 +260,7 @@ static void otic_pack_id_assign(otic_pack_channel_t* channel, const otic_str_t* 
     otic_pack_write_byte(channel, sensorName->size + unit->size + 1);
     memcpy(channel->base.top, sensorName->ptr, sensorName->size);
     channel->base.top += sensorName->size;
-    otic_pack_write_byte(channel, ':');
+    otic_pack_write_byte(channel, 0);
     memcpy(channel->base.top, unit->ptr, unit->size);
     channel->base.top += unit->size;
 #if OTIC_STATS

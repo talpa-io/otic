@@ -133,7 +133,7 @@ class OticPackChannelTest extends TestCase
         $channel = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
         $temp = [];
         for ($value = 0; $value < 10; ++$value) {
-            $temp[] = "sensor" . $value.":"."someUnit";
+            $temp[] = "sensor" . $value;
             $channel->inject($value, "sensor" . $value, "someUnit", $value);
         }
         static::assertSame($temp, $channel->getSensorsList());

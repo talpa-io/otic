@@ -49,8 +49,8 @@ static oticUnpackEntry_t* otic_unpack_insert_entry(oticUnpackChannel_t* channel,
     char *ptr = value;
     while (ptr <= end)
     {
-        if (*ptr == ':') {
-            *ptr = 0;
+        if (*ptr == 0) {
+//            *ptr = 0;
             ++ptr;
             break;
         }
