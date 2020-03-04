@@ -156,19 +156,19 @@ PHP_METHOD(OticPackChannel, getStats)
     array_init(return_value);
 #if OTIC_STATS
 #define ADD2ARRAY(key, val) add_assoc_long(return_value, #key, val);
-    ADD2ARRAY(blocksWritten, intern->oticPackChannel->stats.blocksWritten)
-    ADD2ARRAY(typeUnmodified, intern->oticPackChannel->stats.blocksWritten)
-    ADD2ARRAY(typeInteger, intern->oticPackChannel->stats.type_integer)
-    ADD2ARRAY(typeString, intern->oticPackChannel->stats.type_string)
-    ADD2ARRAY(typeBool, intern->oticPackChannel->stats.type_bool)
-    ADD2ARRAY(typeDouble, intern->oticPackChannel->stats.type_double)
-    ADD2ARRAY(typeArray, intern->oticPackChannel->stats.type_array)
-    ADD2ARRAY(typeObject, intern->oticPackChannel->stats.type_object)
-    ADD2ARRAY(typeNull, intern->oticPackChannel->stats.type_null)
-    ADD2ARRAY(typeTimestampSets, intern->oticPackChannel->stats.time_sets)
-    ADD2ARRAY(typeTimestampShifts, intern->oticPackChannel->stats.time_shifts)
-    ADD2ARRAY(typeColsAssigned, intern->oticPackChannel->stats.cols_assigned)
-    ADD2ARRAY(rowsRead, intern->oticPackChannel->base.rowCounter)
+ADD2ARRAY(blocksWritten, intern->oticPackChannel->stats.blocksWritten)
+ADD2ARRAY(typeUnmodified, intern->oticPackChannel->stats.blocksWritten)
+ADD2ARRAY(typeInteger, intern->oticPackChannel->stats.type_integer)
+ADD2ARRAY(typeString, intern->oticPackChannel->stats.type_string)
+ADD2ARRAY(typeBool, intern->oticPackChannel->stats.type_bool)
+ADD2ARRAY(typeDouble, intern->oticPackChannel->stats.type_double)
+ADD2ARRAY(typeArray, intern->oticPackChannel->stats.type_array)
+ADD2ARRAY(typeObject, intern->oticPackChannel->stats.type_object)
+ADD2ARRAY(typeNull, intern->oticPackChannel->stats.type_null)
+ADD2ARRAY(typeTimestampSets, intern->oticPackChannel->stats.time_sets)
+ADD2ARRAY(typeTimestampShifts, intern->oticPackChannel->stats.time_shifts)
+ADD2ARRAY(typeColsAssigned, intern->oticPackChannel->stats.cols_assigned)
+ADD2ARRAY(rowsRead, intern->oticPackChannel->base.rowCounter)
 #undef ADD2ARRAY
 #endif
 }
@@ -265,8 +265,9 @@ PHP_METHOD(OticPack, __construct)
 {
     zval* id = getThis();
     zval* fileOut;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &fileOut) == FAILURE)
-        RETURN_FALSE
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "r", &fileOut) == FAILURE) {
+        RETURN_FALSE;
+    }
     oticPack_object* intern = Z_OTICPACK_P(id);
     if (intern) {
         php_stream* stream;
@@ -294,7 +295,7 @@ PHP_METHOD(OticPack, __destruct)
     if (zend_parse_parameters_none() == FAILURE)
         return;
     oticPack_object* intern = Z_OTICPACK_P(id);
-    if (intern) {
+    if (intern && intern->oticPack) {
         if (intern->oticPack->state == OTIC_STATE_CLOSED)
             return;
         if (!otic_zend_stream_isOpened(intern->oticPack->data))
@@ -314,7 +315,7 @@ PHP_METHOD(OticPack, defineChannel)
 	otic_php_throw_oticException("Invalid Channel Type", -6);
     zval* id = getThis();
     oticPack_object *intern = Z_OTICPACK_P(id);
-    if (!intern)
+    if (!intern || !intern->oticPack)
         return;
     oticPackChannel_object* channel = (oticPackChannel_object*)ecalloc(1, sizeof(oticPackChannel_object) + zend_object_properties_size(oticPackChannel_ce));
     channel->oticPackChannel = otic_pack_defineChannel(intern->oticPack, channelType, channelId, 0x00, 0);
@@ -335,8 +336,8 @@ PHP_METHOD(OticPack, clearErrorFlag)
         return;
     zval* id = getThis();
     oticPack_object* intern = Z_OTICPACK_P(id);
-    if (!intern)
-	return;
+    if (!intern || !intern->oticPack)
+	    return;
     otic_pack_clearErrorFlag(intern->oticPack);    
 }
 
@@ -349,7 +350,7 @@ PHP_METHOD(OticPack, closeChannel)
     if (channelID < 0 || channelID > UINT8_MAX)
         zend_throw_exception(oticExceptions_ce, "Invalid ChannelID", 0);
     oticPack_object *intern = Z_OTICPACK_P(id);
-    if (intern) {
+    if (intern && intern->oticPack) {
         otic_pack_closeChannel(intern->oticPack, (uint8_t)channelID);
         if (intern->oticPack->state == OTIC_STATE_ON_ERROR)
             otic_php_throw_libOticException(intern->oticPack->error);
@@ -362,7 +363,7 @@ PHP_METHOD(OticPack, flush)
     if (zend_parse_parameters_none() == FAILURE)
         return;
     oticPack_object* intern = Z_OTICPACK_P(id);
-    if (intern) {
+    if (intern && intern->oticPack) {
         otic_pack_flush(intern->oticPack);
         if (intern->oticPack->state == OTIC_STATE_ON_ERROR)
             otic_php_throw_libOticException(intern->oticPack->error);
@@ -375,7 +376,7 @@ PHP_METHOD(OticPack, close)
     if (zend_parse_parameters_none() == FAILURE)
         return;
     oticPack_object* intern = Z_OTICPACK_P(id);
-    if (intern) {
+    if (intern && intern->oticPack) {
         if (intern->oticPack->state == OTIC_STATE_CLOSED)
             return;
         if (!otic_zend_stream_isOpened(intern->oticPack->data))

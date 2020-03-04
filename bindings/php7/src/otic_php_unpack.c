@@ -198,7 +198,7 @@ PHP_METHOD(OticUnpack, __construct)
         return;
     zval* id = getThis();
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
-    if (!intern)
+    if (!intern || !intern->oticUnpack)
         return;
     php_stream* stream;
     php_stream_from_zval(stream, fileIn);
@@ -213,7 +213,7 @@ PHP_METHOD(OticUnpack, __toString)
         return;
     zval* id = getThis();
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
-    if (!intern)
+    if (!intern || !intern->oticUnpack)
         return;
     char buffer[512] = {};
     sprintf(buffer, "<Class: %s. Total Channels: %hhu. State: %hhu. Error: %hhu>",
@@ -228,7 +228,7 @@ PHP_METHOD(OticUnpack, __destruct)
     if (zend_parse_parameters_none() == FAILURE)
         return;
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
-    if (!intern)
+    if (!intern || !intern->oticUnpack)
         return;
     if (intern->oticUnpack->state != OTIC_STATE_CLOSED)
         if (!otic_unpack_close(intern->oticUnpack))
@@ -284,7 +284,7 @@ PHP_METHOD(OticUnpack, selectChannel)
         return;
     zval* id =  getThis();
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
-    if (!intern)
+    if (!intern || !intern->oticUnpack)
         return;
     if (channelId < 0 || channelId > 255)
         otic_php_throw_oticException("Invalid Channel ID! Reason: Valid Range (int): 0 - 255", 0);
@@ -315,7 +315,7 @@ PHP_METHOD(OticUnpack, parse)
         return;
     zval* id = getThis();
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
-    if (!intern)
+    if (!intern || !intern->oticUnpack)
         return;
     otic_unpack_parse(intern->oticUnpack);
     if (intern->oticUnpack->error != 0)
@@ -375,7 +375,7 @@ PHP_METHOD(OticUnpack, read)
         return;
     zval* id = getThis();
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
-    if (!intern)
+    if (!intern || !intern->oticUnpack)
         return;
     while (otic_unpack_parse(intern->oticUnpack));
 }
@@ -386,7 +386,7 @@ PHP_METHOD(OticUnpack, close)
         return;
     zval* id = getThis();
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
-    if (!intern)
+    if (!intern || !intern->oticUnpack)
         return;
     if (intern->oticUnpack->state != OTIC_STATE_CLOSED)
         if (!otic_unpack_close(intern->oticUnpack))
