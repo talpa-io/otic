@@ -198,7 +198,7 @@ PHP_METHOD(OticUnpack, __construct)
         return;
     zval* id = getThis();
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
-    if (!intern || !intern->oticUnpack)
+    if (!intern)
         return;
     php_stream* stream;
     php_stream_from_zval(stream, fileIn);
