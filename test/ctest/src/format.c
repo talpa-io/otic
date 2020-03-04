@@ -1,8 +1,17 @@
 #include <string.h>
 #include <utility/format.h>
-#include <assert.h>
 #include "utility/format.h"
 #include "otic_test.h"
+
+extern void setUp()
+{
+
+}
+
+extern void tearDown()
+{
+
+}
 
 OTIC_TEST_CASE(format_test, init_close)
 {
@@ -20,8 +29,7 @@ OTIC_TEST_CASE(format_test, parse_simple)
 {
     format_t format;
     format_init(&format, '\t', 5);
-    char buffer[64] = {};
-    strcpy(buffer, "This\tis\ta\ttest");
+    char buffer[64] = "This\tis\ta\ttest";
     format_parse(&format, buffer);
 
     TEST_ASSERT_EQUAL_size_t(4, format.columns.parsed);
@@ -38,8 +46,7 @@ OTIC_TEST_CASE(format_test, parse)
 {
     format_t format;
     format_init(&format, ',', 10);
-    char buffer[64] = {};
-    strcpy(buffer, "A,,Some,.Weird,text,.,,.,\n");
+    char buffer[64] = "A,,Some,.Weird,text,.,,.,\n";
     format_parse(&format, buffer);
 
     TEST_ASSERT_EQUAL_size_t(9, format.columns.parsed);
@@ -59,8 +66,7 @@ OTIC_TEST_CASE(format_test, parse_complex)
 {
     format_t format;
     format_init(&format, '|', 8);
-    char buffer[64] = {};
-    strcpy(buffer, "||||||hallo world|");
+    char buffer[64] = "||||||hallo world|";
     format_parse(&format, buffer);
     TEST_ASSERT(*format.columns.content[0] == '\0')
     TEST_ASSERT(format.columns.content[1] == 0)

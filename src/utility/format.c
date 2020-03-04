@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "utility/format.h"
 
-
 uint8_t format_init(format_t *restrict format, char delimiter, size_t numb_columns)
 {
     if (!format || !(format->columns.content = malloc(numb_columns * sizeof(char*))))

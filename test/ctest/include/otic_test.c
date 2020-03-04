@@ -14,14 +14,6 @@ void otic_register_test(otic_test_descr_t* descr)
     }
 }
 
-void setUp(void)
-{
-}
-
-void tearDown(void)
-{
-}
-
 static void runTest(otic_test_descr_t* descr)
 {
     Unity.CurrentTestName = descr->testName;
@@ -45,7 +37,7 @@ static void runTest(otic_test_descr_t* descr)
 int main(void)
 {
     UNITY_BEGIN();
-    while (descr_first != 0)
+    while (descr_first)
     {
         runTest(descr_first);
         descr_first = descr_first->next;

@@ -55,6 +55,9 @@ class OticPackChannel
     public function resizeBucket(): void
     {
     }
+    public function getStats(): array
+    {
+    }
     public function clearErrorFlag(): void
     {
     }

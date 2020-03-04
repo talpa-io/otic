@@ -25,14 +25,15 @@ uint8_t compare_compareNumbLines(FILE* file1, FILE* file2)
         return 0;
     char buffer[512];
     size_t counter1 = 0, counter2 = 0;
+    int ret = 0;
     while(fpeek(file1) != EOF)
     {
-        (void)fscanf(file1, "%[^\n]\n", buffer);
+        ret = fscanf(file1, "%[^\n]\n", buffer);
         ++counter1;
     }
     while(fpeek(file2) != EOF)
     {
-        (void)fscanf(file2, "%[^\n]\n", buffer);
+        ret = fscanf(file2, "%[^\n]\n", buffer);
         ++counter2;
     }
     printf("Res: %lu, %lu\n", counter1, counter2);
@@ -81,10 +82,11 @@ uint8_t compare_compareLineValues(FILE* file1, FILE* file2)
         return 0;
     double val1, val2;
     size_t line = 0;
+    int ret = 0;
     while(fpeek(file1) != EOF)
     {
-        (void)fscanf(file1, "%[^\n]\n", buffer1);
-        (void)fscanf(file2, "%[^\n]\n", buffer2);
+        ret = fscanf(file1, "%[^\n]\n", buffer1);
+        ret = fscanf(file2, "%[^\n]\n", buffer2);
         format_parse(&format1, buffer1);
         format_parse(&format2, buffer2);
 

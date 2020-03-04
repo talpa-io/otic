@@ -8,8 +8,10 @@
 uint8_t otic_base_init(otic_base_t* base, uint32_t bucketSize)
 {
     base->top = base->cache = malloc(bucketSize);
-    if (!base->cache)
+    if (!base->cache) {
+        base->error = OTIC_ERROR_ALLOCATION_FAILURE;
         return 0;
+    }
     base->timestampCurrent = base->timestampStart = TS_NULL;
     base->error = OTIC_ERROR_NONE;
     base->state = OTIC_STATE_OPENED;

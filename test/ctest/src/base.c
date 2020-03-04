@@ -3,6 +3,15 @@
 #include "core/base.h"
 #include "otic_test.h"
 
+void setUp()
+{
+
+}
+
+void tearDown()
+{
+
+}
 
 static uint8_t numbLeb128BytesFinder_u(uint64_t value) {
     uint8_t counter = 0;

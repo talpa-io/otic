@@ -35,7 +35,7 @@ struct oticUnpackChannel_t
         oticUnpackEntry_t* currentEntry;
     } cache;
     double ts;
-    uint8_t out[OTIC_UNPACK_OUT_SIZE];
+    uint8_t* out;
     uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void*);
     void* data;
 

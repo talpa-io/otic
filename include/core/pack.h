@@ -117,7 +117,7 @@ struct otic_pack_t
 
 uint8_t                 otic_pack_init(otic_pack_t* oticPack, uint8_t features, uint8_t(*flusher)(uint8_t*, size_t, void*), void* data) NONNULL(1);
 otic_pack_channel_t*    otic_pack_defineChannel(otic_pack_t* oticPack, channel_type_e channelType, uint8_t id,
-                                                otic_feature_e features, uint32_t bucketSize) __attribute__((warn_unused_result)) NONNULL(1);
+                                                otic_feature_e features, uint32_t bucketSize) MUST_CHECK NONNULL(1);
 #define otic_pack_defineChannel_defaultSize(oticPack, channelType, id, features) otic_pack_defineChannel(oticPack, channelType, id, features, bucketSize, 0)
 uint8_t                 otic_pack_closeChannel(otic_pack_t* oticPackBase, uint8_t id) NONNULL(1);
 uint8_t                 otic_pack_getTotalAmountOfChannel(otic_pack_t* oticPack) NONNULL(1);

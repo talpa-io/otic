@@ -72,14 +72,8 @@ configure_file(
 
 CHECK_INCLUDE_FILE(zstd.h HAS_ZSTD_H)
 
-find_package(zstd QUIET)
-if (zstd_FOUND)
-    message(STATUS "Zstd found")
-else()
-    message(STATUS "ZSTD not found")
-endif()
-
 if (NOT HAS_ZSTD_H)
+    message(STATUS "Called")
     if (ALLOW_CMAKE_LIB_FETCH)
         if (${CMAKE_VERSION} VERSION_LESS "3.11")
             message(WARNING "Can't fetch missing zstd from github, as your CMake's Version: ${CMAKE_VERSION} doesn't support content fetch")
@@ -94,6 +88,39 @@ if (NOT HAS_ZSTD_H)
             include_directories(${zstd_SOURCE_DIR}/lib)
         endif()
     endif(ALLOW_CMAKE_LIB_FETCH)
+
+    set(LIBRARY_DIR ${zstd_SOURCE_DIR}/lib)
+    file(GLOB CommonSources ${LIBRARY_DIR}/common/*.c)
+    file(GLOB CompressSources ${LIBRARY_DIR}/compress/*.c)
+    file(GLOB DecompressSources ${LIBRARY_DIR}/decompress/*.c)
+    file(GLOB DictBuilderSources ${LIBRARY_DIR}/dictBuilder/*.c)
+    file(GLOB DeprecatedSources ${LIBRARY_DIR}/deprecated/*.c)
+    #
+#    set(Sources
+#            ${CommonSources}
+#            ${CompressSources}
+#            ${DecompressSources}
+#            ${DictBuilderSources}
+#            ${DeprecatedSources})
+
+#    file(GLOB CommonHeaders ${LIBRARY_DIR}/common/*.h)
+#    file(GLOB CompressHeaders ${LIBRARY_DIR}/compress/*.h)
+#    file(GLOB DecompressHeaders ${LIBRARY_DIR}/decompress/*.h)
+#    file(GLOB DictBuilderHeaders ${LIBRARY_DIR}/dictBuilder/*.h)
+#    file(GLOB DeprecatedHeaders ${LIBRARY_DIR}/deprecated/*.h)
+
+#    set(Headers
+#            ${LIBRARY_DIR}/zstd.h
+#            ${CommonHeaders}
+#            ${CompressHeaders}
+#            ${DecompressHeaders}
+#            ${DictBuilderHeaders}
+#            ${DeprecatedHeaders}
+#            )
+#    include_directories(${LIBRARY_DIR}/common ${LIBRARY_DIR}/compress ${LIBRARY_DIR}/decompress ${LIBRARY_DIR}/dicBuilder ${LIBRARY_DIR}/deprecated)
+#    message(STATUS "Sources: ${zstd_SOURCE_DIR}")
+else()
+    message(STATUS "ZSTD found")
 endif()
 
 add_subdirectory(src)

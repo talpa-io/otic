@@ -11,7 +11,6 @@
 #include "utility/format.h"
 #include "utility/compare.h"
 
-// Almost 1 MB ... memory friendly 1 MB. Did you know that 1 byte is actually 9 bits and not 8 bits?
 #define READ_BUFFERSIZE 1048576
 
 static otic_error_e otic_error;
@@ -181,6 +180,7 @@ inline static size_t getLinesNumber(const char* fileName)
  */
 static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut) {
     tsv_parser_error_e tsvParserError = TSV_PARSER_ERROR_NONE;
+    otic_error = OTIC_ERROR_NONE;
     FILE *inputFile = fopen(fileNameIn, "r");
     FILE *outputFile = fopen(fileNameOut, "wb");
     if (!inputFile || !outputFile) {
@@ -194,7 +194,7 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut) 
         goto fail;
     }
 
-    otic_pack_channel_t* channel = otic_pack_defineChannel(&oticPack, OTIC_CHANNEL_TYPE_SENSOR, 0x1, 0x00, 12000);
+    otic_pack_channel_t* channel = otic_pack_defineChannel(&oticPack, OTIC_CHANNEL_TYPE_SENSOR, 0x1, 0x00, 10 * 1024 * 1024);
     if (!channel) {
         tsvParserError = TSV_PARSER_ERROR_OTIC;
         goto fail;
@@ -277,7 +277,7 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut) 
     fclose(inputFile);
     fclose(outputFile);
     // TODO: Add statistics
-    return 1;
+    return otic_error;
 fail:
     if (tsvParserError == TSV_PARSER_ERROR_OTIC)
         otic_error = oticPack.error;
@@ -316,7 +316,6 @@ fail:
     return 0;
 }
 
-// Total number of lines 5090023
 // TODO: Add a otic_file info fetcher
 // TODO: Decide Buffer Size: Either use BUFSIZE or 12000 (Mem. friendly = 16384)
 static uint8_t compare(const char* origFileName, const char* decompFileName)
@@ -344,8 +343,17 @@ static uint8_t getLines(const char* fileInName, const char* fileOutName, size_t 
     return counter;
 }
 
+#ifdef DEBUG
+int main(void)
+{
+//    const char* argv[] = {"otic", "-p", "-i", "bigFile.txt", "-o", "dump.otic"};
+    const char* argv[] = {"otic", "-u", "-i", "dump.otic", "-o", "res.txt"};
+    int argc = 6;
+#else
 int main(int argc, char** argv)
 {
+#endif
+
     if (argc == 1)
         goto usage;
     if (argc == 2 && same("-h", argv[1], 2))
@@ -364,15 +372,15 @@ int main(int argc, char** argv)
                 return compare(argv[3], argv[5]);
         }
     }
-    goto invalid_input;
 
+// Fallthrough
+
+invalid_input:
+    fprintf(stderr, "%s", "Invalid Input\n");
 usage:
     fprintf(stderr, "%s", "Usage: otic [-p|-u|-c|-h|-v] [-i] <inputFileName> [-o] <outputFileName>\n");
-    return EXIT_SUCCESS;
+    return EXIT_FAILURE;
 version:
     fprintf(stderr, "v%d.%d.%d\n", OTIC_VERSION_MAJOR, OTIC_VERSION_MINOR, OTIC_VERSION_PATCH);
     return EXIT_SUCCESS;
-invalid_input:
-    fprintf(stderr, "%s", "Invalid Input\n");
-    goto usage;
 }

@@ -37,7 +37,7 @@ static uint8_t isFetchable(oticUnpackChannel_t* channel, const char* value)
 OTIC_UNPACK_INLINE
 static oticUnpackEntry_t* otic_unpack_insert_entry(oticUnpackChannel_t* channel, char* value, const char* end) {
     if (channel->cache.allocationLeft == 0) {
-        oticUnpackEntry_t** temp = realloc(channel->cache.cache, sizeof(*channel->cache.cache) * (OTIC_UNPACK_CACHE_ALLOCATION_RESERVE_SIZE + channel->cache.cache_allocated));
+        oticUnpackEntry_t** temp = realloc(channel->cache.cache, sizeof(oticUnpackEntry_t*) * (OTIC_UNPACK_CACHE_ALLOCATION_RESERVE_SIZE + channel->cache.cache_allocated));
         if (!temp)
             return 0;
         channel->cache.cache = temp;
@@ -122,6 +122,8 @@ static void otic_unpack_read_false(oticUnpackChannel_t* channel)
 OTIC_UNPACK_INLINE
 static void otic_unpack_read_null(oticUnpackChannel_t* channel)
 {
+    static int counter = 0;
+    ++counter;
     channel->base.top += leb128_decode_unsigned(channel->base.top, (uint64_t*)&channel->entryIndex);
     channel->cache.currentEntry = channel->cache.cache[channel->entryIndex];
     otic_unpack_cleaner(&channel->cache.currentEntry->value);
@@ -336,8 +338,7 @@ static void otic_unpack_read_shiftTimestamp(oticUnpackChannel_t* channel)
 OTIC_UNPACK_INLINE
 static void otic_unpack_read_nameAssign(oticUnpackChannel_t* channel)
 {
-    uint64_t length;
-    channel->base.top += leb128_decode_unsigned(channel->base.top, &length);
+    uint8_t length = *channel->base.top++;
     channel->cache.currentEntry = otic_unpack_insert_entry(channel, (char*)channel->base.top, (const char*)channel->base.top + length);
     channel->base.top += length;
     channel->cache.currentEntry->value.type = OTIC_TYPE_EOF;
@@ -383,11 +384,18 @@ uint8_t otic_unpack_channel_init(oticUnpackChannel_t* channel, uint8_t id, uint8
 {
     channel->data = data;
     channel->flusher = flusher;
+    channel->out = malloc(OTIC_UNPACK_OUT_SIZE);
+    if (!channel->out) {
+        otic_unpack_setError(parent, OTIC_ERROR_ALLOCATION_FAILURE);
+        otic_unpack_setState(channel->info.parent, OTIC_STATE_ON_ERROR);
+        return 0;
+    }
     if (!(channel->dCtx = ZSTD_createDCtx())){
         otic_unpack_setError(parent, OTIC_ERROR_ZSTD);
         goto fail;
     }
-    otic_base_init(&channel->base, OTIC_BASE_CACHE_SIZE);
+    if (!otic_base_init(&channel->base, OTIC_BASE_CACHE_SIZE))
+        return 0;
     channel->info.channelId = id;
     channel->info.metaData = 0;
     channel->info.parent = parent;
@@ -400,6 +408,7 @@ uint8_t otic_unpack_channel_init(oticUnpackChannel_t* channel, uint8_t id, uint8
     channel->timeInterval.time_start = channel->timeInterval.time_end = 0;
     return 1;
 fail:
+    free(channel->out);
     otic_unpack_setState(channel->info.parent, OTIC_STATE_ON_ERROR);
     return 0;
 }
@@ -582,13 +591,15 @@ static void otic_unpack_parseBlock(oticUnpackChannel_t* channel)
     }
 }
 
+#include <stdio.h>
+
 OTIC_UNPACK_INLINE
 static uint8_t otic_unpack_read_data(otic_unpack_t* oticUnpack, oticUnpackChannel_t* channel, uint32_t size)
 {
     channel->blockSize = size;
     oticUnpack->fetcher(channel->base.cache, size, oticUnpack->fetcherData);
     channel->blockSize = ZSTD_decompressDCtx(
-            channel->dCtx, channel->out, OTIC_UNPACK_OUT_SIZE,
+            channel->dCtx, channel->out, channel->base.cacheSize,
             channel->base.cache, size
             );
     if (ZSTD_isError(channel->blockSize)) {
@@ -845,6 +856,9 @@ uint8_t otic_unpack_parse(otic_unpack_t* oticUnpack) {
             if (channel->base.cache)
                 free(channel->base.cache);
             channel->base.cache = malloc(size);
+            free(channel->out);
+            channel->out = malloc(size);
+            channel->base.cacheSize = size;
             if (!channel->base.cache) {
                 otic_unpack_setError(oticUnpack, OTIC_ERROR_ALLOCATION_FAILURE);
                 goto fail;

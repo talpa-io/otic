@@ -2,8 +2,9 @@ include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/include)
 
 function(add_demo DEMO_NAME)
     add_executable(${DEMO_NAME} ${ARGN} ${PROJECT_SOURCE_DIR}/include/otic.h ${OTIC_CORE_FILES})
-    target_link_libraries(${DEMO_NAME} zstd m pthread)
+    target_link_libraries(${DEMO_NAME} m zstd)
 endfunction()
+
 
 add_demo(pack_demo
         pack_demo/pack_demo.c
@@ -18,6 +19,8 @@ add_demo(unpack_demo
         )
 
 add_demo(tsvParser
+        ${Headers}
+        ${Sources}
         tsvParser/tsvParser.c
         ../src/utility/errHand.c
         ../include/utility/errHand.h
@@ -30,12 +33,14 @@ add_demo(tsvParser
 set_target_properties(
         tsvParser
         PROPERTIES OUTPUT_NAME otic
+#        COMPILER_FLAGS "-DEBUG"
+#        COMPILE_FLprintf()AGS "-fprofile-arcs -ftest-coverage"
 )
 
 install(
         TARGETS tsvParser
         RUNTIME DESTINATION bin
-        )
+)
 
 #target_compile_options(tsvParser PRIVATE -Wall -Wextra -pedantic -Werror)
 #target_compile_options(tsvParser PRIVATE -Wall -Wextra -pedantic)

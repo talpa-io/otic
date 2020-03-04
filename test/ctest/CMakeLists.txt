@@ -15,6 +15,7 @@ function(add_test_executable testName)
     target_include_directories(${testName} PUBLIC ${PROJECT_SOURCE_DIR}/include/ include)
 endfunction()
 
+add_test_executable(test_test src/test_test.c)
 add_test_executable(core_test src/base.c)
 add_test_executable(format_test src/format.c ../../src/utility/format.c)
 add_test_executable(pack_test src/pack.c)
