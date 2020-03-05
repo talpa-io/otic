@@ -73,7 +73,6 @@ configure_file(
 CHECK_INCLUDE_FILE(zstd.h HAS_ZSTD_H)
 
 if (NOT HAS_ZSTD_H)
-    message(STATUS "Called")
     if (ALLOW_CMAKE_LIB_FETCH)
         if (${CMAKE_VERSION} VERSION_LESS "3.11")
             message(WARNING "Can't fetch missing zstd from github, as your CMake's Version: ${CMAKE_VERSION} doesn't support content fetch")
@@ -89,12 +88,12 @@ if (NOT HAS_ZSTD_H)
         endif()
     endif(ALLOW_CMAKE_LIB_FETCH)
 
-    set(LIBRARY_DIR ${zstd_SOURCE_DIR}/lib)
-    file(GLOB CommonSources ${LIBRARY_DIR}/common/*.c)
-    file(GLOB CompressSources ${LIBRARY_DIR}/compress/*.c)
-    file(GLOB DecompressSources ${LIBRARY_DIR}/decompress/*.c)
-    file(GLOB DictBuilderSources ${LIBRARY_DIR}/dictBuilder/*.c)
-    file(GLOB DeprecatedSources ${LIBRARY_DIR}/deprecated/*.c)
+#    set(LIBRARY_DIR ${zstd_SOURCE_DIR}/lib)
+#    file(GLOB CommonSources ${LIBRARY_DIR}/common/*.c)
+#    file(GLOB CompressSources ${LIBRARY_DIR}/compress/*.c)
+#    file(GLOB DecompressSources ${LIBRARY_DIR}/decompress/*.c)
+#    file(GLOB DictBuilderSources ${LIBRARY_DIR}/dictBuilder/*.c)
+#    file(GLOB DeprecatedSources ${LIBRARY_DIR}/deprecated/*.c)
     #
 #    set(Sources
 #            ${CommonSources}

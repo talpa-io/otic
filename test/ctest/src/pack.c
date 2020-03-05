@@ -24,8 +24,8 @@ uint8_t flusher(uint8_t* content, size_t size, void* data)
     return 1;
 }
 
-otic_pack_t packer;
-size_t bucketSize;
+static otic_pack_t packer;
+static size_t bucketSize;
 
 void setUp()
 {
@@ -87,9 +87,8 @@ OTIC_TEST_CASE(otic_pack, defineChannel)
 
 OTIC_TEST_CASE(otic_pack, define_channel_sanitize)
 {
+
 }
-
-
 
 OTIC_TEST_CASE(otic_pack, close_channel)
 {

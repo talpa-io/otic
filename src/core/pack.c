@@ -28,7 +28,7 @@ static otic_entry_t* otic_pack_entry_find(otic_pack_channel_t* pack, const char*
     otic_entry_t* ptr = pack->cache[otic_hashFunction(o)];
     while (ptr)
     {
-        if (strncmp(ptr->name, o, strlen(o)) == 0)
+        if (strcmp(ptr->name, o) == 0)
             return ptr;
         ptr = ptr->next;
     }

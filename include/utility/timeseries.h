@@ -20,23 +20,14 @@ typedef struct {
     uint64_t startTs;
     uint64_t endTs;
     timeSerie_error_e error;
-} otic_timeSerie_t;
+} timeSerie_t;
 
 uint8_t otic_timeserie_init(timeSerie_t *ts, double startTs, double endTs, uint8_t fillEmpty, double sampleIntervall);
-
 uint8_t otic_timeserie_shift(timeSerie_t *ts, double timestamp);
-
 uint8_t otic_timeserie_fillNull(timeSerie_t *ts, double timestamp);
-
-void otic_timeserie_increment(timeSerie_t *ts);
-
-double otic_timeserie_getStart(timeSerie_t *ts);
-
-void otic_timeserie_close(timeSerie_t *ts);
-
-inline uint64_t otic_timeserie_toStandard(double ts) {
-    return (uint64_t)(ts * OTIC_TS_MULTIPLICATOR);
-}
+void    otic_timeserie_increment(timeSerie_t *ts);
+double  otic_timeserie_getStart(timeSerie_t *ts);
+void    otic_timeserie_close(timeSerie_t *ts);
 
 #ifdef __cplusplus
 }

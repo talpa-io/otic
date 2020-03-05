@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <stddef.h>
 #include "portability.h"
 
 #define OTIC_BASE_CACHE_SIZE            12000

@@ -35,6 +35,9 @@ void otic_aggreg_reset(otic_aggreg_t* aggreg)
         case OTIC_AGGREG_COUNT:
             aggreg->value.val.lval = 0;
             break;
+        case OTIC_AGGREG_LAST:
+        case OTIC_AGGREG_NULL:
+            break;
     }
 }
 

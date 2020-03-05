@@ -1,16 +1,20 @@
-#include "timeSeries.h"
+#include "utility/timeseries.h"
 
-uint8_t otic_timeserie_init(timeSerie_t* ts, double startTs, double endTs, uint8_t fillEmpty, double sampleIntervall)
+static inline uint64_t otic_timeserie_toStandard(double ts) {
+    return (uint64_t)(ts * OTIC_TS_MULTIPLICATOR);
+}
+
+uint8_t otic_timeserie_init(timeSerie_t* ts, double startTs, double endTs, uint8_t fillEmpty, double sampleInterval)
 {
-    if (sampleIntervall < 0.0001) {
+    if (sampleInterval < 0.0001) {
         ts->sampleInterval = 0;
         if (fillEmpty == 1)
             return 0;
     } else {
-        ts->sampleInterval = otic_timeSerie_toStandard(sampleInterval);
+        ts->sampleInterval = otic_timeserie_toStandard(sampleInterval);
     }
     ts->fillEmpty = fillEmpty;
-    ts->currentFrameStart = ts->startTs = otic_timeserie_toStandard(timestartTs);
+    ts->currentFrameStart = ts->startTs = otic_timeserie_toStandard(startTs);
     ts->endTs = otic_timeserie_toStandard(endTs);
     ts->currentFrameEnd = ts->startTs + ts->sampleInterval - 1;
     ts->error = OTIC_TIMESERIE_NO_ERROR;
@@ -19,7 +23,7 @@ uint8_t otic_timeserie_init(timeSerie_t* ts, double startTs, double endTs, uint8
 
 uint8_t otic_timeserie_shift(timeSerie_t* ts, double timestamp)
 {
-    typeof(ts->startTs) sTimestamp = otic_timeserie_toStandard(ts);
+    typeof(ts->startTs) sTimestamp = otic_timeserie_toStandard(timestamp);
     if (ts->startTs > sTimestamp || ts->endTs <= sTimestamp)
         return 0;
     if (!ts->sampleInterval)
@@ -47,7 +51,7 @@ void otic_timeserie_increment(timeSerie_t* ts)
     if (ts->sampleInterval == 0)
         return;
     ts->currentFrameStart += ts->sampleInterval;
-    ts->currentFrameEnd = ts->curFrameStart + ts->sampleInterval - 1;
+    ts->currentFrameEnd = ts->currentFrameStart + ts->sampleInterval - 1;
 }
 
 double otic_timeserie_getStart(timeSerie_t* ts)
