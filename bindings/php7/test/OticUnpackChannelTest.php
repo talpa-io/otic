@@ -68,21 +68,21 @@ class OticUnpackChannelTest extends TestCase
             "float" => 0,
             "string" => 0
         ];
-//        for ($counter = 0; $counter < 10000; ++$counter) {
-//            $generated = $this->generate($readStats);
-//            $this->inject($generated["timestamp"], $generated["sensorName"], $generated["sensorUnit"], $generated["val"]);
-//        }
-
-        $timestamp=1582612585.419277;
-        for ($i=0; $i<86400; $i++) {
-            $timestamp+=1;
-            for ($i2=0; $i2<120; $i2++) {
-                $unit = "u$i2";
-                $name = "s$i2".$i%100;//bin2hex(random_bytes(rand(20,60)));
-                $value = $i.$i2; //rand(0,999) . "." . rand(100000000000000,900000000000000);
-                $this->inject($timestamp, $name, $unit, $value);
-            }
+        for ($counter = 0; $counter < 10000; ++$counter) {
+            $generated = $this->generate($readStats);
+            $this->inject($generated["timestamp"], $generated["sensorName"], $generated["sensorUnit"], $generated["val"]);
         }
+
+//        $timestamp=1582612585.419277;
+//        for ($i=0; $i<86400; $i++) {
+//            $timestamp+=1;
+//            for ($i2=0; $i2<120; $i2++) {
+//                $unit = "u$i2";
+//                $name = "s$i2".$i%100;//bin2hex(random_bytes(rand(20,60)));
+//                $value = $i.$i2; //rand(0,999) . "." . rand(100000000000000,900000000000000);
+//                $this->inject($timestamp, $name, $unit, $value);
+//            }
+//        }
 
         $this->packer->close();
         fclose($this->outputFile);

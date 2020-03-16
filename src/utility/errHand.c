@@ -28,6 +28,8 @@ const char* otic_strError(otic_error_e e)
             return "Invalid End Of File";
         case OTIC_ERROR_INVALID_FILE:
             return "Invalid file";
+        case OTIC_ERROR_INVALID_OTIC_FILE:
+            return "Invalid Otic File";
         case OTIC_ERROR_DATA_CORRUPTED:
             return "Data corrupted";
         case OTIC_ERROR_VERSION_UNSUPPORTED:

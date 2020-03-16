@@ -623,7 +623,7 @@ uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, 
     otic_header_t header;
     fetcher((uint8_t*)&header, sizeof(header), fetcherData);
     if (memcmp(header.magic, OTIC_MAGIC, OTIC_MAGIC_SIZE) != 0) {
-        otic_unpack_setError(oticUnpack, OTIC_ERROR_DATA_CORRUPTED);
+        otic_unpack_setError(oticUnpack, OTIC_ERROR_INVALID_OTIC_FILE);
         goto fail;
     }
     if (header.version > OTIC_VERSION_MAJOR) {

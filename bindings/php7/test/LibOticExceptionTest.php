@@ -19,6 +19,7 @@ class LibOticExceptionTest extends TestCase
         LibOticException::EOF => "Invalid End Of File",
         LibOticException::INVALID_FILE => "Invalid file",
         LibOticException::DATA_CORRUPTED => "Data corrupted",
+        LibOticException::INVALID_OTIC_FILE => "Invalid Otic File",
         LibOticException::VERSION_UNSUPPORTED => "Unsupported Version detected",
         LibOticException::ROW_COUNT_MISMATCH => "Rows count mismatch",
         LibOticException::INVALID_ARGUMENT => "Invalid Argument",
