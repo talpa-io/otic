@@ -67,8 +67,8 @@ PHP_METHOD(OticUnpackChannel, getTimeInterval)
     if (!intern || !intern->oticUnpackChannel)
         return;
     array_init(return_value);
-    add_index_double(return_value, 0, intern->oticUnpackChannel->timeInterval.time_start);
-    add_index_double(return_value, 1, intern->oticUnpackChannel->ts);
+    intern->oticUnpackChannel->timeInterval.time_start == TS_NULL ? add_index_null(return_value, 0) : add_index_double(return_value, 0, intern->oticUnpackChannel->timeInterval.time_start);
+    intern->oticUnpackChannel->ts == TS_NULL ? add_index_null(return_value, 1) : add_index_double(return_value, 1, intern->oticUnpackChannel->ts);
 }
 
 PHP_METHOD(OticUnpackChannel, getSensorsList)

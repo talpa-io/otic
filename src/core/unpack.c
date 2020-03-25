@@ -322,7 +322,7 @@ static void otic_unpack_read_setTimestamp(oticUnpackChannel_t* channel)
     channel->base.top += leb128_decode_unsigned(channel->base.top, &channel->base.timestampStart);
     channel->base.timestampCurrent = channel->base.timestampStart;
     channel->ts = (double)channel->base.timestampCurrent / OTIC_TS_MULTIPLICATOR;
-    if (channel->timeInterval.time_start == 0)
+    if (channel->timeInterval.time_start == TS_NULL)
         channel->timeInterval.time_start = channel->ts;
 }
 
@@ -405,7 +405,8 @@ uint8_t otic_unpack_channel_init(oticUnpackChannel_t* channel, uint8_t id, uint8
     channel->toFetch.ptr = 0;
     channel->toFetch.size = 0;
     channel->cache.cache_allocated = channel->cache.totalEntries = channel->cache.allocationLeft = 0;
-    channel->timeInterval.time_start = channel->timeInterval.time_end = 0;
+    channel->timeInterval.time_start = channel->timeInterval.time_end = TS_NULL;
+    channel->ts = TS_NULL;
     return 1;
 fail:
     free(channel->out);
