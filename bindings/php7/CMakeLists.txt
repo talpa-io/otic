@@ -65,10 +65,12 @@ foreach (X ${PHP_INCLUDES})
 endforeach ()
 
 include(cmake/php.cmake)
+include(cmake/stub_generator.cmake)
+
+GENERATE_FROM_STUB(${CMAKE_CURRENT_LIST_DIR}/otic.php.stub ${CMAKE_CURRENT_LIST_DIR}/otic.php)
 
 file(GLOB OTIC_PHP_INCLUDE include/*.h)
 file(GLOB OTIC_PHP_SRC src/*.c)
-
 
 
 set(OTIC_CORE_FILES
@@ -102,7 +104,19 @@ add_php_executable(test/unpack.php)
 add_php_executable(test/test.php)
 add_php_executable(test/gene_test.php)
 
+
+execute_process(
+        COMMAND php -v
+        OUTPUT_VARIABLE PHP_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+string(REGEX MATCH "PHP [^.].[^.]" PHP_VERSION ${PHP_VERSION})
+string(REPLACE "PHP " "" PHP_VERSION ${PHP_VERSION})
+
 install(SCRIPT cmake/installExt.cmake)
+
+message(STATUS "EXTENSION DIR: ${PHP_EXTENSION_DIR}")
 
 install(TARGETS otic_php
         EXPORT otic_phpTargets

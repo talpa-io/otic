@@ -1,22 +1,9 @@
-if (NOT EXISTS "@CMAKE_BINARY_DIR@/install_manifest.txt")
-    message(FATAL_ERROR "Cannot find install manifest: @CMAKE_BINARY_DIR@/install_manifest.txt")
+message(STATUS "Dir: ${PHP_EXTENSION_DIR}")
+exec_program(
+    "@CMAKE_COMMAND@" ARGS "-E remove \"${PHP_EXTENSION_DIR}/libotic_php.so\"  \"/etc/php/${PHP_VERSION}/mods-available/libotic_php.ini\""
+    OUTPUT_VARIABLE rm_out
+    RETURN_VALUE rm_retval
+)
+if (NOT "${rm_retval}" STREQUAL 0)
+    message(FATAL_ERROR "Problem when uninstalling otic_php")
 endif()
-
-file(READ "@CMAKE_BINARY_DIR@/install_manifest.txt" files)
-message(STATUS "")
-string(REGEX REPLACE "\n" ";" files "${files}")
-foreach(file ${files})
-    message(STATUS "Uninstalling $ENV{DESTDIR}${file}")
-    if (IS_SYMLINK "$ENV{DESTDIR}${file}" OR EXISTS "$ENV{DESTDIR}${file}")
-        exec_program(
-        "@CMAKE_COMMAND@" ARGS "-E remove \"$ENV{DESTDIR}${file}\""
-        OUTPUT_VARIABLE rm_out
-        RETURN_VALUE rm_retval
-        )
-        if (NOT "${rm_retval}" STREQUAL 0)
-            message(FATAL_ERROR "Problem when removing $ENV{DESTDIR}${file}")
-        endif()
-    else()
-        message(STATUS "File $ENV{DESTDIR}${file} does not exist.")
-    endif()
-endforeach(file)

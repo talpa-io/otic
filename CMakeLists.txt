@@ -29,13 +29,12 @@ if (ENABLE_FUZZ)
     set(CMAKE_CXX_COMPILER clang)
 endif()
 
-
-#if (NOT ${CMAKE_BUILD_TYPE})
-#    message(STATUS "Setting the build type to: Release")
-#    set(CMAKE_BUILD_TYPE Release)
-#else()
-#    message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
-#endif()
+if (NOT CMAKE_BUILD_TYPE)
+    message(STATUS "Setting the build type to: Release")
+    set(CMAKE_BUILD_TYPE Release)
+else()
+    message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+endif()
 
 project(otic
         VERSION 1.0.0

@@ -17,7 +17,22 @@ sudo make install
 ```
 still in the `build` directory that was created a step above. The previous command will copy `libotic_php.so` into the 
 corresponding PHP extension directory and create a `libotic_php.ini` file with content `extension=libotic_php` inside the 
- PHP extension config directory.  
+ PHP extension config directory. 
+To generate the stub file. Run (still in the build directory):  
+```bash
+cmake --build . --target generate_from_stub
+``` 
+This will create an `otic.php` file from the stub `otic.php.stub` file.  
+
+## Uninstall  
+
+```bash
+sudo make uninstall
+```
+or 
+```bash
+sudo cmake --build . --target uninstall
+```
  
 ## Extension Structure  
 ```php
