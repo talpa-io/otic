@@ -592,8 +592,6 @@ static void otic_unpack_parseBlock(oticUnpackChannel_t* channel)
     }
 }
 
-#include <stdio.h>
-
 OTIC_UNPACK_INLINE
 static uint8_t otic_unpack_read_data(otic_unpack_t* oticUnpack, oticUnpackChannel_t* channel, uint32_t size)
 {

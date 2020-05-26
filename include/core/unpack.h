@@ -8,7 +8,7 @@ extern "C" {
 #include <zstd.h>
 #include "base.h"
 
-#define OTIC_UNPACK_OUT_SIZE 12000
+#define OTIC_UNPACK_OUT_SIZE  (200 * 16384)
 #define OTIC_UNPACK_CACHE_ALLOCATION_RESERVE_SIZE 8
 
 typedef struct

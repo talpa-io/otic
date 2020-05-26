@@ -21,7 +21,7 @@ option(OTIC_PACK_NO_COMPRESSION "Disable Otic Pack Second Compression: ZSTD, ZLI
 option(OTIC_PACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Pack src file" ON)
 option(OTIC_UNPACK_INLINE_ALL_STATIC "Inline every static functions in the Otic Unpack src file" ON)
 option(OTIC_STATS "Enable Statistics" ON)
-set(PACK_BUCKET_SIZE 16384 CACHE STRING "Cache size in bytes of the pack bucket")
+set(PACK_BUCKET_SIZE 3276800 CACHE STRING "Cache size in bytes of the pack bucket")
 
 
 if (ENABLE_FUZZ)
