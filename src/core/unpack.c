@@ -7,7 +7,6 @@
 #include <core/base.h>
 #include <otic.h>
 
-
 #if OTIC_UNPACK_INLINE_ALL_STATIC
 #define OTIC_UNPACK_INLINE inline
 #else
@@ -50,7 +49,6 @@ static oticUnpackEntry_t* otic_unpack_insert_entry(oticUnpackChannel_t* channel,
     while (ptr <= end)
     {
         if (*ptr == 0) {
-//            *ptr = 0;
             ++ptr;
             break;
         }
@@ -146,7 +144,7 @@ static void otic_unpack_read_smallint(oticUnpackChannel_t* channel, uint8_t val)
     otic_unpack_cleaner(&channel->cache.currentEntry->value);
     channel->cache.currentEntry->value.type = OTIC_TYPE_INT_POS;
     channel->cache.currentEntry->value.val.lval = val;
-    flush_if_flushable(channel);
+//    flush_if_flushable(channel);
     ++channel->base.rowCounter;
 }
 
@@ -472,8 +470,7 @@ static int32_t otic_unpack_getMeta(otic_meta_data_t* metaData, uint8_t size, uin
 OTIC_UNPACK_INLINE
 static uint8_t otic_unpack_getLine(oticUnpackChannel_t* channel)
 {
-    if (channel->base.top - channel->out  >= channel->blockSize)
-    {
+    if (channel->base.top - channel->out >= channel->blockSize) {
         channel->info.parent->current = 0;
         return 1;
     }
@@ -521,7 +518,6 @@ static uint8_t otic_unpack_getLine(oticUnpackChannel_t* channel)
         case OTIC_TYPE_EOF:
             otic_unpack_read_eof(channel);
             return 0;
-            break;
         case OTIC_TYPE_STRING:
             otic_unpack_read_string(channel);
             break;
@@ -592,13 +588,12 @@ static void otic_unpack_parseBlock(oticUnpackChannel_t* channel)
     }
 }
 
-#include <stdio.h>
-
 OTIC_UNPACK_INLINE
 static uint8_t otic_unpack_read_data(otic_unpack_t* oticUnpack, oticUnpackChannel_t* channel, uint32_t size)
 {
     channel->blockSize = size;
-    oticUnpack->fetcher(channel->base.cache, size, oticUnpack->fetcherData);
+    if (!oticUnpack->fetcher(channel->base.cache, size, oticUnpack->fetcherData))
+        return 0;
     channel->blockSize = ZSTD_decompressDCtx(
             channel->dCtx, channel->out, channel->base.cacheSize,
             channel->base.cache, size
@@ -716,12 +711,13 @@ static uint8_t otic_unpack_getNext(otic_unpack_t* oticUnpack)
                     oticUnpack->current = 0;
                     return 0;
                 }
+
                 if (channel) {
                     oticUnpack->current = channel;
                     oticUnpack->current->blockSize = size;
                     oticUnpack->fetcher(channel->base.cache, size, oticUnpack->fetcherData);
                     channel->blockSize = ZSTD_decompressDCtx(
-                            channel->dCtx, channel->out, OTIC_UNPACK_OUT_SIZE,
+                            channel->dCtx, channel->out, channel->base.cacheSize,
                             channel->base.cache, size
                     );
                     if (ZSTD_isError(channel->blockSize)) {
@@ -815,8 +811,9 @@ uint8_t otic_unpack_parse(otic_unpack_t* oticUnpack) {
                 otic_unpack_setError(oticUnpack, OTIC_ERROR_EOF);
                 goto fail;
             }
-            if (channel)
+            if (channel) {
                 return otic_unpack_read_data(oticUnpack, channel, size);
+            }
             if (oticUnpack->seeker)
                 oticUnpack->seeker(size, oticUnpack->seekerData);
             else {

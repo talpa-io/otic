@@ -1,3 +1,5 @@
+message(STATUS "Added Demos")
+
 include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/include)
 
 function(add_demo DEMO_NAME)

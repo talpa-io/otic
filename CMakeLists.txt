@@ -13,7 +13,7 @@ if (POLICY CMP0054)
 endif()
 
 option(ALLOW_CMAKE_LIB_FETCH "Allow CMake to Fetch the missing libs from the Web" ON)
-option(ENABLE_TESTS "Enable tests of the core OTIC library" ON)
+option(ENABLE_TESTS "Enable tests of the core OTIC library" OFF)
 option(ENABLE_FUZZ "Enable Build of the Fuzzing of the OTIC library" OFF)
 option(BUILD_DEMOS "Build demos and examples" ON)
 option(PHP_BIND "Build PHP Bindings" OFF)
@@ -35,6 +35,7 @@ if (NOT CMAKE_BUILD_TYPE)
 else()
     message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 endif()
+
 
 project(otic
         VERSION 1.0.0

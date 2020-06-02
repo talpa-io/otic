@@ -12,7 +12,6 @@
 #define OTIC_PACK_INLINE
 #endif
 
-
 OTIC_PACK_INLINE PURE
 static uint32_t otic_hashFunction(const char* ptr)
 {
@@ -813,6 +812,7 @@ uint8_t otic_pack_channel_flush(otic_pack_channel_t* channel)
             channel->base.top - channel->base.cache,
             OTIC_ZSTD_COMPRESSION_LEVEL
             );
+
     if (ZSTD_isError(ret)) {
         otic_base_setError(&channel->base, OTIC_ERROR_ZSTD);
         goto fail;
