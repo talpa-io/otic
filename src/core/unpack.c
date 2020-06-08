@@ -144,7 +144,7 @@ static void otic_unpack_read_smallint(oticUnpackChannel_t* channel, uint8_t val)
     otic_unpack_cleaner(&channel->cache.currentEntry->value);
     channel->cache.currentEntry->value.type = OTIC_TYPE_INT_POS;
     channel->cache.currentEntry->value.val.lval = val;
-//    flush_if_flushable(channel);
+    flush_if_flushable(channel);
     ++channel->base.rowCounter;
 }
 

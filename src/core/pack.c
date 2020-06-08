@@ -460,8 +460,7 @@ uint8_t otic_pack_channel_inject_i(otic_pack_channel_t* channel, double timestam
         if (value < SMALL_INT_LIMIT) {
             otic_pack_write_byte(channel, value);
             write_long(channel, channel->totalEntries);
-        }
-        else {
+        } else {
             otic_pack_write_byte(channel, OTIC_TYPE_INT_POS);
             write_long(channel, channel->totalEntries);
             write_long(channel, value);
