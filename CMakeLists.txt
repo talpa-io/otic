@@ -12,6 +12,9 @@ if (POLICY CMP0054)
     cmake_policy(SET CMP0054 NEW)
 endif()
 
+
+set(CMAKE_C_STANDARD 99)
+
 option(ALLOW_CMAKE_LIB_FETCH "Allow CMake to Fetch the missing libs from the Web" ON)
 option(ENABLE_TESTS "Enable tests of the core OTIC library" OFF)
 option(ENABLE_FUZZ "Enable Build of the Fuzzing of the OTIC library" OFF)
@@ -36,14 +39,12 @@ else()
     message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 endif()
 
-
 project(otic
-        VERSION 1.0.0
+        VERSION 2.0.0
         DESCRIPTION "Open Telemetry Interchange Container Format"
         LANGUAGES C CXX
         )
 
-set(CMAKE_C_STANDARD 99)
 
 if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)

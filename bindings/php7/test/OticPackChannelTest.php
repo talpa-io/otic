@@ -24,7 +24,7 @@ trait RandomValGenerator
     {
         static $TOTAL_SENSORS = 20;
 
-        $randomTs = function(float $currentTs) use (&$stats) {
+        $randomTs = static function(float $currentTs) use (&$stats) {
             $randVal = rand(1, 10000);
             if (($randVal % 2 != 0) && ($randVal % 3 != 0) ) {
                 $currentTs += random_int(1, 1000) / random_int(4, 45);
@@ -35,27 +35,27 @@ trait RandomValGenerator
             return $currentTs;
         };
 
-        $randomSensor = function (int $id) use ($TOTAL_SENSORS) : array {
+        $randomSensor = static function (int $id) use ($TOTAL_SENSORS) : array {
             return ["sensor".$id, "unit".$id];
         };
 
-        $randomFloat = function () use (&$stats) : float  {
+        $randomFloat = static function () use (&$stats) : float  {
             ++$stats["float"];
             return (rand(0, 10000000) / rand(1, 3434123));
         };
 
-        $randomInt = function () use (&$stats): int {
+        $randomInt = static function () use (&$stats): int {
             ++$stats["int"];
             return rand(0, 3434334543);
         };
 
-        $randomString = function(int $length = 29) use (&$stats) : string
+        $randomString = static function(int $length = 1000) use (&$stats) : string
         {
-            $randomModASCII = function () {
-                $toRet = rand(32, 126);
-                return $toRet === 58 ? 32 : $toRet;
+            $randomModASCII = static function () {
+                return random_int(32, 126);
             };
             $res = "";
+            $length = random_int(0, $length);
             for ($counter = 0; $counter < $length; ++$counter)
                 $res .= chr($randomModASCII());
             ++$stats["string"];
@@ -64,12 +64,12 @@ trait RandomValGenerator
 
         // TODO: Array, bool Randomization
 
-        $randomVal = function (int $id) use ($randomString, $randomInt, $randomFloat) {
+        $randomVal = static function (int $id) use ($randomString, $randomInt, $randomFloat) {
             $valRandomizer = [$randomInt, $randomFloat, $randomString];
             return $valRandomizer[$id % 3]();
         };
 
-        $id = rand(0, $TOTAL_SENSORS);
+        $id = random_int(0, $TOTAL_SENSORS);
 
         $this->row["timestamp"] = $randomTs($this->row["timestamp"]);
         $current = $randomSensor($id);
@@ -92,9 +92,9 @@ class OticPackChannelTest extends TestCase
 
     use RandomValGenerator;
 
-    static private function assertAlmostEqual($expected, $actual, string $message = "")
+    private static function assertAlmostEqual($expected, $actual, string $message = ""): void
     {
-        $round = function ($values) {
+        $round = static function ($values) {
             $ret = [];
             foreach ($values as $value)
                 $ret[] = ((int)$value * 10000) / 10000;
@@ -102,21 +102,21 @@ class OticPackChannelTest extends TestCase
         static::assertThat($round($actual), new IsIdentical($round($expected)), $message);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->outputFile = fopen(dirname(__FILE__)."/dump.otic", "w");
+        $this->outputFile = fopen(__DIR__."/dump.otic", "w");
         $this->packer = new OticPack($this->outputFile);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->packer->close();
         fclose($this->outputFile);
     }
 
-    public function test__construct()
+    public function test__construct(): void
     {
         $channel = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
         static::assertIsObject($channel);
@@ -128,7 +128,7 @@ class OticPackChannelTest extends TestCase
         $channel->close();
     }
 
-    public function testGetSensorsList()
+    public function testGetSensorsList(): void
     {
         $channel = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
         $temp = [];
@@ -137,11 +137,11 @@ class OticPackChannelTest extends TestCase
             $channel->inject($value, "sensor" . $value, "someUnit", $value);
         }
         static::assertSame($temp, $channel->getSensorsList());
-        static::assertSame(sizeof($temp), $channel->getStats()["typeColsAssigned"]);
+        static::assertSame(count($temp), $channel->getStats()["typeColsAssigned"]);
         $channel->close();
     }
 
-    public function testInject()
+    public function testInject(): void
     {
         $channel = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
         $statsChecker = [
@@ -167,7 +167,7 @@ class OticPackChannelTest extends TestCase
         $channel->close();
     }
 
-    public function testInvalidTs()
+    public function testInvalidTs(): void
     {
         $channel = $this->packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
         $channel->inject(123, "abc", "cdef", 232);

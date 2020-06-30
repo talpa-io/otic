@@ -70,6 +70,7 @@ struct otic_unpack_t
     oticUnpackChannel_t* current;
     uint8_t(*fetcher)(uint8_t*, size_t, void*);
     uint8_t(*seeker)(uint32_t, void*);
+    uint8_t version;
 };
 
 uint8_t                 otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t, void*), void* fetcherData, uint8_t(*seeker)(uint32_t, void*), void* seekerData) NONNULL(1,2);

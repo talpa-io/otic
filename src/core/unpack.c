@@ -205,7 +205,12 @@ static void otic_unpack_read_string(oticUnpackChannel_t* channel)
 {
     channel->base.top += leb128_decode_unsigned(channel->base.top, (uint64_t*)&channel->entryIndex);
     channel->cache.currentEntry = channel->cache.cache[channel->entryIndex];
-    uint8_t total = *channel->base.top++;
+    uint64_t total = 0;
+    if (LIKELY(channel->info.parent->version == 1)) {
+        total = *channel->base.top++;
+    } else {
+        channel->base.top += leb128_decode_unsigned(channel->base.top, &total);
+    }
     otic_unpack_cleaner(&channel->cache.currentEntry->value);
     channel->cache.currentEntry->value.val.sval.ptr = malloc((total + 1) * sizeof(char));
     channel->cache.currentEntry->value.val.sval.size = total;
@@ -626,6 +631,7 @@ uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, 
         otic_unpack_setError(oticUnpack, OTIC_ERROR_VERSION_UNSUPPORTED);
         goto fail;
     }
+    oticUnpack->version = header.version;
     oticUnpack->channels = 0;
     otic_unpack_setState(oticUnpack, OTIC_STATE_OPENED);
     otic_unpack_setError(oticUnpack, OTIC_ERROR_NONE);

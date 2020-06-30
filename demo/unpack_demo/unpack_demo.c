@@ -119,37 +119,6 @@ static int fpeek(FILE* stream)
     return c;
 }
 
-//int main(void)
-//{
-//    FILE* srcFile = fopen("pack_demo.otic", "rb"), *destFile = fopen("unpack_demo.tsv", "w");
-//    otic_unpack_t oticUnpack;
-//    if (!otic_unpack_init(&oticUnpack, fetcher, srcFile, seeker, srcFile))
-//        return 1;
-//    oticUnpackChannel_t* channel = otic_unpack_defineChannel(&oticUnpack, 1, flusher2, destFile);
-//    if (!channel)
-//        return 1;
-//    while(otic_unpack_generate(&oticUnpack));
-//    otic_unpack_close(&oticUnpack);
-//    return 0;
-//}
-//
-
-//int main(void)
-//{
-//    FILE* srcFile = fopen("pack_demo.otic", "rb"), *destFile = fopen("unpack_demo.tsv", "w");
-//    otic_unpack_t oticUnpack;
-//    if (!otic_unpack_init(&oticUnpack, fetcher, srcFile, seeker, srcFile))
-//        return 1;
-//    oticUnpackChannel_t *channel = otic_unpack_defineChannel(&oticUnpack, 1, flusher2, destFile);
-//    if (!channel)
-//        return 1;
-//
-//    while (otic_unpack_parse(&oticUnpack));
-//
-//    otic_unpack_close(&oticUnpack);
-//    return 0;
-//}
-//
 int main()
 {
     FILE* srcFile = fopen("pack_demo.otic", "rb");

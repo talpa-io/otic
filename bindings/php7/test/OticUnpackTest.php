@@ -13,15 +13,15 @@ class OticUnpackTest extends TestCase
     private $unPacker = null;
     private $inputFile = null;
 
-    const INPUT_FILE_NAME = "inFile.otic";
-    const OUTPUT_FILE_NAME = "outFile.otic";
+    private const INPUT_FILE_NAME = "inFile.otic";
+    private const OUTPUT_FILE_NAME = "outFile.otic";
 
     private function normalizePath(string $path) : string
     {
-        return dirname(__FILE__)."/$path";
+        return __DIR__."/$path";
     }
 
-    private function generateOticFile()
+    private function generateOticFile(): void
     {
         $this->inputFile = fopen($this->normalizePath(self::INPUT_FILE_NAME), "w");
         $packer = new OticPack($this->inputFile);
@@ -31,12 +31,12 @@ class OticUnpackTest extends TestCase
         fclose($this->inputFile);
     }
 
-    private function destroyOticFile()
+    private function destroyOticFile(): void
     {
         unlink($this->normalizePath(self::INPUT_FILE_NAME));
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->generateOticFile();
@@ -44,19 +44,19 @@ class OticUnpackTest extends TestCase
         $this->unPacker = new OticUnpack($this->inputFile);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->unPacker->close();
         fclose($this->inputFile);
     }
 
-    public function test__toString()
+    public function test__toString(): void
     {
         static::assertIsString($this->unPacker->__toString());
     }
 
-    public function testSelectChannel()
+    public function testSelectChannel(): void
     {
         $channel = $this->unPacker->selectChannel(0x01, function ($ts, $sn, $su, $v) {
             echo "$ts\t$sn\t$su\t$v\n";
@@ -67,7 +67,7 @@ class OticUnpackTest extends TestCase
         static::assertIsString($this->unPacker->__toString());
     }
 
-    public function testMultipleChannels()
+    public function testMultipleChannels(): void
     {
         $channel1 = $this->unPacker->selectChannel(0x01, function () { });
         $channel2 = null;
@@ -88,7 +88,7 @@ class OticUnpackTest extends TestCase
         static::assertIsObject($channel3);
     }
 
-    public function testInvalidChannelId()
+    public function testInvalidChannelId(): void
     {
         $channel1 = null;
         try {

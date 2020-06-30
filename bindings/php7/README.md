@@ -42,8 +42,7 @@ sudo cmake --build . --target uninstall
 *   Not inside the namespace: \a Otic
 */
 function getLibOticVersion() : string
-{
-}
+{}
 
 class LibOticException extends Exception
 {
@@ -63,8 +62,7 @@ class LibOticException extends Exception
     const AT_INVALID_STATE          = 0x0D;
     const ALLOCATION_FAILURE        = 0x0E;
     public function __construct(int $errorNo)
-    {
-    }
+    {}
 }
 
 class OticException extends Exception
@@ -75,102 +73,79 @@ class OticPackChannel
 {
     const TYPE_SENSOR = 0x00;
     const TYPE_BINARY = 0x01;
-    public function __construct()
-    {
-    }
-    public function __toString() : string
-    {
-    }
-    public function inject(float $timestamp, string $sensorName, string $sensorUnit, $value)
-    {
-    }
-    public function getTimeInterval(): array
-    {
-    }
-    public function getSensorsList() : array
-    {
-    }
-    public function resizeBucket(int $bufferSize) : void
-    {
-    }
-    public function flush()
-    {
-    }
-    public function close()
-    {
-    }
+    public function __construct() {}
+    public function __toString() : string {}
+    public function inject(float $timestamp, string $sensorName, string $sensorUnit, $value) {}
+    public function getTimeInterval(): array {}
+    public function getSensorsList() : array {}
+    public function resizeBucket(int $bufferSize) : void {}
+    public function flush() {}
+    public function close() {}
 }
 
 class OticPack
 {
-    public function __construct($fileHandle)
-    {
-    }
-    public function __toString() : string
-    {
-    }
-    public function defineChannel(int $channelId, int $channelType, int $features) : OticPackChannel
-    {
-    }
-    public function close()
-    {
-    }
-    public function flush()
-    {
-    }
-    public function closeChannel(int $channelId)
-    {
-    }
-    function __destruct()
-    {
-    }
+    public function __construct($fileHandle) {}
+    public function __toString() : string {}
+    public function defineChannel(int $channelId, int $channelType, int $features) : OticPackChannel {}
+    public function close() {}
+    public function flush() {}
+    public function closeChannel(int $channelId) {}
+    function __destruct() {}
 }
 
 class OticUnpackChannel
 {
-    public function __construct()
-    {
-    }
-    public function __toString() : string
-    {
-    }
-    public function setFetchList(string ... $values)
-    {
-    }
-    public function getTimeInterval(): array
-    {
-    }
-    public function getSensorsList() : array
-    {
-    }
-    public function close()
-    {
-    }
-    public function __destruct()
-    {
-    }
+    public function __construct() {}
+    public function __toString() : string {}
+    public function setFetchList(string ... $values) {}
+    public function getTimeInterval(): array {}
+    public function getSensorsList() : array {}
+    public function close() {}
+    public function __destruct() {}
 }
 
 class OticUnpack
 {
-    public function __construct($fileHandle)
-    {
-    }
-    public function __destruct()
-    {
-    }
-    public function __toString() : string
-    {
-    }
-    public function parse()
-    {
-    }
-    public function selectChannel(int $channelId, callable $flusher): OticUnpackChannel
-    {
-    }
-    public function close()
-    {
-    }
+    public function __construct($fileHandle) {}
+    public function __destruct() {}
+    public function __toString() : string {}
+    public function parse() {}
+    public function selectChannel(int $channelId, callable $flusher): OticUnpackChannel {}
+    public function close() {}
 }
+```
 
+## Example  
+### Packing  
+```php
+    use Otic\{OticPack, OticPackChannel};
+
+    $packer = new OticPack($outputFile = fopen('someDumpFile.otic', 'w'));
+    $channel = $packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
+    $channel->inject(12343.2334, "Some Sensor name", "Some sensor unit", "Some value");
+    $channel->inject(233534343.343, "Some Other sensor name", "", true);
+    echo $channel."\n";
+    $packer->close();
+    fclose($outputFile);
+```  
+
+## Unpacking
+```php
+   use Otic\{OticUnpack, OticUnpackChannel};
+   
+    $unpacker = new OticUnpack($inputFile = fopen('someInputFile.otic', 'r'));
+    $channel1 = $unpacker->selectChannel(0x01, static function($ts, $sn, $su, $val)
+    {
+        echo "$ts\t$sn\t$su\t$val\n";
+    });
+    $channel2 = $unpacker->selectChannel(0x02, static function($ts, $sn, $su, $val)
+    {
+        static $buffer = [];
+        $buffer[] = [$ts, $val];
+    });
+    while (!feof($inputFile))
+        $unpacker->parse();
+    $unpacker->close();
+    fclose($inputFile);
 ```
