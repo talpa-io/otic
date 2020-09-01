@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <core/base.h>
 #include "core/pack.h"
 #include "utility/errHand.h"
 
@@ -19,29 +18,6 @@ static void runScreamingIfInvalid(uint8_t condition, const char* message)
         exit(EXIT_FAILURE);
     }
 }
-
-
-//int main(void)
-//{
-//    FILE* fileOut = fopen("pack_demo.otic", "wb");
-//    otic_pack_t oticPack;
-//    if (!otic_pack_init(&oticPack, 0x00, flusher, fileOut))
-//        return 1;
-//    otic_pack_channel_t* channel;
-//    if (!(channel = otic_pack_defineChannel(&oticPack, 1, 1, 0x00, 2048)))
-//        return 1;
-//    oval_t array;
-//    otic_array_init_size(&array, 5);
-//    otic_oval_setlf(&array.val.aval.elements[0], 1232.121);
-//    otic_oval_sets(&array.val.aval.elements[1], "hallo World", 12);
-//    otic_oval_setd(&array.val.aval.elements[4], 98475, 1);
-//        otic_pack_channel_inject_i(channel, 1234, "sensor1", "unit1", 34343);
-//    otic_pack_channel_inject_array(channel, 1234, "sensor1", "unit1", &array.val.aval);
-//
-//    otic_pack_close(&oticPack);
-//}
-
-
 
 int main()
 {

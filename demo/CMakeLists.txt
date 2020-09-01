@@ -1,10 +1,11 @@
+message(STATUS "Added Demos")
+
 include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/include)
 
 function(add_demo DEMO_NAME)
     add_executable(${DEMO_NAME} ${ARGN} ${PROJECT_SOURCE_DIR}/include/otic.h ${OTIC_CORE_FILES})
     target_link_libraries(${DEMO_NAME} m zstd)
 endfunction()
-
 
 add_demo(pack_demo
         pack_demo/pack_demo.c

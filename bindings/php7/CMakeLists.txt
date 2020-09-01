@@ -65,13 +65,9 @@ foreach (X ${PHP_INCLUDES})
 endforeach ()
 
 include(cmake/php.cmake)
-include(cmake/stub_generator.cmake)
-
-GENERATE_FROM_STUB(${CMAKE_CURRENT_LIST_DIR}/otic.php.stub ${CMAKE_CURRENT_LIST_DIR}/otic.php)
 
 file(GLOB OTIC_PHP_INCLUDE include/*.h)
 file(GLOB OTIC_PHP_SRC src/*.c)
-
 
 set(OTIC_CORE_FILES
         ${PROJECT_SOURCE_DIR}/../../include/core/base.h

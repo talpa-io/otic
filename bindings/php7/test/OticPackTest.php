@@ -55,7 +55,8 @@ class OticPackTest extends TestCase
         fclose($file);
 
         $file = fopen($this->toDumpDest("file1.otic"), "r");
-        $this->assertFileContent($file, hex2bin("4fa946350001"));
+        // $this->assertFileContent($file, hex2bin("4fa946350001"));
+        $this->assertFileContent($file, hex2bin("4fa946350002"));
         fclose($file);
 
         $this->assertSame(6, filesize($this->toDumpDest("file1.otic")));

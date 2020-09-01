@@ -1,7 +1,3 @@
-//
-// Created by hp on 9/24/19.
-//
-
 #ifndef OTIC_ERRORHAND_H
 #define OTIC_ERRORHAND_H
 

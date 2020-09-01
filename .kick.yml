@@ -15,8 +15,7 @@ command:
 
   make:
     - "sudo rm -rf build"
-    - "mkdir -p build && cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTS=OFF -DPHP_BIND=ON -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=dist -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=dist && make -C build"
-    - "cp bindings/php7/otic.php.stub bindings/php7/otic.php"
+    - "mkdir -p build && cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release -DPHP_BIND=ON -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=dist -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=dist && make -C build"
     - "sudo ldconfig"
 
   test-c:
@@ -28,8 +27,7 @@ command:
 
   makeTest:
     - "sudo rm -rf build"
-    - "mkdir -p build && cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release -DENABLE_TESTS=OFF -DPHP_BIND=ON -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=dist -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=dist && make -C build"
-    - "cp bindings/php7/otic.php.stub bindings/php7/otic.php"
+    - "mkdir -p build && cmake . -Bbuild -DCMAKE_BUILD_TYPE=Release -DPHP_BIND=ON -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=dist -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=dist && make -C build"
     - "sudo ldconfig"
 #    - "make test -C `pwd`/build"
     - 'composer install -d "bindings/php7/"'

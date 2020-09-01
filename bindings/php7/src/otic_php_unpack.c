@@ -50,6 +50,10 @@ static inline uint8_t otic_zend_stream_isOpened(php_stream* stream)
     return stream->orig_path != 0;
 }
 
+static inline void php_otic_safe_zend_class_add_ref(zend_class_entry * ce)
+{
+}
+
 PHP_METHOD(OticUnpackChannel, __construct)
 {
 }
@@ -269,7 +273,10 @@ static inline uint8_t oticUnpack_channelSelect_wrapper(double timestamp, const c
             otic_php_throw_oticException("Unknown Type", 0);
     }
     if (call_user_function_ex(EG(function_table), NULL, data, &ret, 4, params, 0, 0 TSRMLS_CC) == FAILURE)
+    {
         php_error_docref0(NULL TSRMLS_CC, E_WARNING, "User Function Error\n");
+        return 0;
+    }
     zval_ptr_dtor(&ret);
     for (uint8_t counter = 0; counter < 4; counter++)
         zval_ptr_dtor(&params[counter]);
@@ -286,12 +293,15 @@ PHP_METHOD(OticUnpack, selectChannel)
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
     if (!intern || !intern->oticUnpack)
         return;
-    if (channelId < 0 || channelId > 255)
+    if (channelId < 0 || channelId > 255) {
         otic_php_throw_oticException("Invalid Channel ID! Reason: Valid Range (int): 0 - 255", 0);
+        RETURN_FALSE;
+    }
     zend_string* funcName;
     if (!zend_is_callable(callback, 0, &funcName TSRMLS_CC)) {
         php_error_docref0(NULL TSRMLS_CC, E_ERROR, "Invalid Callback %s", funcName->val);
         zend_string_release(funcName);
+        RETURN_FALSE;
     }
     zend_string_release(funcName);
     oticUnpackChannel_object* channel = (oticUnpackChannel_object*)ecalloc(1, sizeof(oticUnpackChannel_object) + zend_object_properties_size(oticUnpackChannel_ce));
@@ -300,12 +310,13 @@ PHP_METHOD(OticUnpack, selectChannel)
     if (!channel->oticUnpackChannel) {
         efree(channel);
         otic_php_throw_libOticException(intern->oticUnpack->error);
-        return;
+        RETURN_FALSE;
     }
     zval_add_ref(&channel->funcptr);
     zend_object_std_init(&channel->std, oticUnpackChannel_ce TSRMLS_CC);
     object_properties_init(&channel->std, oticUnpackChannel_ce);
     channel->std.handlers = &oticUnpackChannel_object_handlers;
+    php_otic_safe_zend_class_add_ref(channel->std.ce);
     RETURN_OBJ(&channel->std)
 }
 
@@ -317,9 +328,11 @@ PHP_METHOD(OticUnpack, parse)
     oticUnpack_object* intern = T_OTICUNPACKOBJ_P(id);
     if (!intern || !intern->oticUnpack)
         return;
-    otic_unpack_parse(intern->oticUnpack);
-    if (intern->oticUnpack->error != 0)
+    uint8_t ret = otic_unpack_parse(intern->oticUnpack);
+    if (intern->oticUnpack->error != 0) {
         otic_php_throw_libOticException(intern->oticUnpack->error);
+    }
+    RETURN_BOOL(ret);
 }
 
 PHP_METHOD(OticUnpack, generate)

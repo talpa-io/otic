@@ -194,7 +194,7 @@ static inline uint8_t compress(const char* fileNameIn, const char* fileNameOut) 
         goto fail;
     }
 
-    otic_pack_channel_t* channel = otic_pack_defineChannel(&oticPack, OTIC_CHANNEL_TYPE_SENSOR, 0x1, 0x00, 10 * 1024 * 1024);
+    otic_pack_channel_t* channel = otic_pack_defineChannel(&oticPack, OTIC_CHANNEL_TYPE_SENSOR, 0x1, 0x00, 0);
     if (!channel) {
         tsvParserError = TSV_PARSER_ERROR_OTIC;
         goto fail;
@@ -346,8 +346,8 @@ static uint8_t getLines(const char* fileInName, const char* fileOutName, size_t 
 #ifdef DEBUG
 int main(void)
 {
-//    const char* argv[] = {"otic", "-p", "-i", "bigFile.txt", "-o", "dump.otic"};
-    const char* argv[] = {"otic", "-u", "-i", "dump.otic", "-o", "res.txt"};
+    const char* argv[] = {"otic", "-u", "-i", "dump.otic", "-o", "dump.tsv"};
+//    const char* argv[] = {"otic", "-u", "-i", "dump.otic", "-o", "res.txt"};
     int argc = 6;
 #else
 int main(int argc, char** argv)
