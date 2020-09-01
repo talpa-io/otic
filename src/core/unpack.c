@@ -13,9 +13,8 @@
 #define OTIC_UNPACK_INLINE
 #endif
 
-
-OTIC_UNPACK_INLINE
-__attribute_pure__ static size_t otic_hashFunction(const char* ptr)
+PURE OTIC_UNPACK_INLINE
+static size_t otic_unpack_hashFunction(const char* ptr)
 {
     size_t hash_address = 0;
     while(*ptr)
@@ -26,7 +25,7 @@ __attribute_pure__ static size_t otic_hashFunction(const char* ptr)
 OTIC_UNPACK_INLINE
 static uint8_t isFetchable(oticUnpackChannel_t* channel, const char* value)
 {
-    size_t hashAddress = otic_hashFunction(value);
+    size_t hashAddress = otic_unpack_hashFunction(value);
     for (size_t counter = 0; counter < channel->toFetch.size; counter++)
         if (hashAddress == channel->toFetch.ptr[counter])
             return 1;
@@ -56,7 +55,7 @@ static oticUnpackEntry_t* otic_unpack_insert_entry(oticUnpackChannel_t* channel,
     }
     channel->cache.cache[channel->cache.totalEntries] = malloc(sizeof(oticUnpackEntry_t));
     oticUnpackEntry_t* entry = channel->cache.cache[channel->cache.totalEntries];
-    uint8_t lengthValue = (ptr - value);
+    size_t lengthValue = (ptr - value);
     entry->index = channel->cache.totalEntries;
     entry->name = malloc((lengthValue + 1) * sizeof(char));
     memcpy(entry->name, value, lengthValue);
@@ -383,6 +382,7 @@ static otic_state_e otic_unpack_getState(otic_unpack_t* oticUnpack)
     return oticUnpack->state;
 }
 
+OTIC_PUBLIC_API
 uint8_t otic_unpack_channel_init(oticUnpackChannel_t* channel, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void*),void* data, otic_unpack_t* parent)
 {
     channel->data = data;
@@ -417,6 +417,7 @@ fail:
     return 0;
 }
 
+OTIC_PUBLIC_API
 void otic_unpack_channel_toFetch(oticUnpackChannel_t* channel, const char** values, size_t size)
 {
     if (size == 0)
@@ -424,9 +425,10 @@ void otic_unpack_channel_toFetch(oticUnpackChannel_t* channel, const char** valu
     channel->toFetch.ptr = malloc(sizeof(size_t) * size);
     channel->toFetch.size = size;
     for (size_t counter = 0; counter < size; ++counter)
-        channel->toFetch.ptr[counter] = otic_hashFunction(values[counter]);
+        channel->toFetch.ptr[counter] = otic_unpack_hashFunction(values[counter]);
 }
 
+OTIC_PUBLIC_API
 uint8_t otic_unpack_channel_close(oticUnpackChannel_t* channel)
 {
     ZSTD_freeDCtx(channel->dCtx);
@@ -614,6 +616,7 @@ static uint8_t otic_unpack_read_data(otic_unpack_t* oticUnpack, oticUnpackChanne
     return 1;
 }
 
+OTIC_PUBLIC_API
 uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t, void*), void* fetcherData, uint8_t(*seeker)(uint32_t, void*), void* seekerData)
 {
     oticUnpack->fetcher = fetcher;
@@ -641,6 +644,7 @@ fail:
     return 0;
 }
 
+OTIC_PUBLIC_API
 oticUnpackChannel_t* otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void*), void* data)
 {
     if (oticUnpack->state != OTIC_STATE_OPENED) {
@@ -794,11 +798,13 @@ static uint8_t otic_unpack_getNext(otic_unpack_t* oticUnpack)
     }
 }
 
+OTIC_PUBLIC_API
 uint8_t otic_unpack_generate(otic_unpack_t* oticUnpack)
 {
     return oticUnpack->current ? otic_unpack_getLine(oticUnpack->current) : otic_unpack_getNext(oticUnpack);
 }
 
+OTIC_PUBLIC_API
 uint8_t otic_unpack_parse(otic_unpack_t* oticUnpack) {
     otic_meta_data_t metaData;
     if (oticUnpack->fetcher((uint8_t *)&metaData, sizeof(metaData), oticUnpack->fetcherData) == 0) {
@@ -879,6 +885,7 @@ fail:
     return 0;
 }
 
+OTIC_PUBLIC_API
 uint8_t otic_unpack_closeChannel(otic_unpack_t* oticUnpack, uint8_t id)
 {
     oticUnpackChannel_t* current = oticUnpack->channels, *before = oticUnpack->channels;
@@ -901,6 +908,7 @@ uint8_t otic_unpack_closeChannel(otic_unpack_t* oticUnpack, uint8_t id)
     return 0;
 }
 
+OTIC_PUBLIC_API
 uint8_t otic_unpack_getTotalAmountOfChannel(const otic_unpack_t* oticUnpack)
 {
     uint8_t counter = 0;
@@ -908,6 +916,7 @@ uint8_t otic_unpack_getTotalAmountOfChannel(const otic_unpack_t* oticUnpack)
     return counter;
 }
 
+OTIC_PUBLIC_API
 uint8_t otic_unpack_close(otic_unpack_t* oticUnpack)
 {
     oticUnpackChannel_t* current = oticUnpack->channels;

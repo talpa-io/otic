@@ -1,9 +1,9 @@
-#ifndef OTIC_UNPACK_H
-#define OTIC_UNPACK_H
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifndef OTIC_UNPACK_H
+#define OTIC_UNPACK_H
 
 #include <zstd.h>
 #include "base.h"
@@ -57,9 +57,9 @@ struct oticUnpackChannel_t
     oticUnpackChannel_t* previous;
 };
 
-uint8_t                 otic_unpack_channel_init(oticUnpackChannel_t* channel, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void* data),void* data, otic_unpack_t* parent);
-void                    otic_unpack_channel_toFetch(oticUnpackChannel_t* channel, const char** values, size_t size);
-uint8_t                 otic_unpack_channel_close(oticUnpackChannel_t* channel);
+OTIC_PUBLIC_API uint8_t otic_unpack_channel_init(oticUnpackChannel_t* channel, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void* data),void* data, otic_unpack_t* parent);
+OTIC_PUBLIC_API void otic_unpack_channel_toFetch(oticUnpackChannel_t* channel, const char** values, size_t size);
+OTIC_PUBLIC_API uint8_t otic_unpack_channel_close(oticUnpackChannel_t* channel);
 
 struct otic_unpack_t
 {
@@ -73,16 +73,21 @@ struct otic_unpack_t
     uint8_t version;
 };
 
-uint8_t                 otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t, void*), void* fetcherData, uint8_t(*seeker)(uint32_t, void*), void* seekerData) NONNULL(1,2);
-oticUnpackChannel_t*    otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void* data), void* data) NONNULL(1, 3);
-uint8_t                 otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8_t id) NONNULL(1);
-uint8_t                 otic_unpack_getTotalAmountOfChannel(const otic_unpack_t* oticUnpack) NONNULL(1);
-uint8_t                 otic_unpack_parse(otic_unpack_t* oticUnpackBase) NONNULL(1);
-uint8_t                 otic_unpack_close(otic_unpack_t* oticUnpackBase) NONNULL(1);
-uint8_t                 otic_unpack_generate(otic_unpack_t* oticUnpack) NONNULL(1);
+OTIC_PUBLIC_API uint8_t otic_unpack_init(otic_unpack_t* oticUnpack, uint8_t(*fetcher)(uint8_t*, size_t, void*), void* fetcherData, uint8_t(*seeker)(uint32_t, void*), void* seekerData) NONNULL(1,2);
+OTIC_PUBLIC_API oticUnpackChannel_t* otic_unpack_defineChannel(otic_unpack_t* oticUnpack, uint8_t id, uint8_t(*flusher)(double, const char*, const char*, const oval_t*, void* data), void* data) NONNULL(1, 3);
+OTIC_PUBLIC_API uint8_t otic_unpack_closeChannel(otic_unpack_t* oticUnpack,uint8_t id) NONNULL(1);
+OTIC_PUBLIC_API uint8_t otic_unpack_getTotalAmountOfChannel(const otic_unpack_t* oticUnpack) NONNULL(1);
+OTIC_PUBLIC_API uint8_t otic_unpack_parse(otic_unpack_t* oticUnpackBase) NONNULL(1);
+OTIC_PUBLIC_API uint8_t otic_unpack_close(otic_unpack_t* oticUnpackBase) NONNULL(1);
+OTIC_PUBLIC_API uint8_t otic_unpack_generate(otic_unpack_t* oticUnpack) NONNULL(1);
+
+#endif //OTIC_UNPACK_H
+
+#if defined(OTIC_PRIVATE_API) && !defined(OTIC_UNPACK_C)
+#define OTIC_UNPACK_C 1
+#include "../../src/core/unpack.c"
+#endif
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif //OTIC_UNPACK_H

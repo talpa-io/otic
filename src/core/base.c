@@ -1,11 +1,11 @@
+#ifndef OTIC_BASE_C
+#define OTIC_BASE_C
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
-#include <core/base.h>
 #include "core/base.h"
 
-
-uint8_t otic_base_init(otic_base_t* base, uint32_t bucketSize)
+OTIC_PUBLIC_API uint8_t otic_base_init(otic_base_t* base, uint32_t bucketSize)
 {
     base->top = base->cache = malloc(bucketSize);
     if (!base->cache) {
@@ -20,74 +20,74 @@ uint8_t otic_base_init(otic_base_t* base, uint32_t bucketSize)
     return 1;
 }
 
-inline void otic_base_setError(otic_base_t * base, otic_error_e error)
+OTIC_PUBLIC_API void otic_base_setError(otic_base_t * base, otic_error_e error)
 {
     base->error = error;
 }
 
-inline otic_error_e otic_base_getError(otic_base_t *base)
+OTIC_PUBLIC_API otic_error_e otic_base_getError(otic_base_t *base)
 {
     return base->error;
 }
 
-inline void otic_base_setState(otic_base_t* base, otic_state_e state)
+OTIC_PUBLIC_API void otic_base_setState(otic_base_t* base, otic_state_e state)
 {
     base->state = state;
 }
 
-inline otic_state_e otic_base_getState(otic_base_t* base)
+OTIC_PUBLIC_API otic_state_e otic_base_getState(otic_base_t* base)
 {
     return base->state;
 }
 
-inline void otic_base_close(otic_base_t* base)
+OTIC_PUBLIC_API void otic_base_close(otic_base_t* base)
 {
     free(base->cache);
     base->state = OTIC_STATE_CLOSED;
 }
 
-void otic_oval_setd(oval_t* oval, uint32_t value, uint8_t neg)
+OTIC_PUBLIC_API void otic_oval_setd(oval_t* oval, uint32_t value, uint8_t neg)
 {
     oval->val.lval = value;
     oval->type = neg ? OTIC_TYPE_INT_NEG: OTIC_TYPE_INT_POS;
 }
 
-void otic_oval_setdp(oval_t* oval, uint64_t value)
+OTIC_PUBLIC_API void otic_oval_setdp(oval_t* oval, uint64_t value)
 {
     oval->type = OTIC_TYPE_INT_POS;
     oval->val.lval = value;
 }
 
-void otic_oval_setdn(oval_t* oval, uint32_t value)
+OTIC_PUBLIC_API void otic_oval_setdn(oval_t* oval, uint32_t value)
 {
     oval->type = OTIC_TYPE_INT_NEG;
     oval->val.lval = value;
 }
 
-void otic_oval_setlf(oval_t* oval, double value)
+OTIC_PUBLIC_API void otic_oval_setlf(oval_t* oval, double value)
 {
     oval->type = OTIC_TYPE_DOUBLE;
     oval->val.dval = value;
 }
 
-void otic_oval_sets(oval_t* oval, const char* value, size_t size)
+OTIC_PUBLIC_API void otic_oval_sets(oval_t* oval, const char* value, size_t size)
 {
     oval->type = OTIC_TYPE_STRING;
     oval->val.sval.ptr = (char*)value;
     oval->val.sval.size = size;
 }
 
-void otic_oval_setn(oval_t* oval)
+OTIC_PUBLIC_API void otic_oval_setn(oval_t* oval)
 {
     oval->type = OTIC_TYPE_NULL;
 }
 
-uint8_t otic_oval_isNumeric(oval_t* oval)
+OTIC_PUBLIC_API uint8_t otic_oval_isNumeric(oval_t* oval)
 {
     return oval->type == OTIC_TYPE_DOUBLE || oval->type == OTIC_TYPE_INT_POS || oval->type == OTIC_TYPE_INT_NEG;
 }
 
-uint8_t otic_oval_cmp(const oval_t* val1, const oval_t* val2)
+OTIC_PUBLIC_API uint8_t otic_oval_cmp(const oval_t* val1, const oval_t* val2)
 {
     if (val1->type != val2->type)
         return 0;
@@ -106,17 +106,17 @@ uint8_t otic_oval_cmp(const oval_t* val1, const oval_t* val2)
     return 0;
 }
 
-void otic_oval_cpy(oval_t* dest, const oval_t* source)
+OTIC_PUBLIC_API void otic_oval_cpy(oval_t* dest, const oval_t* source)
 {
     memcpy(dest, source, sizeof(typeof(*source)));
 }
 
-otic_type_e otic_oval_getType(const oval_t* value)
+OTIC_PUBLIC_API otic_type_e otic_oval_getType(const oval_t* value)
 {
     return value->type;
 }
 
-uint8_t oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalArray2)
+OTIC_PUBLIC_API uint8_t oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalArray2)
 {
     if (ovalArray1->size != ovalArray2->size)
         return 0;
@@ -148,7 +148,7 @@ uint8_t oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalA
  * optimize the algorithm as one of the ptr doesn't change the values it is pointing to.
  * @return The number of bytes written into \a dest
  */
-uint8_t leb128_encode_unsigned(uint64_t value, uint8_t* dest)
+OTIC_PUBLIC_API uint8_t leb128_encode_unsigned(uint64_t value, uint8_t* dest)
 {
     uint8_t* ptr = dest;
     while (value >= 128)
@@ -164,7 +164,7 @@ uint8_t leb128_encode_unsigned(uint64_t value, uint8_t* dest)
 * @brief: In analogy to the \a leb128_encode_unsigned(), the algorithm from Wikipedia was improved here to improve the
 * overall Performance. The following function outputs 17 lines of ASM when compiled -O1 with GCC 9.2 for an X86-64 machine
 */
-uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t* value)
+OTIC_PUBLIC_API uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t* value)
 {
     const uint8_t* ptr = encoded_values;
     uint8_t shift = 0;
@@ -176,7 +176,7 @@ uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t*
     return ptr - encoded_values;
 }
 
-uint8_t leb128_encode_signed(int64_t value, uint8_t* restrict dest)
+OTIC_PUBLIC_API uint8_t leb128_encode_signed(int64_t value, uint8_t* restrict dest)
 {
     uint8_t more = 1;
     uint8_t negative = (value < 0);
@@ -200,7 +200,7 @@ uint8_t leb128_encode_signed(int64_t value, uint8_t* restrict dest)
     return counter;
 }
 
-uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict result)
+OTIC_PUBLIC_API uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict result)
 {
     *result = 0;
     uint8_t shift = 0;
@@ -217,7 +217,7 @@ uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* re
     return counter;
 }
 
-otic_str_t* otic_setStr(const char* ptr)
+OTIC_PUBLIC_API otic_str_t* otic_setStr(const char* ptr)
 {
     otic_str_t* oticStr = malloc(sizeof(otic_str_t));
     oticStr->size = ptr ? strlen(ptr) : 0;
@@ -225,23 +225,18 @@ otic_str_t* otic_setStr(const char* ptr)
     return oticStr;
 }
 
-void otic_freeStr(otic_str_t* oticStr)
+OTIC_PUBLIC_API void otic_freeStr(otic_str_t* oticStr)
 {
     free(oticStr);
 }
 
-void otic_updateStr(otic_str_t* oticStr, const char* ptr)
+OTIC_PUBLIC_API void otic_updateStr(otic_str_t* oticStr, const char* ptr)
 {
     oticStr->size = ptr ? strlen(ptr) : 0;
     oticStr->ptr = (char*)ptr;
 }
 
-uint8_t otic_array_init(oval_t* oval)
-{
-    return otic_array_init_size(oval, 0);
-}
-
-uint8_t otic_array_init_size(oval_t* oval, size_t size)
+OTIC_PUBLIC_API uint8_t otic_array_init_size(oval_t* oval, size_t size)
 {
     oval->val.aval.size = size;
     if (size  != 0) {
@@ -257,7 +252,12 @@ fail:
     return 0;
 }
 
-uint8_t otic_array_release(oval_t* oval)
+OTIC_PUBLIC_API uint8_t otic_array_init(oval_t* oval)
+{
+    return otic_array_init_size(oval, 0);
+}
+
+OTIC_PUBLIC_API uint8_t otic_array_release(oval_t* oval)
 {
     if (oval->type != OTIC_TYPE_ARRAY)
         return 0;
@@ -265,3 +265,4 @@ uint8_t otic_array_release(oval_t* oval)
     oval->val.aval.size = 0;
     return 1;
 }
+#endif // OTIC_BASE_C

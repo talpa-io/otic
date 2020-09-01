@@ -119,33 +119,33 @@ class OticUnpack
 ## Example  
 ### Packing  
 ```php
-    use Otic\{OticPack, OticPackChannel};
+use Otic\{OticPack, OticPackChannel};
 
-    $packer = new OticPack($outputFile = fopen('someDumpFile.otic', 'w'));
-    $channel = $packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
-    $channel->inject(12343.2334, "Some Sensor name", "Some sensor unit", "Some value");
-    $channel->inject(233534343.343, "Some Other sensor name", "", true);
-    echo $channel."\n";
-    $packer->close();
-    fclose($outputFile);
+$packer = new OticPack($outputFile = fopen('someDumpFile.otic', 'w') or die('Could not open InputFile'));
+$channel = $packer->defineChannel(0x01, OticPackChannel::TYPE_SENSOR, 0x00);
+$channel->inject(12343.2334, "Some Sensor name", "Some sensor unit", "Some value");
+$channel->inject(233534343.343, "Some Other sensor name", "", true);
+echo $channel."\n";
+$packer->close();
+fclose($outputFile);
 ```  
 
 ## Unpacking
 ```php
-   use Otic\{OticUnpack, OticUnpackChannel};
+use Otic\{OticUnpack, OticUnpackChannel};
    
-    $unpacker = new OticUnpack($inputFile = fopen('someInputFile.otic', 'r'));
-    $channel1 = $unpacker->selectChannel(0x01, static function($ts, $sn, $su, $val)
-    {
-        echo "$ts\t$sn\t$su\t$val\n";
-    });
-    $channel2 = $unpacker->selectChannel(0x02, static function($ts, $sn, $su, $val)
-    {
-        static $buffer = [];
-        $buffer[] = [$ts, $val];
-    });
-    while (!feof($inputFile))
-        $unpacker->parse();
-    $unpacker->close();
-    fclose($inputFile);
+$unpacker = new OticUnpack($inputFile = fopen('someInputFile.otic', 'r') or die('could not open inputFile'));
+$channel1 = $unpacker->selectChannel(0x01, static function($ts, $sn, $su, $val)
+{
+    echo "$ts\t$sn\t$su\t$val\n";
+});
+$buffer = [];
+$channel2 = $unpacker->selectChannel(0x02, static function($ts, $sn, $su, $val) use (&$buffer)
+{
+    $buffer[] = [$ts, $val];
+});
+while (!feof($inputFile))
+    $unpacker->parse();
+$unpacker->close();
+fclose($inputFile);
 ```

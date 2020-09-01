@@ -84,6 +84,16 @@ extern "C" {
 #define MAXPACK
 #endif
 
+#if defined(__GNUC__)
+#define OTIC_STATIC_INLINE static __inline
+#elif defined(__cplusplus) || defined(__GNUC__) && __STDC_VERSION__ >= 199901L
+#define OTIC_STATIC_INLINE static inline
+#elif defined(OTIC_WIN32)
+#define OTIC_STATIC_INLINE static __inline
+#else
+#define OTIC_STATIC_INLINE static
+#endif
+
 #ifdef __cplusplus
 }
 #endif

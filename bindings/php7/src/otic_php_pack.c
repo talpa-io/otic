@@ -72,7 +72,7 @@ PHP_METHOD(OticPackChannel, inject)
                 otic_pack_channel_inject_i(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr,
                                            Z_LVAL_P(value));
             } else
-                otic_pack_channel_inject_i_neg(intern->oticPackChannel, timestamp, sensorName.ptr, sensorName.ptr, -Z_LVAL_P(value));
+                otic_pack_channel_inject_i_neg(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr, -Z_LVAL_P(value));
             break;
         case IS_DOUBLE:
             otic_pack_channel_inject_d(intern->oticPackChannel, timestamp, sensorName.ptr, sensorUnit.ptr, Z_DVAL_P(value));

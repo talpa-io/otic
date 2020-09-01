@@ -5,6 +5,7 @@
         ]
     },
     "require-dev": {
+        "roave/security-advisories": "dev-master",
         "phpunit/phpunit": "^7",
         "phpspec/prophecy": "~1.0",
         "mockery/mockery": "^1.3"

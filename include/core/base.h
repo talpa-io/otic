@@ -1,9 +1,10 @@
-#ifndef OTIC_BASE_H
-#define OTIC_BASE_H
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifndef OTIC_BASE_H
+#define OTIC_BASE_H
+
 
 #include <stdint.h>
 #include <stddef.h>
@@ -26,6 +27,15 @@ extern "C" {
 #define OTIC_MAGIC                      "O\xa9\x46\x35"
 #define TS_NULL                         (uint64_t)-1
 
+
+#ifdef OTIC_PRIVATE_API
+#ifndef OTIC_STATIC_LINKAGE
+#define OTIC_STATIC_LINKAGE
+#endif
+#define OTIC_PUBLIC_API OTIC_STATIC_INLINE
+#else
+#define OTIC_PUBLIC_API
+#endif // OTIC_PRIVATE_API
 
 typedef enum
 {
@@ -139,14 +149,12 @@ typedef enum {
     OTIC_CHANNEL_TYPE_BINARY
 } channel_type_e;
 
-
-uint8_t         otic_base_init(otic_base_t* base, uint32_t bucketSize) NONNULL(1);
-void            otic_base_setError(otic_base_t *base, otic_error_e error) NONNULL(1);
-otic_error_e    otic_base_getError(otic_base_t *base) NONNULL(1);
-void            otic_base_setState(otic_base_t* base, otic_state_e state) NONNULL(1);
-otic_state_e    otic_base_getState(otic_base_t* base) NONNULL(1);
-void            otic_base_close(otic_base_t* base) NONNULL(1);
-
+OTIC_PUBLIC_API uint8_t         otic_base_init(otic_base_t* base, uint32_t bucketSize) NONNULL(1);
+OTIC_PUBLIC_API void            otic_base_setError(otic_base_t *base, otic_error_e error) NONNULL(1);
+OTIC_PUBLIC_API otic_error_e    otic_base_getError(otic_base_t *base) NONNULL(1);
+OTIC_PUBLIC_API void            otic_base_setState(otic_base_t* base, otic_state_e state) NONNULL(1);
+OTIC_PUBLIC_API otic_state_e    otic_base_getState(otic_base_t* base) NONNULL(1);
+OTIC_PUBLIC_API void            otic_base_close(otic_base_t* base) NONNULL(1);
 
 typedef struct
 {
@@ -154,9 +162,9 @@ typedef struct
     size_t size;
 } otic_str_t;
 
-otic_str_t*     otic_setStr(const char* ptr);
-void            otic_freeStr(otic_str_t* oticStr) NONNULL(1);
-void            otic_updateStr(otic_str_t* oticStr, const char* ptr) NONNULL(1);
+OTIC_PUBLIC_API otic_str_t*     otic_setStr(const char* ptr);
+OTIC_PUBLIC_API void            otic_freeStr(otic_str_t* oticStr) NONNULL(1);
+OTIC_PUBLIC_API void            otic_updateStr(otic_str_t* oticStr, const char* ptr) NONNULL(1);
 
 struct oval_t;
 struct oval_obj_element_t;
@@ -169,9 +177,9 @@ typedef struct
     oval_t* elements;
 } oval_array_t;
 
-uint8_t         otic_array_init(oval_t* val);
-uint8_t         otic_array_init_size(oval_t* val, size_t size);
-uint8_t         otic_array_release(oval_t* val);
+OTIC_PUBLIC_API uint8_t         otic_array_init(oval_t* val);
+OTIC_PUBLIC_API uint8_t         otic_array_init_size(oval_t* val, size_t size);
+OTIC_PUBLIC_API uint8_t         otic_array_release(oval_t* val);
 
 typedef struct
 {
@@ -197,18 +205,42 @@ typedef struct
     oval_t value;
 } oval_obj_element_t;
 
-void            otic_oval_setd(oval_t* oval, uint32_t value, uint8_t neg);
-void            otic_oval_setdp(oval_t* oval, uint64_t value);
-void            otic_oval_setdn(oval_t* oval, uint32_t value);
-void            otic_oval_setlf(oval_t* oval, double value);
-void            otic_oval_sets(oval_t* oval, const char* value, size_t size);
-void            otic_oval_setn(oval_t* oval);
-uint8_t         otic_oval_isNumeric(oval_t* oval);
-uint8_t         otic_oval_cmp(const oval_t* val1, const oval_t* val2);
-void            otic_oval_cpy(oval_t* dest, const oval_t* source);
-otic_type_e     otic_oval_getType(const oval_t* val);
+OTIC_PUBLIC_API void otic_oval_setd(oval_t* oval, uint32_t value, uint8_t neg);
+OTIC_PUBLIC_API void otic_oval_setdp(oval_t* oval, uint64_t value);
+OTIC_PUBLIC_API void otic_oval_setdn(oval_t* oval, uint32_t value);
+OTIC_PUBLIC_API void otic_oval_setlf(oval_t* oval, double value);
+OTIC_PUBLIC_API void otic_oval_sets(oval_t* oval, const char* value, size_t size);
+OTIC_PUBLIC_API void otic_oval_setn(oval_t* oval);
+OTIC_PUBLIC_API uint8_t otic_oval_isNumeric(oval_t* oval);
+OTIC_PUBLIC_API uint8_t otic_oval_cmp(const oval_t* val1, const oval_t* val2);
+OTIC_PUBLIC_API void otic_oval_cpy(oval_t* dest, const oval_t* source);
+OTIC_PUBLIC_API otic_type_e otic_oval_getType(const oval_t* val);
+OTIC_PUBLIC_API uint8_t oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalArray2);
 
-uint8_t         oval_array_cmp(const oval_array_t* ovalArray1, const oval_array_t* ovalArray2);
+
+ALWAYS_INLINE
+static double otic_oval_double(const oval_t* value)
+{
+    return value->val.dval;
+}
+
+ALWAYS_INLINE
+static float otic_oval_float(const oval_t* value)
+{
+    return (float) value->val.dval;
+}
+
+ALWAYS_INLINE
+static const char* otic_oval_string(const oval_t* value)
+{
+    return value->val.sval.ptr;
+}
+
+ALWAYS_INLINE
+static uint64_t otic_oval_int(const oval_t* value)
+{
+    return value->val.lval;
+}
 
 #if OTIC_STATS
 typedef struct
@@ -228,13 +260,17 @@ typedef struct
 } otic_stats;
 #endif
 
-uint8_t         leb128_encode_unsigned(uint64_t value, uint8_t* restrict dest) NONNULL(2);
-uint8_t         leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t* restrict value) NONNULL(1, 2);
-uint8_t         leb128_encode_signed(int64_t value, uint8_t* restrict dest) NONNULL(2);
-uint8_t         leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value) NONNULL(1, 2);
+OTIC_PUBLIC_API uint8_t leb128_encode_unsigned(uint64_t value, uint8_t* restrict dest) NONNULL(2);
+OTIC_PUBLIC_API uint8_t leb128_decode_unsigned(const uint8_t* restrict encoded_values, uint64_t* restrict value) NONNULL(1, 2);
+OTIC_PUBLIC_API uint8_t leb128_encode_signed(int64_t value, uint8_t* restrict dest) NONNULL(2);
+OTIC_PUBLIC_API uint8_t leb128_decode_signed(const uint8_t* restrict encoded_values, int64_t* restrict value) NONNULL(1, 2);
+
+#endif //OTIC_BASE_H
+
+#ifdef OTIC_PRIVATE_API
+#include "../../src/core/base.c"
+#endif
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif //OTIC_BASE_H

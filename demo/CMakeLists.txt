@@ -7,7 +7,6 @@ function(add_demo DEMO_NAME)
     target_link_libraries(${DEMO_NAME} m zstd)
 endfunction()
 
-
 add_demo(pack_demo
         pack_demo/pack_demo.c
         ../include/utility/errHand.h

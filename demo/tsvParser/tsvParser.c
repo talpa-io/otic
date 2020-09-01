@@ -346,7 +346,7 @@ static uint8_t getLines(const char* fileInName, const char* fileOutName, size_t 
 #ifdef DEBUG
 int main(void)
 {
-    const char* argv[] = {"otic", "-p", "-i", "bigFile.txt", "-o", "dump.otic"};
+    const char* argv[] = {"otic", "-u", "-i", "dump.otic", "-o", "dump.tsv"};
 //    const char* argv[] = {"otic", "-u", "-i", "dump.otic", "-o", "res.txt"};
     int argc = 6;
 #else

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <core/base.h>
 #include "core/pack.h"
 #include "utility/errHand.h"
 
