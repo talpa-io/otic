@@ -16,7 +16,7 @@ static size_t otic_pack_hashFunction(const char* ptr)
     size_t hash_address = 0;
     while(*ptr)
         hash_address = PTR_M * hash_address + *ptr++;
-    return hash_address & OTIC_PACK_CACHE_SIZE ;
+    return hash_address % OTIC_PACK_CACHE_SIZE ;
 }
 
 OTIC_PACK_INLINE
